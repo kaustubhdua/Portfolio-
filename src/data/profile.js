@@ -14,7 +14,8 @@ export const profile = {
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
   about: [
     'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, interested in software engineering and problem-solving.',
-    'My projects span OR-Tools route optimisation, voice-first multilingual assistance, crop-residue coordination and a public website for the JIIT Youth Club.',
+    'I like turning complex workflows into useful tools, with clear system boundaries, careful validation and thoughtful UX.',
+    'My projects span OR-Tools route optimisation, voice-first multilingual assistance, crop-residue coordination, local AI and a public website for the JIIT Youth Club.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
   workflow: [
@@ -41,6 +42,7 @@ export const profile = {
   ],
   links: {
     github: 'https://github.com/kaustubhdua',
+    email: 'kaustubhdua1991@gmail.com',
     linkedin: 'https://www.linkedin.com/in/kaustubh-dua-2b5a76416',
   },
 };

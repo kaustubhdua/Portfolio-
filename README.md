@@ -39,3 +39,7 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 ## Content policy
 
 Everything in `src/data/` comes from the public GitHub profile and project READMEs. Awards, certifications and metrics are intentionally absent because none are published. Prototype, simulated and demo status is stated on each project.
+
+## Credits
+
+The cursor spotlight, card tilt, count-up stats and scrolling technology strip follow patterns popularised by [React Bits](https://github.com/DavidHDev/react-bits) (MIT with Commons Clause). They are small re-implementations in this codebase with no extra dependencies, not copies of its source. Technology logos come from `react-icons` (Simple Icons).

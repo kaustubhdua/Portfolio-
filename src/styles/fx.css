@@ -1,0 +1,169 @@
+/* ----------------------------------------------------- pointer effects
+   Spotlight glow that follows the cursor inside panels and cards (driven by
+   usePointerFx). Touch devices never set --mx/--my, so nothing shows there. */
+
+.panel::before,
+.card::before,
+.adv::before,
+.slot-step::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 150, 70, 0.13), transparent 70%);
+}
+
+.panel:hover::before,
+.card:hover::before,
+.adv:hover::before,
+.slot-step:hover::before {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------- at a glance */
+
+.glance {
+  padding-block: clamp(1.5rem, 4vw, 2.5rem) 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 6.5rem;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--basalt), var(--charcoal));
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px var(--edge);
+}
+
+.stat-num {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0.08em 0 #3d0b14;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
+.marquee {
+  position: relative;
+  margin-top: 1.25rem;
+  padding-right: 3.25rem;
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: marquee 55s linear infinite;
+  -webkit-mask-image: none;
+}
+
+.marquee::before,
+.marquee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 3rem;
+  pointer-events: none;
+}
+
+.marquee::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--obsidian), transparent);
+}
+
+.marquee::after {
+  right: 3.25rem;
+  background: linear-gradient(270deg, var(--obsidian), transparent);
+}
+
+.marquee-track li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 2.25rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.marquee-track svg {
+  color: var(--text);
+}
+
+.marquee-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: var(--charcoal);
+  border: 2px solid var(--edge);
+}
+
+.marquee-toggle:hover {
+  color: var(--text);
+  border-color: var(--amber);
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee.is-paused .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+@media (max-width: 720px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    padding-right: 0;
+  }
+  .marquee-track {
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 0.75rem;
+    animation: none;
+  }
+  .marquee-track li[aria-hidden='true'],
+  .marquee-toggle,
+  .marquee::before,
+  .marquee::after {
+    display: none;
+  }
+}

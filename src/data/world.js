@@ -5,5 +5,5 @@ export const domains = [
   { id: 'local-ai', biome: 'wastes', title: 'Local AI', text: 'Hardware-aware model selection and on-device inference with Ollama.', projects: ['adaptai'] },
   { id: 'geo', biome: 'crimson', title: 'Maps and Field Data', text: 'Field mapping, GPS telemetry and PostGIS-backed records for agricultural workflows.', projects: ['nirdhoom'] },
   { id: 'community', biome: 'crimson', title: 'Community Platforms', text: 'A public home for events, clubs and archives, with CI, CodeQL and browser QA.', projects: ['jyc'] },
-  { id: 'trust', biome: 'soul', title: 'Security and Trust', text: 'Server-side secrets, consent gates, honest status labels and a fork of the SATARK triage workspace.', projects: ['saathi', 'nirdhoom'] },
+  { id: 'trust', biome: 'soul', title: 'Security and Trust', text: 'Server-side secrets, consent gates, honest status labels and evidence-backed risk triage in PatchPilot.', projects: ['patchpilot', 'saathi', 'nirdhoom'] },
 ];

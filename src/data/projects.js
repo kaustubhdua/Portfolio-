@@ -175,16 +175,54 @@ export const projects = [
     status: 'Live public site with automated quality gates.',
   },
   {
+    id: 'patchpilot',
+    name: 'PatchPilot',
+    tagline: 'Explainable pull-request risk triage',
+    biome: 'soul',
+    kind: 'Own repository',
+    image: 'img/projects/patchpilot.png',
+    summary:
+      'An early-stage service that reads a unified diff and returns changed-file statistics, evidence-backed risk signals, a coarse 0-100 score and test suggestions.',
+    stack: ['Python', 'FastAPI', 'pytest', 'Ruff', 'Docker', 'GitHub Actions'],
+    repo: 'https://github.com/kaustubhdua/PatchPilot',
+    live: null,
+    problem:
+      'Reviewers skim large diffs and can miss risky changes. PatchPilot points at the lines and files that deserve a closer look, and says why.',
+    features: [
+      'Command-line analyser for a patch from a file or stdin, with JSON output',
+      'HTTP API with health and readiness probes and a POST /v1/analyze endpoint',
+      'Heuristics for sensitive auth and security paths, dependency and lockfile changes, very large diffs, risky added lines and production changes without matching tests',
+      'Input limits and unknown-field rejection, plus a per-client rate limit that returns HTTP 429 with Retry-After',
+    ],
+    architecture: [
+      { title: 'Analysis', text: 'Deterministic diff parsing and rule-based signals. It never clones or executes repository code.' },
+      { title: 'API', text: 'FastAPI service with request validation, rate limiting and a readiness probe.' },
+      { title: 'Delivery', text: 'Regression tests, Ruff linting, GitHub Actions CI and a non-root Docker image with a health check.' },
+    ],
+    decisions: [
+      'Every signal carries its evidence, so the score can be explained rather than trusted blindly.',
+      'The score is described as coarse triage, not a defect probability or a merge recommendation.',
+      'Untrusted input is bounded: size limits, strict schemas and no execution of the analysed code.',
+    ],
+    limits: [
+      'Not a hosted service and not an autonomous code-fixing agent.',
+      'GitHub App integration, syntax-aware parsing, persistent history and measured false-positive benchmarks are still ahead.',
+      'Heuristics are not semantic analysis; binary files are counted but not analysed.',
+    ],
+    status:
+      'Early-stage tool with tests and CI. No live demo exists, and no accuracy figures are claimed.',
+  },
+  {
     id: 'adaptai',
     name: 'Adapt AI',
     tagline: 'Hardware-aware local AI assistant',
     biome: 'wastes',
-    kind: 'Team project',
+    kind: 'Team project · contributor',
     image: 'img/projects/adaptai.png',
     summary:
-      'A team-built local assistant that recommends an Ollama model based on the machine’s RAM and VRAM, for on-device chat, file and Python workflows.',
+      'A team-built local assistant, which I contributed to, that recommends an Ollama model based on the machine’s RAM and VRAM, for on-device chat, file and Python workflows.',
     stack: ['FastAPI', 'Ollama', 'Local inference', 'JavaScript'],
-    repo: 'https://github.com/ManOfDiamond/adapt-ai',
+    repo: 'https://github.com/kaustubhdua/adapt-ai',
     live: null,
     problem:
       'Choosing a local model that actually fits your hardware is trial and error. Adapt AI inspects the available memory and recommends one.',
@@ -198,9 +236,9 @@ export const projects = [
     ],
     decisions: ['Inference stays local, so conversations and files never leave the device.'],
     limits: [
-      'The repository is owned by a teammate (ManOfDiamond); my fork is kaustubhdua/adapt-ai. Specific contributions are not itemised in the README.',
+      'The upstream repository is owned by a teammate (ManOfDiamond) and the link here is my fork. The README does not itemise individual contributions.',
     ],
-    status: 'Team project listed in my selected work. No performance figures are claimed.',
+    status: 'Team project I contributed to. No performance figures are claimed.',
   },
 ];
 
