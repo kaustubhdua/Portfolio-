@@ -1,0 +1,340 @@
+/* ------------------------------------------------------------------ hero
+   The environment lives in a 16:9 "scene" that always covers the stage, so the
+   pixel-art layers and the CSS portal stay locked to the same platform at any
+   viewport. Positions inside the scene are percentages of that 320x180 grid. */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: max(100svh, 50rem);
+  padding: clamp(4.5rem, 12vh, 6.5rem) var(--gutter) 25rem;
+  text-align: center;
+  overflow: hidden;
+  background: var(--obsidian);
+}
+
+.hero:focus {
+  outline: none;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    padding-top: calc(var(--nav-h) + clamp(2.5rem, 7vh, 4.5rem));
+    padding-bottom: 14rem;
+  }
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  container-type: size;
+  background: var(--obsidian);
+}
+
+.scene {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 100cqh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  transform: translate3d(calc(var(--px, 0) * var(--depth) * -0.35px), calc(var(--sy, 0) * var(--depth) * 0.5px), 0) scale(1.08);
+  will-change: transform;
+}
+
+.layer-sky { background-image: url('img/hero/sky.png'); }
+.layer-far { background-image: url('img/hero/far.png'); }
+.layer-lava { background-image: url('img/hero/lava.png'); }
+.layer-mid { background-image: url('img/hero/mid.png'); }
+.layer-near { background-image: url('img/hero/near.png'); }
+.layer-fore { background-image: url('img/hero/fore.png'); }
+
+/* Shimmer across the lava lake: moving highlights, masked to the lava band. */
+.layer-lava::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 4%, rgba(255, 214, 140, 0.35) 4.6% 5.4%, transparent 6% 11%),
+    linear-gradient(to bottom, transparent 66%, rgba(255, 140, 40, 0.45) 80%, transparent 92%);
+  background-size: 22% 100%, 100% 100%;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 66%, #000 76%, #000 88%, transparent 94%);
+  mask-image: linear-gradient(to bottom, transparent 66%, #000 76%, #000 88%, transparent 94%);
+  animation: lava-shimmer 7s linear infinite, lava-breathe 4.5s ease-in-out infinite alternate;
+}
+
+/* ---------------------------------------------------------------- portal */
+
+.layer-portal-wrap {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  transform: translate3d(calc(var(--px, 0) * var(--depth) * -0.35px), calc(var(--sy, 0) * var(--depth) * 0.5px), 0) scale(1.08);
+  will-change: transform;
+}
+
+.portal-glow {
+  position: absolute;
+  left: 50%;
+  top: 73.9%;
+  width: 40cqw;
+  height: 40cqw;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(164, 92, 255, 0.6) 0%, rgba(110, 40, 200, 0.28) 38%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: glow-pulse 4s ease-in-out infinite alternate;
+}
+
+/* 4x5 block frame with the four corners removed, exactly like the in-game gate. */
+.portal {
+  position: absolute;
+  left: 50%;
+  top: 62.78%;
+  width: 10%;
+  aspect-ratio: 32 / 40;
+  transform: translateX(-50%);
+  background: url('img/tex/obsidian.png') 0 0 / 5cqw 5cqw;
+  image-rendering: pixelated;
+  clip-path: polygon(25% 0, 75% 0, 75% 20%, 100% 20%, 100% 80%, 75% 80%, 75% 100%, 25% 100%, 25% 80%, 0 80%, 0 20%, 25% 20%);
+}
+
+.portal-surface {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 20%;
+  bottom: 20%;
+  overflow: hidden;
+  background: url('img/tex/portal-tile.png') 0 0 / 20cqw 20cqw;
+  image-rendering: pixelated;
+  animation: swirl-a 14s linear infinite;
+}
+
+.portal-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('img/tex/portal-tile.png') 0 0 / 14cqw 14cqw;
+  image-rendering: pixelated;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  filter: hue-rotate(-24deg) brightness(1.15);
+  animation: swirl-b 9s linear infinite;
+}
+
+/* ------------------------------------------------------------ atmosphere */
+
+.fog {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.fog-a {
+  top: 38%;
+  height: 34%;
+  background:
+    radial-gradient(ellipse 30% 55% at 28% 50%, rgba(138, 32, 52, 0.38), transparent 70%),
+    radial-gradient(ellipse 28% 50% at 72% 55%, rgba(160, 70, 50, 0.26), transparent 70%);
+  animation: fog-drift 46s ease-in-out infinite alternate;
+}
+
+.fog-b {
+  top: 62%;
+  height: 36%;
+  background:
+    radial-gradient(ellipse 34% 50% at 40% 55%, rgba(120, 50, 170, 0.22), transparent 70%),
+    radial-gradient(ellipse 30% 50% at 80% 45%, rgba(110, 24, 44, 0.3), transparent 70%);
+  animation: fog-drift 34s ease-in-out infinite alternate-reverse;
+}
+
+.lava-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(255, 106, 26, 0.3), rgba(255, 106, 26, 0.08) 55%, transparent);
+  mix-blend-mode: screen;
+  animation: lava-breathe 5s ease-in-out infinite alternate;
+}
+
+.embers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Keeps the headline readable over any part of the scene, and melts into the page below. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 75% 50% at 50% 28%, rgba(11, 6, 16, 0.78), rgba(11, 6, 16, 0.4) 62%, transparent 85%),
+    linear-gradient(to bottom, rgba(11, 6, 16, 0.5), transparent 20%, transparent 74%, var(--obsidian) 100%);
+}
+
+.hero[data-away='true'] *,
+.hero[data-away='true'] *::before,
+.hero[data-away='true'] *::after {
+  animation-play-state: paused !important;
+}
+
+/* --------------------------------------------------------------- content */
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 46rem;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+  font-size: clamp(0.62rem, 1.6vw, 0.8rem);
+  color: var(--amber);
+  line-height: 1.5;
+}
+
+.hero-kicker::before,
+.hero-kicker::after {
+  content: '';
+  width: clamp(1.25rem, 6vw, 3rem);
+  height: 3px;
+  background: var(--lava);
+  box-shadow: 0 0 10px var(--lava);
+}
+
+.hero-name {
+  font-size: clamp(1.5rem, 8.4vw, 4.75rem);
+  line-height: 1.15;
+  color: var(--text);
+  text-shadow: 0 0.07em 0 #3d0b14, 0 0.14em 0 rgba(11, 6, 16, 0.9), 0 0 36px rgba(255, 106, 26, 0.45);
+}
+
+.hero-letters {
+  display: inline-block;
+}
+
+.letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.45em);
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero.is-ready .letter {
+  animation: letter-in 0.6s var(--ease) calc(120ms + var(--i) * 45ms) both;
+}
+
+.hero-role {
+  margin-top: 1.5rem;
+  font-size: clamp(1.05rem, 2.6vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--gold);
+  text-wrap: balance;
+}
+
+.hero-intro {
+  margin-top: 0.9rem;
+  max-width: 38rem;
+  color: #e3d6db;
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 899px) {
+  .hero {
+    padding-bottom: 24rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-actions .btn {
+    flex: 1 1 100%;
+  }
+  .hero-actions .icon-btn {
+    flex: 0 0 auto;
+  }
+}
+
+@keyframes letter-in {
+  from { opacity: 0; transform: translateY(0.45em); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes lava-shimmer {
+  to { background-position: 22% 0, 0 0; }
+}
+
+@keyframes lava-breathe {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+@keyframes swirl-a {
+  to { background-position: 20cqw 20cqw; }
+}
+
+@keyframes swirl-b {
+  to { background-position: -14cqw 14cqw; }
+}
+
+@keyframes fog-drift {
+  from { transform: translate3d(-4%, 0, 0); }
+  to { transform: translate3d(4%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,41 @@
+# Kaustubh Dua · Nether Portfolio
+
+A Minecraft Nether-themed developer portfolio. React 19 and esbuild, no router, no animation library. The hero environment, project thumbnails, sprites, pixel font and social card are generated in-house by scripts in `scripts/`, so no third-party art ships.
+
+## Run locally
+
+```bash
+npm install
+npm run dev        # http://localhost:5173, rebuilds on save
+```
+
+## Production build
+
+```bash
+npm run verify     # lint + production build + static dist checks
+npm run preview    # serves dist/ at http://localhost:4173
+```
+
+Set `SITE_URL` at build time so canonical and social-card URLs are absolute:
+
+```bash
+SITE_URL=https://example.com npm run build
+```
+
+All asset URLs are relative, so `dist/` can be hosted at a domain root or under a sub-path (GitHub Pages, Netlify, Vercel, any static host).
+
+## Layout
+
+| Path | Purpose |
+| --- | --- |
+| `src/data/` | All copy: profile, skills, projects, advancements. Edit content here. |
+| `src/components/` | One component per section, plus `Hero`, `Nav`, `Embers`, `Loader`, `ProjectDialog`. |
+| `src/styles/` | Theme tokens, base, nav, hero, shared UI and per-section CSS. |
+| `scripts/` | Build, dev server, preview server, static check, asset and font generators. |
+| `public/` | Generated hero layers, textures, thumbnails, font, favicon, social card. |
+
+`npm run assets` regenerates the raster art; `scripts/build-font.py` rebuilds the pixel font.
+
+## Content policy
+
+Everything in `src/data/` comes from the public GitHub profile and project READMEs. Awards, certifications and metrics are intentionally absent because none are published. Prototype, simulated and demo status is stated on each project.

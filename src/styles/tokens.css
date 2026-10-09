@@ -1,0 +1,34 @@
+@font-face {
+  font-family: 'Nether Pixel';
+  src: url('fonts/nether-pixel.woff') format('woff');
+  font-display: swap;
+}
+
+:root {
+  --obsidian: #0b0610;
+  --charcoal: #15101b;
+  --basalt: #1f1826;
+  --basalt-2: #2a2133;
+  --edge: #3d3441;
+  --crimson: #c22f43;
+  --burgundy: #7a1220;
+  --lava: #ff6a1a;
+  --amber: #ffb347;
+  --gold: #ffd27a;
+  --portal: #a45cff;
+  --portal-deep: #5a1fb0;
+  --text: #f1e7ea;
+  --muted: #b3a6ae;
+  --dim: #8a7e86;
+
+  --pixel: 'Nether Pixel', 'Courier New', monospace;
+  --sans: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  --wrap: 1120px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --section-y: clamp(4.5rem, 10vw, 8rem);
+  --nav-h: 3.75rem;
+  --hotbar-h: 4.5rem;
+  --radius: 2px;
+  --ease: cubic-bezier(0.22, 0.8, 0.3, 1);
+}
