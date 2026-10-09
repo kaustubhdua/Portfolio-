@@ -79,6 +79,7 @@
 
 /* Stone-and-obsidian panel used by every card-like block. */
 .panel {
+  position: relative;
   padding: clamp(1.1rem, 3vw, 1.6rem);
   background: linear-gradient(180deg, var(--basalt), var(--charcoal));
   border: 2px solid var(--edge);

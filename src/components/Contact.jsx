@@ -1,4 +1,4 @@
-import { FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaEnvelope, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
 import Sprite from './Sprite.jsx';
 import { profile, sections } from '../data/profile.js';
@@ -10,9 +10,12 @@ export default function Contact() {
     <Section id="contact" {...meta} title="Ender Chest" lead="Open to conversations about projects and collaboration.">
       <Reveal className="panel chest">
         <Sprite name="ender" size={72} />
-        <p>The fastest way to reach me is LinkedIn. My code, issues and discussions live on GitHub.</p>
+        <p>The most direct way to reach me is email. LinkedIn works too, and my code lives on GitHub.</p>
         <div className="chest-actions">
-          <a className="btn btn-primary pixel" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn-primary pixel" href={`mailto:${profile.links.email}`}>
+            <FaEnvelope aria-hidden="true" /> Email
+          </a>
+          <a className="btn btn-secondary pixel" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">
             <FaLinkedinIn aria-hidden="true" /> LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </a>
           <a className="btn btn-secondary pixel" href={profile.links.github} target="_blank" rel="noopener noreferrer">

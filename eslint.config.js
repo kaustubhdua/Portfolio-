@@ -21,6 +21,7 @@ const browserGlobals = {
   location: 'readonly',
   performance: 'readonly',
   HTMLElement: 'readonly',
+  Element: 'readonly',
 };
 
 const nodeGlobals = {

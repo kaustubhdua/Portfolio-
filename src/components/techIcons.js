@@ -16,6 +16,11 @@ import {
   SiOllama,
   SiGithubactions,
   SiGit,
+  SiCplusplus,
+  SiHtml5,
+  SiDocker,
+  SiPytest,
+  SiEsbuild,
 } from 'react-icons/si';
 
 /** Only the icons the skills list actually uses, so unused ones are tree-shaken out of the bundle. */
@@ -37,4 +42,9 @@ export const techIcons = {
   SiOllama,
   SiGithubactions,
   SiGit,
+  SiCplusplus,
+  SiHtml5,
+  SiDocker,
+  SiPytest,
+  SiEsbuild,
 };

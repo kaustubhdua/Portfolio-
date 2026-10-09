@@ -5,6 +5,7 @@ import { biomes, projects, explored } from '../data/projects.js';
 import { sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
+const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight' };
 
 export function ProjectCard({ project, onOpen, delay }) {
   const extra = project.stack.length - 4;
@@ -47,7 +48,7 @@ export default function Forge({ onOpen }) {
   const present = [...new Set(projects.map((p) => p.biome))];
 
   return (
-    <Section id="forge" {...meta} title="Featured Projects" lead="Five builds, each with a case study covering architecture, decisions and honest limits.">
+    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits.`}>
       <div className="filters" role="group" aria-label="Filter projects by biome">
         {[['all', 'All biomes'], ...present.map((b) => [b, biomes[b].name])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>

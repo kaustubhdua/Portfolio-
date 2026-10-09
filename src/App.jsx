@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Loader from './components/Loader.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
+import Stats from './components/Stats.jsx';
 import Profile from './components/Profile.jsx';
 import Inventory from './components/Inventory.jsx';
 import Forge from './components/Forge.jsx';
@@ -14,6 +15,7 @@ import { sections, profile } from './data/profile.js';
 import { projects } from './data/projects.js';
 import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
+import { usePointerFx } from './hooks/usePointerFx.js';
 import { setAmbient } from './lib/audio.js';
 
 const SEEN_KEY = 'nether-intro-seen';
@@ -28,6 +30,7 @@ function introAlreadySeen() {
 
 export default function App() {
   const reduced = useReducedMotion();
+  usePointerFx();
   const ids = useMemo(() => sections.map((s) => s.id), []);
   const active = useActiveSection(ids);
   const [intro, setIntro] = useState(() => !introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -78,6 +81,7 @@ export default function App() {
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} />
       <main>
         <Hero ready={!intro} onNavigate={navigate} />
+        <Stats />
         <PortalRule />
         <Profile />
         <PortalRule />

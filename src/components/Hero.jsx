@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef } from 'react';
-import { FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaEnvelope, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import Embers from './Embers.jsx';
 import { profile } from '../data/profile.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
@@ -123,6 +123,9 @@ export default function Hero({ ready, onNavigate }) {
           </a>
           <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
             <FaGithub aria-hidden="true" />
+          </a>
+          <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
+            <FaEnvelope aria-hidden="true" />
           </a>
           <a className="icon-btn" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in a new tab)">
             <FaLinkedinIn aria-hidden="true" />

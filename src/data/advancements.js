@@ -25,7 +25,7 @@ export const advancements = [
     id: 'team',
     category: 'Collaboration',
     title: 'Team Player',
-    text: 'Adapt AI, a hardware-aware local assistant, is a team project built with ManOfDiamond.',
+    text: 'Contributed to Adapt AI, a hardware-aware local assistant built as a team project with ManOfDiamond.',
     sprite: 'chip',
   },
   {

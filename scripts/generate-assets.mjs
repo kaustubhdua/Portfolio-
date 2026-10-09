@@ -89,6 +89,7 @@ const thumbs = [
   { id: 'jyc', biome: 'crimson', seed: 313, sprite: 'banner' },
   { id: 'smartwaste', biome: 'basalt', seed: 419, sprite: 'bin' },
   { id: 'adaptai', biome: 'wastes', seed: 523, sprite: 'chip' },
+  { id: 'patchpilot', biome: 'basalt', seed: 631, sprite: 'shield' },
 ];
 
 for (const t of thumbs) {
