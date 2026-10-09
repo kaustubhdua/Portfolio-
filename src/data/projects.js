@@ -1,0 +1,237 @@
+/**
+ * Featured projects. Every statement is taken from the project's public README or
+ * GitHub page. Limits are listed honestly, and no measured results are claimed
+ * because none of these READMEs publish any.
+ */
+
+export const biomes = {
+  crimson: { name: 'Crimson Forest', note: 'Full-stack platforms' },
+  basalt: { name: 'Basalt Deltas', note: 'Data and optimisation' },
+  wastes: { name: 'Nether Wastes', note: 'Local AI' },
+  soul: { name: 'Soul Sand Valley', note: 'Security and trust' },
+};
+
+export const projects = [
+  {
+    id: 'nirdhoom',
+    name: 'NIRDHOOM',
+    tagline: 'Crop-residue coordination system',
+    biome: 'crimson',
+    kind: 'Own repository',
+    image: 'img/projects/nirdhoom.png',
+    summary:
+      'A field-first web app that connects farmers, field records, machine operators, dispatch, verification and residue buyers in one workflow.',
+    stack: ['React 19', 'Vite', 'Supabase', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'Leaflet'],
+    repo: 'https://github.com/kaustubhdua/nihdhoom',
+    live: 'https://nihdhoom-9qiu.vercel.app/',
+    problem:
+      'Clearing crop residue involves several parties: farmers, machine operators, dispatchers and residue buyers. NIRDHOOM models the whole path from a field request to verified lots a buyer can see.',
+    features: [
+      'Farmer field view, booking flow and residue pathways',
+      'Field mapping on an OpenStreetMap basemap with a boundary-drawing prototype',
+      'Operator workflow with assigned jobs, device GPS telemetry, private evidence upload, SHA-256 hashing and an offline evidence queue',
+      'Authenticated dispatch endpoint where a human reviews the solver output',
+      'Residue network with verified-lot pools, buyer demand and offers',
+      'PWA manifest and service worker',
+    ],
+    architecture: [
+      { title: 'Front end', text: 'React 19 and Vite 8 with a modular app shell and feature components for booking, field jobs, operators, dispatch map, residue pooling and verification.' },
+      { title: 'Server routes', text: 'Vercel-style API routes mediate external services and privileged operations, so service keys never reach the browser.' },
+      { title: 'Data', text: 'Supabase with PostgreSQL, PostGIS and Row Level Security. Schema changes live in versioned SQL migrations.' },
+      { title: 'Dispatch', text: 'A separately deployed Python OR-Tools service, with a local heuristic fallback when it is unavailable.' },
+    ],
+    decisions: [
+      'Heavy screens load lazily, and Leaflet only loads when tracking opens. Three.js stays behind the 3D workspaces.',
+      'Frequently used workspaces prefetch on pointer or focus intent.',
+      'Only browser-safe values reach the client. Service-role and provider keys stay server-side.',
+      'Remote-sensing data is treated as supporting evidence, not as proof of what happened in a field.',
+      'Payments are demo-only; real payment or payout integration is explicitly out of scope.',
+    ],
+    limits: [
+      'Real-provider phone OTP and consent verification are still needed.',
+      'No authoritative land-boundary source is connected yet.',
+      'GPS validation, offline sync on real devices and low-end Android testing remain pilot gates.',
+      'No browser end-to-end test harness in the current release.',
+    ],
+    status:
+      'Prototype and integration foundation. Seeded records and indicative planning values are kept separate from live records, and no performance figures are claimed.',
+  },
+  {
+    id: 'saathi',
+    name: 'Saathi',
+    tagline: 'Voice-first multilingual assistance',
+    biome: 'crimson',
+    kind: 'Own repository',
+    image: 'img/projects/saathi.png',
+    summary:
+      'A Hindi-first, voice-first assistance platform with source-aware answers, consent-based workflows and human escalation.',
+    stack: ['Next.js', 'React', 'FastAPI', 'Python', 'Speech APIs', 'GitHub Actions'],
+    repo: 'https://github.com/kaustubhdua/Saathi',
+    live: 'https://saathi-two-pi.vercel.app',
+    problem:
+      'Information and service workflows are hard to reach for people who prefer speaking in their own language. Saathi aims at field-ready workflows rather than disconnected AI demos.',
+    features: [
+      'Responsive landing page and an operator command centre at /dashboard',
+      'Deterministic Hindi and Hinglish intent routing with a 120-case synthetic benchmark',
+      'Source provenance on every factual result, with demo and live data labelled',
+      'Weather and government mandi-price adapters',
+      'Provider-gated speech-to-text and text-to-speech, plus a phone-call WebSocket endpoint',
+      'Consent and human-escalation UI; rate limiting and correlation IDs on the API',
+    ],
+    architecture: [
+      { title: 'Front end', text: 'Next.js and React interface plus an operator control room.' },
+      { title: 'Back end', text: 'FastAPI service with agent orchestration and provider boundaries.' },
+      { title: 'Delivery', text: 'GitHub Actions run backend tests, front-end checks and builds, and dependency audits.' },
+      { title: 'Docs', text: 'Architecture, API contracts, voice contract, evaluation and release gates are written down in the repository.' },
+    ],
+    decisions: [
+      'Intent routing is deterministic: the language model is not the source of truth.',
+      'External providers sit behind replaceable adapters, and no provider secrets are hard-coded.',
+      'Every factual tool result carries its provenance and retrieval time.',
+      'A capability is called live only after its real provider path has been exercised.',
+      'Explicit consent is required before storing memory or making outbound calls.',
+    ],
+    limits: [
+      'Persistent memory, durable webhook storage and human case persistence are still ahead.',
+      'Low-latency real-time phone transport is not finished.',
+      'Healthcare is informational and navigation support only in the MVP.',
+    ],
+    status:
+      'MVP with a hosted demo. The next milestone in the README is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
+  },
+  {
+    id: 'smartwaste',
+    name: 'Smart Waste',
+    tagline: 'Predict, prioritise and route waste collection',
+    biome: 'basalt',
+    kind: 'Own repository',
+    image: 'img/projects/smartwaste.png',
+    summary:
+      'An end-to-end pipeline that predicts bin fill levels, scores collection priority from 0 to 100 and optimises truck routes with Google OR-Tools.',
+    stack: ['Python', 'Random Forest', 'OR-Tools', 'Streamlit', 'Folium'],
+    repo: 'https://github.com/kaustubhdua/smart_waste_project',
+    live: 'https://smartwasteproject-glmvz89ttkxfktcssfdfuc.streamlit.app/',
+    problem:
+      'Collection trucks waste distance on bins that are not full yet. This prototype shows how predicted fill levels and a priority score can drive a capacity-aware routing plan.',
+    features: [
+      'Synthetic IoT-style time series with lag features and rolling averages',
+      'Random Forest regressor that predicts future fill levels',
+      'Priority score from 0 to 100 built from fill level, elapsed time and bin criticality',
+      'Capacitated vehicle routing solved with OR-Tools within truck capacity limits',
+      'Streamlit and Folium dashboard with adjustable thresholds and route maps',
+    ],
+    architecture: [
+      { title: 'Preprocessing', text: 'Generates synthetic bin data and engineers the time-series features.' },
+      { title: 'Prediction', text: 'Trains and persists the Random Forest model.' },
+      { title: 'Priority engine', text: 'Fuzzy-style membership curves turn raw signals into a single score.' },
+      { title: 'Optimisation', text: 'An OR-Tools vehicle routing solver minimises travel distance.' },
+    ],
+    decisions: [
+      'The pipeline is split into four separable stages, each in its own module.',
+      'Priority is a normalised score rather than a hard threshold, so the dashboard can tune it live.',
+      'The README states plainly that the data is synthetic and the routing environment is simulated.',
+    ],
+    limits: [
+      'Data is synthetic and the routing environment is simulated.',
+      'It is not evidence of a live municipal deployment.',
+    ],
+    status:
+      'Engineering prototype with a hosted dashboard. Model accuracy, route quality and savings are treated as experiments, so no results are claimed.',
+  },
+  {
+    id: 'jyc',
+    name: 'JYC Website',
+    tagline: 'Public website for JIIT Youth Club',
+    biome: 'crimson',
+    kind: 'Own repository',
+    image: 'img/projects/jyc.png',
+    summary:
+      'The public website for JIIT Youth Club (JYC) at the Sector 128 campus: events, clubs, gallery, archive, announcements and recruitment.',
+    stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
+    repo: 'https://github.com/kaustubhdua/JYC-Website',
+    live: 'https://jyc-website-livid.vercel.app',
+    problem:
+      'JYC coordinates major college events and fests and needs one public home for them. The site is deliberately not a student portal or social network.',
+    features: [
+      'Public sections for home, about, history, clubs and hubs, events, fests, gallery, archive, team, achievements and contact',
+      'Event lifecycle from draft and review through registration to results and archive',
+      'Supabase-backed content and Edge Functions',
+      'PWA shell with a service worker',
+    ],
+    architecture: [
+      { title: 'Front end', text: 'React 19, Vite 8 and React Router with a CSS-first interaction layer.' },
+      { title: 'Content', text: 'Supabase-backed records for clubs, events and gallery items.' },
+      { title: 'Quality gates', text: 'Static QA covers source integrity, security, SEO, accessibility and media; Playwright runs browser QA.' },
+      { title: 'CI', text: 'GitHub Actions workflows including CodeQL.' },
+    ],
+    decisions: [
+      'Historical material is treated as source material, not automatic proof of current clubs or office holders.',
+      'Unknown social handles are left blank instead of guessed.',
+      'Out-of-scope features (accounts, attendance, public AI chat, social feeds) are explicitly excluded.',
+    ],
+    limits: [
+      'The README lists running the browser suite against the deployed site and verifying the production deployment as remaining work.',
+    ],
+    status: 'Live public site with automated quality gates.',
+  },
+  {
+    id: 'adaptai',
+    name: 'Adapt AI',
+    tagline: 'Hardware-aware local AI assistant',
+    biome: 'wastes',
+    kind: 'Team project',
+    image: 'img/projects/adaptai.png',
+    summary:
+      'A team-built local assistant that recommends an Ollama model based on the machine’s RAM and VRAM, for on-device chat, file and Python workflows.',
+    stack: ['FastAPI', 'Ollama', 'Local inference', 'JavaScript'],
+    repo: 'https://github.com/ManOfDiamond/adapt-ai',
+    live: null,
+    problem:
+      'Choosing a local model that actually fits your hardware is trial and error. Adapt AI inspects the available memory and recommends one.',
+    features: [
+      'Model recommendation based on available RAM and VRAM',
+      'On-device chat, file and Python workflows through Ollama',
+    ],
+    architecture: [
+      { title: 'API', text: 'FastAPI service in front of local inference.' },
+      { title: 'Inference', text: 'Ollama runs the recommended model on the user’s own machine.' },
+    ],
+    decisions: ['Inference stays local, so conversations and files never leave the device.'],
+    limits: [
+      'The repository is owned by a teammate (ManOfDiamond); my fork is kaustubhdua/adapt-ai. Specific contributions are not itemised in the README.',
+    ],
+    status: 'Team project listed in my selected work. No performance figures are claimed.',
+  },
+];
+
+/** Forks and smaller prototypes. Shown separately and labelled honestly. */
+export const explored = [
+  {
+    name: 'GitGlobe',
+    kind: 'Fork of ydabas-hue/GitGlobe',
+    text: 'An interactive 3D globe that places GitHub repositories by what they do, using embeddings, Three.js and a FastAPI search API.',
+    repo: 'https://github.com/kaustubhdua/GitGlobe',
+    live: 'https://gitglobe-yd-mj.vercel.app',
+  },
+  {
+    name: 'SATARK',
+    kind: 'Fork of harshilgupta926/Satark',
+    text: 'A Streamlit workspace for triaging suspicious messages, links, images, QR codes and PDFs. A learning aid, not an antivirus.',
+    repo: 'https://github.com/kaustubhdua/Satark',
+    live: 'https://satark-32uppvjxwmderrchbhj7gj.streamlit.app/',
+  },
+  {
+    name: 'AkashChalak',
+    kind: 'Prototype',
+    text: 'A satellite-assisted air-quality and hotspot decision-support prototype for India.',
+    repo: 'https://github.com/kaustubhdua/Akash-Chalak',
+    live: null,
+  },
+  {
+    name: 'Smart Bike Taxi',
+    kind: 'Prototype',
+    text: 'A platform for bike-taxi workflows.',
+    repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
+    live: null,
+  },
+];
