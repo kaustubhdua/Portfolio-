@@ -149,7 +149,7 @@ export const projects = [
       'The public website for JIIT Youth Club (JYC) at the Sector 128 campus: events, clubs, gallery, archive, announcements and recruitment.',
     stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/JYC-Website',
-    live: 'https://jyc-website-livid.vercel.app',
+    live: 'https://jyc-website-eight.vercel.app',
     problem:
       'JYC coordinates major college events and fests and needs one public home for them. The site is deliberately not a student portal or social network.',
     features: [
