@@ -1,0 +1,186 @@
+/* ------------------------------------------------------------ navigation
+   Desktop: a slim top bar. Phones and tablets: a Minecraft-style hotbar fixed to the
+   bottom edge, with the selected slot's name floating above it like an item tooltip. */
+
+.topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: var(--nav-h);
+  padding-inline: max(var(--gutter), calc((100% - var(--wrap)) / 2));
+  border-bottom: 2px solid transparent;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.topbar.is-solid {
+  background: rgba(11, 6, 16, 0.9);
+  border-bottom-color: var(--basalt-2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 1rem;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  color: var(--text);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.nav-brand:hover {
+  color: var(--gold);
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-inline: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.5rem 0.65rem;
+  border: 2px solid transparent;
+  color: var(--muted);
+  font-size: 0.6rem;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* The active link reads as the selected hotbar slot. */
+.nav-link.is-active {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(255, 179, 71, 0.09);
+}
+
+.nav-tip {
+  display: none;
+}
+
+.sound-toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  font-size: 1.05rem;
+  color: var(--muted);
+  background: rgba(21, 16, 27, 0.85);
+  border: 2px solid var(--edge);
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.sound-toggle:hover {
+  color: var(--text);
+  border-color: var(--amber);
+}
+
+.sound-toggle[aria-pressed='true'] {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+@media (max-width: 899px) {
+  .topbar {
+    position: static;
+    height: 0;
+    padding: 0;
+  }
+
+  .nav {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 100;
+    display: block;
+    height: calc(var(--hotbar-h) + env(safe-area-inset-bottom));
+    padding: 0.4rem 0.4rem calc(0.4rem + env(safe-area-inset-bottom));
+    background: rgba(11, 6, 16, 0.95);
+    border-top: 3px solid var(--edge);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-brand,
+  .nav-text {
+    display: none;
+  }
+
+  .nav-list {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+    height: 100%;
+    margin: 0;
+  }
+
+  .nav-list > li {
+    display: flex;
+    min-width: 0;
+  }
+
+  .nav-link {
+    flex: 1;
+    justify-content: center;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: #000;
+  }
+
+  .nav-link .sprite {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-link.is-active {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px #000 inset;
+  }
+
+  .nav-tip {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.6rem);
+    transform: translateX(-50%);
+    padding: 0.45rem 0.8rem;
+    font-size: 0.62rem;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--gold);
+    background: rgba(11, 6, 16, 0.92);
+    border: 2px solid var(--edge);
+    pointer-events: none;
+  }
+
+  .sound-toggle {
+    position: fixed;
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: 0.75rem;
+    z-index: 100;
+  }
+}
