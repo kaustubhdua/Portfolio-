@@ -4,6 +4,7 @@ import Chat from './components/Chat.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import Stats from './components/Stats.jsx';
+import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
 import Inventory from './components/Inventory.jsx';
 import Forge from './components/Forge.jsx';
@@ -80,6 +81,7 @@ export default function App() {
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
       {intro && <Loader onDone={finishIntro} />}
       <Chat />
+      <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} />
       <main>
         <Hero ready={!intro} onNavigate={navigate} />

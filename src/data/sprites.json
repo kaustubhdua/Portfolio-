@@ -35,14 +35,14 @@
       "...NN..."
     ],
     "head": [
-      "hhhhhhhh",
-      "hhhhhhhh",
-      "hssssssh",
-      "swkssksw",
-      "ssssssss",
-      "sssNNsss",
-      "ssssssss",
-      ".ssssss."
+      "..PPPP..",
+      ".PppppP.",
+      "PppppppP",
+      "PpkkkkpP",
+      "PkakkakP",
+      "PpkkkkpP",
+      ".PpkkpP.",
+      "..PPPP.."
     ],
     "chest": [
       ".NNNNNN.",
@@ -184,25 +184,25 @@
       ".r.oo.r.",
       "...aa..."
     ],
-    "ghast": [
-      "wwwwwwww",
-      "wwwwwwww",
-      "wkkwwkkw",
-      "wwwwwwww",
-      "wwwGGwww",
-      "wwwwwwww",
-      "wGwwwwGw",
-      "w.wGGw.w"
+    "wisp": [
+      "..PPPP..",
+      ".PppppP.",
+      "PppaappP",
+      "PppaappP",
+      ".PppppP.",
+      ".p.pp.p.",
+      ".p.pp.p.",
+      "..p..p.."
     ],
-    "strider": [
-      "..rrrr..",
-      ".rRRRRr.",
-      "rRrRRrRr",
-      "rRRRRRRr",
-      ".RRRRRR.",
+    "crawler": [
+      "..oooo..",
+      ".oaooao.",
+      "oooooooo",
+      "oRRooRRo",
+      ".oooooo.",
       ".k.kk.k.",
-      ".k.kk.k.",
-      ".k....k."
+      "k..kk..k",
+      "........"
     ]
   }
 }

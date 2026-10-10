@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { FaEnvelope, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import Embers from './Embers.jsx';
 import Sprite from './Sprite.jsx';
 import { profile } from '../data/profile.js';
@@ -99,7 +99,7 @@ export default function Hero({ ready, onNavigate }) {
     };
   }, [reduced]);
 
-  const creatureLayer = biome.creature === 'ghast' ? 'sky' : 'lava';
+  const creatureLayer = biome.creature === 'wisp' ? 'sky' : 'lava';
   const renderLayer = (l) => (
     <div key={l.name} className={`layer layer-${l.name}`} style={{ '--depth': l.depth }}>
       {l.name === creatureLayer && <Sprite name={biome.creature} size={64} className={`critter critter-${biome.creature}`} />}
@@ -165,6 +165,9 @@ export default function Hero({ ready, onNavigate }) {
           </a>
           <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
             <FaGithub aria-hidden="true" />
+          </a>
+          <a className="icon-btn" href={profile.links.resume} download aria-label="Download résumé (PDF)">
+            <FaFileArrowDown aria-hidden="true" />
           </a>
           <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
             <FaEnvelope aria-hidden="true" />

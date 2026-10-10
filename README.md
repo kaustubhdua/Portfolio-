@@ -26,7 +26,7 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 
 ## Features worth knowing
 
-- **Biome picker:** the hero switches between Crimson Forest, Basalt Deltas, Warped Forest and Soul Sand Valley. Fog colour, particles and creatures follow the game (ghasts in Basalt Deltas and Soul Sand Valley, striders on the lava sea). Each biome is about 28 kB and loads only when chosen.
+- **Biome picker:** the hero switches between Crimson Forest, Basalt Deltas, Warped Forest and Soul Sand Valley. Fog colour and particles change with each biome, and original creatures (lantern wisps, ember crawlers) drift through. Each biome is about 28 kB and loads only when chosen.
 - **Chat:** press `/` or use the speech-bubble button. It is an offline command box (`/help`, `/projects`, `/project <name>`, `/skills`, `/skill <name>`, `/contact`) that answers from `src/data/` through `src/lib/chat.js`. It uses no AI model and sends nothing anywhere.
 - **Title-screen touches:** a yellow splash text beside the name and a "Did you know?" tip on the loading screen, all drawn from real project facts.
 
