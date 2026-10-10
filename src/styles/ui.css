@@ -275,6 +275,21 @@
   border-color: var(--amber);
 }
 
+/* Pre-JS variant: an indeterminate bar, since the load time is unknown. */
+.boot {
+  cursor: progress;
+}
+
+.boot .loader-bar span {
+  width: 35%;
+  animation: boot-slide 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes boot-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(185%); }
+}
+
 @keyframes loader-swirl {
   to { background-position: 128px 128px; }
 }
@@ -551,4 +566,10 @@
 
 .loader-tip strong {
   color: #ffff55;
+}
+
+/* Real-progress variant: the width follows the loaded hero layers instead of a timer. */
+.loader-bar span.is-live {
+  animation: none;
+  transition: transform 0.25s ease-out;
 }

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import Loader from './components/Loader.jsx';
-import Chat from './components/Chat.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import Stats from './components/Stats.jsx';
@@ -8,7 +7,6 @@ import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
 import Inventory from './components/Inventory.jsx';
 import Forge from './components/Forge.jsx';
-import ProjectDialog from './components/ProjectDialog.jsx';
 import Advancements from './components/Advancements.jsx';
 import WorldMap from './components/WorldMap.jsx';
 import Contact from './components/Contact.jsx';
@@ -19,6 +17,11 @@ import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
 import { setAmbient } from './lib/audio.js';
+
+// Rarely needed on first paint, so they ship as separate chunks.
+const Chat = lazy(() => import('./components/Chat.jsx'));
+const loadDialog = () => import('./components/ProjectDialog.jsx');
+const ProjectDialog = lazy(loadDialog);
 
 const SEEN_KEY = 'nether-intro-seen';
 
@@ -68,6 +71,17 @@ export default function App() {
 
   useEffect(() => () => void setAmbient(false), []);
 
+  // The static boot screen in index.html has done its job once the app is running.
+  useEffect(() => {
+    document.getElementById('boot')?.remove();
+  }, []);
+
+  // Warm the case-study chunk shortly after load so the first click opens instantly.
+  useEffect(() => {
+    const t = setTimeout(loadDialog, 2500);
+    return () => clearTimeout(t);
+  }, []);
+
   // Honour a hash in the URL after the first paint.
   useEffect(() => {
     const id = window.location.hash.slice(1);
@@ -80,7 +94,9 @@ export default function App() {
     <>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
       {intro && <Loader onDone={finishIntro} />}
-      <Chat />
+      <Suspense fallback={null}>
+        <Chat />
+      </Suspense>
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} />
       <main>
@@ -104,7 +120,9 @@ export default function App() {
           &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft
         </p>
       </footer>
-      <ProjectDialog project={project} onClose={() => setOpenId(null)} />
+      <Suspense fallback={null}>
+        <ProjectDialog project={project} onClose={() => setOpenId(null)} />
+      </Suspense>
       <div key={warp} className={`warp${warp ? ' go' : ''}`} aria-hidden="true" />
     </>
   );

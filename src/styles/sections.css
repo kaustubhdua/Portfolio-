@@ -680,3 +680,25 @@
   color: #b4ff5c;
   border-color: #3f9a0c;
 }
+
+.flagship-tag {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.55rem;
+  line-height: 1;
+  color: #1b1128;
+  background: var(--gold);
+  border: 2px solid #000;
+}
+
+/* Lighter text tints so small biome labels clear WCAG AA on the dark panels. */
+.biome-crimson { --accent-text: #ff7a8a; }
+.biome-basalt { --accent-text: #b8aec2; }
+.biome-wastes { --accent-text: #ff8a4a; }
+.biome-soul { --accent-text: #4fd1c5; }
+
+.region-biome {
+  color: var(--accent-text, var(--accent, var(--crimson)));
+}

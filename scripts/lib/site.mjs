@@ -14,17 +14,27 @@ function htmlPlugin() {
       b.onEnd(async (result) => {
         if (!result.metafile) return;
         const outputs = Object.keys(result.metafile.outputs);
-        const js = outputs.find((f) => f.endsWith('.js'));
+        const js = outputs.find((f) => f.endsWith('.js') && result.metafile.outputs[f].entryPoint);
         const css = outputs.find((f) => f.endsWith('.css'));
         if (!js || !css) throw new Error('Expected one JS and one CSS output from esbuild.');
 
-        const siteUrl = (process.env.SITE_URL ?? '').replace(/\/+$/, '');
+        // SITE_URL wins; on Vercel the production domain is used automatically so link previews just work.
+        const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+        const siteUrl = (process.env.SITE_URL ?? (vercelHost ? `https://${vercelHost}` : '')).replace(/\/+$/, '');
         let html = await readFile(path.join(root, 'index.html'), 'utf8');
         html = html
           .replaceAll('%SITE_URL%', siteUrl)
           .replace('<!--@STYLES-->', `<link rel="stylesheet" href="./${path.basename(css)}" />`)
           .replace('<!--@SCRIPTS-->', `<script type="module" src="./${path.basename(js)}"></script>`);
         await writeFile(path.join(dist, 'index.html'), html);
+        // Crawlers need absolute URLs, so the sitemap and robots.txt sitemap line exist only when the site URL is known.
+        if (siteUrl) {
+          await writeFile(
+            path.join(dist, 'sitemap.xml'),
+            `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${siteUrl}/</loc></url></urlset>\n`,
+          );
+          await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
+        }
       });
     },
   };
@@ -36,6 +46,8 @@ export function options(mode) {
     entryPoints: [path.join(root, 'src/main.jsx')],
     bundle: true,
     format: 'esm',
+    splitting: true,
+    chunkNames: 'chunk-[hash]',
     target: ['es2022', 'chrome110', 'safari16', 'firefox110'],
     outdir: dist,
     entryNames: '[name]-[hash]',
