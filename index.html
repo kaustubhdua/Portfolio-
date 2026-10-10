@@ -25,8 +25,34 @@
     <link rel="preload" href="./fonts/nether-pixel.woff" as="font" type="font/woff" crossorigin />
     <link rel="preload" href="./img/hero/crimson/sky.png" as="image" />
     <!--@STYLES-->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Kaustubh Dua",
+        "jobTitle": "Software developer and Electronics & Computer Engineering student",
+        "url": "%SITE_URL%/",
+        "affiliation": { "@type": "CollegeOrUniversity", "name": "Jaypee Institute of Information Technology, Noida" },
+        "knowsAbout": ["Python", "TypeScript", "React", "FastAPI", "PostgreSQL", "OR-Tools", "local AI inference"],
+        "sameAs": ["https://github.com/kaustubhdua", "https://www.linkedin.com/in/kaustubh-dua-2b5a76416"]
+      }
+    </script>
   </head>
   <body>
+    <!-- Instant loading screen: painted with the stylesheet, before any JavaScript runs.
+         The app removes it as soon as it mounts, so it never delays the real content. -->
+    <div id="boot" class="loader boot" role="status">
+      <div class="loader-portal" aria-hidden="true"></div>
+      <p class="loader-title pixel">Entering the Nether</p>
+      <p class="loader-status pixel">Loading...</p>
+      <div class="loader-bar" aria-hidden="true"><span></span></div>
+    </div>
+    <script>
+      setTimeout(function () {
+        var s = document.querySelector('#boot .loader-status');
+        if (s) s.textContent = 'Still loading... check your connection';
+      }, 8000);
+    </script>
     <div id="root"></div>
     <noscript>
       <p style="padding:2rem;color:#f1e7ea;background:#0b0610;font-family:sans-serif">

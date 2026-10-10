@@ -14,6 +14,7 @@ export function ProjectCard({ project, onOpen, delay }) {
       <div className="card-media">
         <img src={project.image} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
         <span className="biome-tag pixel">{biomes[project.biome].name}</span>
+        {project.flagship && <span className="flagship-tag pixel">Flagship</span>}
         <span className={`stage-tag pixel${project.live ? ' is-live' : ''}`}>{project.live && project.stage !== 'Live site' ? `${project.stage} · Live` : project.stage}</span>
       </div>
       <div className="card-body">
@@ -52,7 +53,7 @@ export default function Forge({ onOpen }) {
   const present = [...new Set(projects.map((p) => p.biome))];
 
   return (
-    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits.`}>
+    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits. Start with the three flagships.`}>
       <div className="filters" role="group" aria-label="Filter projects by biome">
         {[['all', 'All biomes'], ...present.map((b) => [b, biomes[b].name])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>

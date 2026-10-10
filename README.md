@@ -49,3 +49,10 @@ Everything in `src/data/` comes from the public GitHub profile and project READM
 ## Credits
 
 The cursor spotlight, card tilt, count-up stats and scrolling technology strip follow patterns popularised by [React Bits](https://github.com/DavidHDev/react-bits) (MIT with Commons Clause). They are small re-implementations in this codebase with no extra dependencies, not copies of its source. Technology logos come from `react-icons` (Simple Icons).
+
+## Loading, tests and CI
+
+- **Loading screens:** `index.html` contains a static boot screen that paints before any JavaScript runs. Once the app mounts, `Loader.jsx` takes over and its bar follows the real loading of the hero art. It is skippable and skipped for reduced-motion users and repeat visits.
+- **Tests:** `npm run build && npm run preview &` then `npm run test:e2e` runs the browser suite (navigation, dialogs, keyboard, reduced motion, responsive checks, console errors).
+- **CI:** `.github/workflows/ci.yml` runs lint, build, the static check and the browser tests on every push.
+- **Deploy:** `vercel.json` makes Vercel zero-config. `SITE_URL` (or Vercel's production URL) sets canonical links, the social card, `sitemap.xml` and `robots.txt`.
