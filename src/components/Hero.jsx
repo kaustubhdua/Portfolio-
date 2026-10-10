@@ -94,7 +94,12 @@ export default function Hero({ ready, onNavigate }) {
       <div className="hero-scrim" aria-hidden="true" />
 
       <div className="hero-content">
-        <p className="hero-kicker pixel">{profile.kicker}</p>
+        <p className="hero-kicker pixel" aria-label="Electronics and Computer Engineering · JIIT Noida">
+          <span className="hero-kicker-frame" aria-hidden="true">
+            <span className="hero-kicker-line hero-kicker-ecm">Electronics &amp; Computer Engineering</span>
+            <span className="hero-kicker-line hero-kicker-jiit">JIIT Noida</span>
+          </span>
+        </p>
         <h1 id="hero-title" className="hero-name pixel">
           <span className="sr-only">{profile.name}</span>
           <span aria-hidden="true" className="hero-letters">
