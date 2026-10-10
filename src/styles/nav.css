@@ -184,3 +184,76 @@
     z-index: 100;
   }
 }
+
+/* ------------------------------------------------- HUD: experience bar
+   Sits above the hotbar on phones, bottom-centre on desktop, like the game. */
+
+.hud {
+  position: fixed;
+  left: 50%;
+  bottom: 0.75rem;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: min(22rem, 86vw);
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.hud.is-idle {
+  opacity: 0;
+}
+
+.hud-level {
+  font-size: 0.8rem;
+  line-height: 1;
+  color: #80ff20;
+  text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000;
+}
+
+.hud-xp {
+  width: 100%;
+  height: 10px;
+  padding: 2px;
+  background: #1a1a1a;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.hud-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#b4ff5c 0 35%, #5fcf12 35% 70%, #3f9a0c 70%);
+  transform: scaleX(var(--xp, 0));
+  transform-origin: left;
+}
+
+@media (max-width: 899px) {
+  .hud {
+    bottom: calc(var(--hotbar-h) + env(safe-area-inset-bottom) + 0.45rem);
+  }
+
+  .nav-tip {
+    bottom: calc(100% + 2.1rem);
+  }
+}
+
+/* Item-tooltip look from the game: near-black purple panel with a violet frame. */
+.nav-tip {
+  color: #fff;
+  background: rgba(16, 0, 16, 0.94);
+  border: 2px solid #2b0a63;
+  box-shadow: inset 0 0 0 2px #5a1fb0;
+}
+
+/* Hotbar selector: the white frame around the held slot. */
+@media (max-width: 899px) {
+  .nav-link.is-active {
+    border-color: #fff;
+    box-shadow: inset 0 0 0 2px #000;
+  }
+}

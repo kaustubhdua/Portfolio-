@@ -2,35 +2,35 @@
  * Nether biomes the hero can show. Colours and particles follow the game: Crimson Forest has
  * shroomlights and weeping vines, Basalt Deltas has light-grey fog and falling dust, Warped
  * Forest has magenta-purple fog and no music, Soul Sand Valley has blue fog and soul fire.
- * Ghasts appear in Basalt Deltas and Soul Sand Valley, striders walk on the lava seas.
+ * Lantern wisps drift in Basalt Deltas and Soul Sand Valley; ember crawlers walk the lava seas (original creatures, not game mobs).
  */
 export const heroBiomes = [
   {
     id: 'crimson',
     name: 'Crimson Forest',
     caption: 'Shroomlights, weeping vines and a red haze.',
-    creature: 'strider',
+    creature: 'crawler',
     particles: { hi: '#ffd27a', lo: '#ff6a1a', ash: [190, 170, 180], ashRatio: 0.35 },
   },
   {
     id: 'basalt',
     name: 'Basalt Deltas',
     caption: 'Light-grey fog and ash drifting down from the ceiling.',
-    creature: 'ghast',
+    creature: 'wisp',
     particles: { hi: '#ffd27a', lo: '#ff6a1a', ash: [205, 200, 212], ashRatio: 0.85 },
   },
   {
     id: 'warped',
     name: 'Warped Forest',
     caption: 'Magenta-purple fog and drifting spores. No music here.',
-    creature: 'strider',
+    creature: 'crawler',
     particles: { hi: '#a8f5e0', lo: '#3cd7c0', ash: [150, 190, 200], ashRatio: 0.15 },
   },
   {
     id: 'soul',
     name: 'Soul Sand Valley',
-    caption: 'Blue fog, basalt spires and soul fire. Ghasts roam here.',
-    creature: 'ghast',
+    caption: 'Blue fog, basalt spires and soul fire. Wisps drift here.',
+    creature: 'wisp',
     particles: { hi: '#c4f2ff', lo: '#4ad3ff', ash: [150, 200, 220], ashRatio: 0.1 },
   },
 ];

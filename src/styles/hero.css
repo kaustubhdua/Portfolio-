@@ -393,7 +393,7 @@
 }
 
 /* ------------------------------------------------------------ creatures
-   Ghasts drift across the sky; striders wade along the lava sea. */
+   Lantern wisps drift across the sky; ember crawlers wade along the lava sea. */
 
 .critter {
   position: absolute;
@@ -401,42 +401,42 @@
   opacity: 0.6;
 }
 
-.critter-ghast {
+.critter-wisp {
   top: 11%;
   left: -12%;
   width: 9%;
-  animation: ghast-drift 150s linear -48s infinite, ghast-bob 6s ease-in-out infinite alternate;
+  animation: wisp-drift 150s linear -48s infinite, wisp-bob 6s ease-in-out infinite alternate;
   filter: brightness(0.75) drop-shadow(0 0 14px rgba(255, 255, 255, 0.18));
 }
 
-.critter-strider {
+.critter-crawler {
   top: 72%;
   left: -8%;
   width: 4.2%;
-  animation: strider-walk 120s linear -34s infinite, strider-bob 1.4s steps(2) infinite;
+  animation: crawler-walk 120s linear -34s infinite, crawler-bob 1.4s steps(2) infinite;
   filter: brightness(0.9) drop-shadow(0 0 8px rgba(255, 106, 26, 0.45));
 }
 
-.hero[data-biome='warped'] .critter-strider {
+.hero[data-biome='warped'] .critter-crawler {
   filter: hue-rotate(150deg) brightness(1) drop-shadow(0 0 8px rgba(60, 215, 192, 0.5));
 }
 
-@keyframes ghast-drift {
+@keyframes wisp-drift {
   from { transform: translateX(0); }
   to { transform: translateX(1200%); }
 }
 
-@keyframes ghast-bob {
+@keyframes wisp-bob {
   from { margin-top: 0; }
   to { margin-top: 1.4%; }
 }
 
-@keyframes strider-walk {
+@keyframes crawler-walk {
   from { transform: translateX(0); }
   to { transform: translateX(2700%); }
 }
 
-@keyframes strider-bob {
+@keyframes crawler-bob {
   from { margin-top: 0; }
   to { margin-top: -0.5%; }
 }
@@ -550,7 +550,7 @@
   .critter {
     animation: none !important;
   }
-  .critter-ghast { left: 70%; }
-  .critter-strider { left: 22%; }
+  .critter-wisp { left: 70%; }
+  .critter-crawler { left: 22%; }
   .hero-splash { animation: none !important; }
 }
