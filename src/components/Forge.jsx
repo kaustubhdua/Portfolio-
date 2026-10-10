@@ -14,6 +14,7 @@ export function ProjectCard({ project, onOpen, delay }) {
       <div className="card-media">
         <img src={project.image} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
         <span className="biome-tag pixel">{biomes[project.biome].name}</span>
+        <span className={`stage-tag pixel${project.live ? ' is-live' : ''}`}>{project.live && project.stage !== 'Live site' ? `${project.stage} · Live` : project.stage}</span>
       </div>
       <div className="card-body">
         <p className="card-kind pixel">{project.kind}</p>
