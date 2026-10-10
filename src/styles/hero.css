@@ -224,6 +224,38 @@
   line-height: 1.5;
 }
 
+.hero-kicker-frame {
+  display: grid;
+  min-height: 1.5em;
+  min-width: 0;
+  align-items: center;
+}
+
+.hero-kicker-line {
+  grid-area: 1 / 1;
+  display: block;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(0.35em);
+  animation: kicker-cycle 6s ease-in-out infinite;
+}
+
+.hero-kicker-jiit {
+  animation-name: kicker-cycle-late;
+}
+
+@keyframes kicker-cycle {
+  0%, 6% { opacity: 0; transform: translateY(0.35em); }
+  12%, 43% { opacity: 1; transform: translateY(0); }
+  50%, 100% { opacity: 0; transform: translateY(-0.35em); }
+}
+
+@keyframes kicker-cycle-late {
+  0%, 50% { opacity: 0; transform: translateY(0.35em); }
+  56%, 88% { opacity: 1; transform: translateY(0); }
+  94%, 100% { opacity: 0; transform: translateY(-0.35em); }
+}
+
 .hero-kicker::before,
 .hero-kicker::after {
   content: '';
@@ -336,5 +368,15 @@
     opacity: 1;
     transform: none;
     animation: none !important;
+  }
+
+  .hero-kicker-line {
+    opacity: 0;
+    transform: none;
+    animation: none !important;
+  }
+
+  .hero-kicker-ecm {
+    opacity: 1;
   }
 }
