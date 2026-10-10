@@ -14,6 +14,7 @@ export const biomes = {
 export const projects = [
   {
     id: 'nirdhoom',
+    stage: 'Prototype',
     name: 'NIRDHOOM',
     tagline: 'Crop-residue coordination system',
     badges: ['PWA', 'PostGIS + RLS', 'Offline evidence queue'],
@@ -59,6 +60,7 @@ export const projects = [
   },
   {
     id: 'saathi',
+    stage: 'MVP',
     name: 'Saathi',
     tagline: 'Voice-first multilingual assistance',
     badges: ['120-case benchmark', 'Hindi + Hinglish', 'Human escalation'],
@@ -103,6 +105,7 @@ export const projects = [
   },
   {
     id: 'smartwaste',
+    stage: 'Prototype',
     name: 'Smart Waste',
     tagline: 'Predict, prioritise and route waste collection',
     badges: ['0-100 priority score', 'OR-Tools routing', 'Synthetic data'],
@@ -143,6 +146,7 @@ export const projects = [
   },
   {
     id: 'jyc',
+    stage: 'Live site',
     name: 'JYC Website',
     tagline: 'Public website for JIIT Youth Club',
     badges: ['CodeQL', 'Playwright QA', 'PWA shell'],
@@ -180,6 +184,7 @@ export const projects = [
   },
   {
     id: 'patchpilot',
+    stage: 'Early-stage',
     name: 'PatchPilot',
     tagline: 'Explainable pull-request risk triage',
     badges: ['0-100 risk score', 'Rate-limited API', 'Non-root Docker'],
@@ -219,6 +224,7 @@ export const projects = [
   },
   {
     id: 'adaptai',
+    stage: 'Team project',
     name: 'Adapt AI',
     tagline: 'Hardware-aware local AI assistant',
     badges: ['Ollama', 'Local inference', 'Team project'],
