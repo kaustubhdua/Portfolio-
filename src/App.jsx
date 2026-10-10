@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Loader from './components/Loader.jsx';
+import Chat from './components/Chat.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import Stats from './components/Stats.jsx';
@@ -78,6 +79,7 @@ export default function App() {
     <>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
       {intro && <Loader onDone={finishIntro} />}
+      <Chat />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} />
       <main>
         <Hero ready={!intro} onNavigate={navigate} />

@@ -24,7 +24,7 @@ export default function Advancements() {
       <ul ref={ref} className={`adv-grid${seen ? ' unlocked' : ''}`}>
         {advancements.map((a, i) => (
           <li key={a.id} className="adv" style={{ '--i': i }}>
-            <div className="adv-icon"><Sprite name={a.sprite} size={36} /></div>
+            <div className={`adv-icon frame-${a.frame}`}><Sprite name={a.sprite} size={36} /></div>
             <div>
               <p className="adv-cat pixel">{a.category}</p>
               <h3 className="adv-title pixel">{a.title}</h3>

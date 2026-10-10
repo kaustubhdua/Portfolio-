@@ -183,6 +183,26 @@
       ".rwwwwr.",
       ".r.oo.r.",
       "...aa..."
+    ],
+    "ghast": [
+      "wwwwwwww",
+      "wwwwwwww",
+      "wkkwwkkw",
+      "wwwwwwww",
+      "wwwGGwww",
+      "wwwwwwww",
+      "wGwwwwGw",
+      "w.wGGw.w"
+    ],
+    "strider": [
+      "..rrrr..",
+      ".rRRRRr.",
+      "rRrRRrRr",
+      "rRRRRRRr",
+      ".RRRRRR.",
+      ".k.kk.k.",
+      ".k.kk.k.",
+      ".k....k."
     ]
   }
 }

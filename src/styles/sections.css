@@ -632,3 +632,33 @@
   .explored-grid { grid-template-columns: minmax(0, 1fr); }
   .player-head { flex-direction: column; text-align: center; }
 }
+
+/* ------------------------------------------- project badges and frames */
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.badges li {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--gold);
+  background: rgba(255, 179, 71, 0.08);
+  border: 1px solid rgba(255, 179, 71, 0.35);
+}
+
+/* Advancement frames: square task, rounded goal, notched challenge, as in the game's advancement screen. */
+.adv-icon.frame-goal {
+  border-radius: 38%;
+}
+
+.adv-icon.frame-challenge {
+  border-color: #c58bff;
+  box-shadow: inset 0 0 14px rgba(164, 92, 255, 0.35), 0 0 0 2px #000;
+  clip-path: polygon(14% 0, 86% 0, 100% 14%, 100% 86%, 86% 100%, 14% 100%, 0 86%, 0 14%);
+}
