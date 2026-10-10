@@ -71,12 +71,15 @@ const tile = S.portalTile();
 const obsidian = S.obsidianTile();
 
 console.log('Hero layers');
-await save('img/hero/sky.png', S.sky(crimson));
-await save('img/hero/far.png', S.far(crimson));
 await save('img/hero/lava.png', S.lava());
-await save('img/hero/mid.png', S.mid(crimson));
-await save('img/hero/near.png', S.near(crimson));
-await save('img/hero/fore.png', S.fore());
+for (const name of ['crimson', 'basalt', 'warped', 'soul']) {
+  const b = S.BIOMES[name];
+  await save(`img/hero/${name}/sky.png`, S.sky(b));
+  await save(`img/hero/${name}/far.png`, S.far(b));
+  await save(`img/hero/${name}/mid.png`, S.mid(b));
+  await save(`img/hero/${name}/near.png`, S.near(b));
+  await save(`img/hero/${name}/fore.png`, S.fore(b));
+}
 
 console.log('Textures');
 await save('img/tex/portal-tile.png', tile);
@@ -141,7 +144,7 @@ console.log('Social card');
   scene.blit(S.mid(crimson), 0, 0);
   S.drawPortal(scene, S.CX, S.PLATFORM_Y, tile, obsidian);
   scene.blit(S.near(crimson), 0, 0);
-  scene.blit(S.fore(), 0, 0);
+  scene.blit(S.fore(crimson), 0, 0);
 
   const og = new Raster(1200, 630);
   og.blit(scene.scaled(4), -40, -90);

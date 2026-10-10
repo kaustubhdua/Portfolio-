@@ -2,6 +2,7 @@
 export const advancements = [
   {
     id: 'shipped',
+    frame: 'goal',
     category: 'Projects shipped',
     title: 'Hosted and Running',
     text: 'Four projects, NIRDHOOM, Saathi, Smart Waste and the JYC Website, have live public demos.',
@@ -9,6 +10,7 @@ export const advancements = [
   },
   {
     id: 'ci',
+    frame: 'challenge',
     category: 'Engineering practice',
     title: 'Quality Gates',
     text: 'The JYC Website runs GitHub Actions, CodeQL and Playwright browser checks. Saathi runs backend tests, front-end builds and dependency audits.',
@@ -16,6 +18,7 @@ export const advancements = [
   },
   {
     id: 'benchmark',
+    frame: 'task',
     category: 'Evaluation',
     title: 'Measure the Router',
     text: 'Saathi routes Hindi and Hinglish intents deterministically and ships a 120-case synthetic benchmark.',
@@ -23,6 +26,7 @@ export const advancements = [
   },
   {
     id: 'team',
+    frame: 'task',
     category: 'Collaboration',
     title: 'Team Player',
     text: 'Contributed to Adapt AI, a hardware-aware local assistant built as a team project with ManOfDiamond.',
@@ -30,6 +34,7 @@ export const advancements = [
   },
   {
     id: 'community',
+    frame: 'goal',
     category: 'Community',
     title: 'Campus Builder',
     text: 'Built the public website for JIIT Youth Club, the club behind major events and fests at the Sector 128 campus.',
@@ -37,6 +42,7 @@ export const advancements = [
   },
   {
     id: 'education',
+    frame: 'task',
     category: 'Education',
     title: 'Electronics Meets Code',
     text: 'Studying Electronics & Computer Engineering (ECM) at the Jaypee Institute of Information Technology, Noida.',

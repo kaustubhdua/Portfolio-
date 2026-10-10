@@ -30,6 +30,11 @@ export const BIOMES = {
     trees: 13,
     columns: 6,
     accent: '#ff6a7a',
+    near: {
+      ground: { top: ['#2a0c16', '#33101c'], side: '#1d0a12', rock: ['#14060d', '#1a0911', '#10050a', '#1e0a14'] },
+      pal: { stem: ['#3a1424', '#2c0f1c', '#16060e'], cap: ['#8a1a2c', '#6a1222', '#3d0a14'], vine: '#6a1222', glow: ['#ffb347', '#ffd27a'] },
+    },
+    fore: { a: '#8a1a2c', b: '#5a0e1c', tip: '#ffb347' },
   },
   basalt: {
     sky: [
@@ -51,6 +56,11 @@ export const BIOMES = {
     trees: 0,
     columns: 16,
     accent: '#ffb347',
+    near: {
+      ground: { top: ['#1c1722', '#241d2b'], side: '#14101a', rock: ['#0e0a12', '#130e18', '#0b080f', '#17121d'] },
+      pal: { stem: ['#2d2530', '#241d2b', '#14101a'], cap: ['#3d3441', '#2d2530', '#1c1620'], vine: '#2d2530', glow: ['#ffb347', '#ffd27a'] },
+    },
+    fore: { a: '#4a4150', b: '#2d2530', tip: '#9a8fa6' },
   },
   wastes: {
     sky: [
@@ -72,6 +82,63 @@ export const BIOMES = {
     trees: 5,
     columns: 4,
     accent: '#ffd27a',
+    near: {
+      ground: { top: ['#3a160f', '#461b12'], side: '#2a100b', rock: ['#1e0b08', '#26100b', '#180806', '#2e130d'] },
+      pal: { stem: ['#4a281e', '#3a1e16', '#1e0e0a'], cap: ['#8a3a22', '#6a2a1a', '#3a160f'], vine: '#6a2a1a', glow: ['#ffd27a', '#fff0b0'] },
+    },
+    fore: { a: '#8a3a2a', b: '#5a2018', tip: '#ffd27a' },
+  },
+  warped: {
+    sky: [
+      [0, '#050912'],
+      [0.3, '#0b1826'],
+      [0.55, '#14363f'],
+      [0.78, '#35467a'],
+      [0.92, '#7a3a98'],
+      [1, '#c05ad0'],
+    ],
+    far: { rim: '#6a3a8a', body: ['#10303a', '#08181f'], spire: '#0c2028', fungus: '#103a3a', glow: '#c060d8' },
+    ground: { top: ['#167e86', '#1f9a8e'], side: '#0f5a60', rock: ['#17323a', '#1d3d46', '#112a30', '#234854'] },
+    tree: {
+      stem: ['#2a8f8f', '#1f6f70', '#124a4c'],
+      cap: ['#14b485', '#0f8a6a', '#0a5a4a'],
+      vine: '#0f8a6a',
+      glow: ['#ffb347', '#ffd27a'],
+    },
+    trees: 13,
+    columns: 4,
+    accent: '#3cd7c0',
+    near: {
+      ground: { top: ['#0a2a2e', '#0e3338'], side: '#071d20', rock: ['#05161a', '#081e22', '#041114', '#0b2529'] },
+      pal: { stem: ['#124a4c', '#0e3a3c', '#071e20'], cap: ['#0f8a6a', '#0a6a52', '#063a2e'], vine: '#0a6a52', glow: ['#ffb347', '#ffd27a'] },
+    },
+    fore: { a: '#14b485', b: '#0a5a4a', tip: '#7af0d0' },
+  },
+  soul: {
+    sky: [
+      [0, '#04070f'],
+      [0.3, '#0a1020'],
+      [0.55, '#122a40'],
+      [0.78, '#1f4a6a'],
+      [0.92, '#3a7aa0'],
+      [1, '#6fc0e0'],
+    ],
+    far: { rim: '#3a6a8a', body: ['#10202e', '#080f16'], spire: '#0b1822', fungus: '#10202e', glow: '#4ad3ff' },
+    ground: { top: ['#5a4a42', '#6b5a50'], side: '#40342e', rock: ['#2a2220', '#33292a', '#221b1a', '#3b3030'] },
+    tree: {
+      stem: ['#4a4150', '#3d3441', '#2d2530'],
+      cap: ['#5a5060', '#4a4150', '#342b39'],
+      vine: '#3d3441',
+      glow: ['#7ae0ff', '#c0f0ff'],
+    },
+    trees: 0,
+    columns: 18,
+    accent: '#4ad3d0',
+    near: {
+      ground: { top: ['#241c1a', '#2d2321'], side: '#181211', rock: ['#120d0c', '#181110', '#0e0a09', '#1d1514'] },
+      pal: { stem: ['#2d2530', '#241d2b', '#14101a'], cap: ['#3d3441', '#2d2530', '#1c1620'], vine: '#2d2530', glow: ['#7ae0ff', '#c0f0ff'] },
+    },
+    fore: { a: '#3a6a8a', b: '#1a3a52', tip: '#7ae0ff' },
   },
 };
 
@@ -356,9 +423,7 @@ export function mid(biome, seed = 21) {
 export function near(biome, seed = 31) {
   const r = new Raster(W, H);
   const rand = rng(seed);
-  const dark = {
-    ground: { top: ['#2a0c16', '#33101c'], side: '#1d0a12', rock: ['#14060d', '#1a0911', '#10050a', '#1e0a14'] },
-  };
+  const dark = { ground: biome.near.ground };
   const top = (x) => {
     const dx = Math.abs(x - CX);
     const base = 172 + (fbm(x / 16, 9, seed, 2) - 0.5) * 8 - (dx > 100 ? (dx - 100) / 6 : 0);
@@ -366,12 +431,7 @@ export function near(biome, seed = 31) {
   };
   drawGround(r, top, { ground: dark.ground }, seed, 0.3);
 
-  const pal = {
-    stem: ['#3a1424', '#2c0f1c', '#16060e'],
-    cap: ['#8a1a2c', '#6a1222', '#3d0a14'],
-    vine: '#6a1222',
-    glow: ['#ffb347', '#ffd27a'],
-  };
+  const pal = biome.near.pal;
   const trees = [
     { x: 14, height: 138, trunkW: 9, capW: 70, capH: 16 },
     { x: 58, height: 92, trunkW: 6, capW: 46, capH: 12 },
@@ -392,7 +452,8 @@ export function near(biome, seed = 31) {
 
 /* ------------------------------------------------------------ foreground */
 
-export function fore(seed = 41) {
+export function fore(biome, seed = 41) {
+  const v = biome.fore;
   const r = new Raster(W, H);
   const rand = rng(seed);
   const ceil = [hex('#0b0509'), hex('#14090f'), hex('#1d0d16')];
@@ -419,8 +480,8 @@ export function fore(seed = 41) {
     const x = Math.floor(rand() * W);
     const len = 10 + Math.floor(rand() * 52);
     const y0 = ceilEdge(x);
-    for (let k = 0; k < len; k++) r.set(x, y0 + k, k % 5 === 4 ? hex('#8a1a2c') : hex('#5a0e1c'));
-    r.set(x, y0 + len, hex(rand() > 0.5 ? '#ffb347' : '#8a1a2c'));
+    for (let k = 0; k < len; k++) r.set(x, y0 + k, k % 5 === 4 ? hex(v.a) : hex(v.b));
+    r.set(x, y0 + len, hex(rand() > 0.5 ? v.tip : v.a));
   }
 
   // Basalt rubble framing the bottom corners.

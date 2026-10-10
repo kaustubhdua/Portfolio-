@@ -45,6 +45,10 @@
   transform: translate(-50%, -50%);
 }
 
+.scene {
+  animation: scene-in 0.7s var(--ease);
+}
+
 .layer {
   position: absolute;
   inset: 0;
@@ -55,12 +59,27 @@
   will-change: transform;
 }
 
-.layer-sky { background-image: url('img/hero/sky.png'); }
-.layer-far { background-image: url('img/hero/far.png'); }
 .layer-lava { background-image: url('img/hero/lava.png'); }
-.layer-mid { background-image: url('img/hero/mid.png'); }
-.layer-near { background-image: url('img/hero/near.png'); }
-.layer-fore { background-image: url('img/hero/fore.png'); }
+.hero[data-biome='crimson'] .layer-sky { background-image: url('img/hero/crimson/sky.png'); }
+.hero[data-biome='crimson'] .layer-far { background-image: url('img/hero/crimson/far.png'); }
+.hero[data-biome='crimson'] .layer-mid { background-image: url('img/hero/crimson/mid.png'); }
+.hero[data-biome='crimson'] .layer-near { background-image: url('img/hero/crimson/near.png'); }
+.hero[data-biome='crimson'] .layer-fore { background-image: url('img/hero/crimson/fore.png'); }
+.hero[data-biome='basalt'] .layer-sky { background-image: url('img/hero/basalt/sky.png'); }
+.hero[data-biome='basalt'] .layer-far { background-image: url('img/hero/basalt/far.png'); }
+.hero[data-biome='basalt'] .layer-mid { background-image: url('img/hero/basalt/mid.png'); }
+.hero[data-biome='basalt'] .layer-near { background-image: url('img/hero/basalt/near.png'); }
+.hero[data-biome='basalt'] .layer-fore { background-image: url('img/hero/basalt/fore.png'); }
+.hero[data-biome='warped'] .layer-sky { background-image: url('img/hero/warped/sky.png'); }
+.hero[data-biome='warped'] .layer-far { background-image: url('img/hero/warped/far.png'); }
+.hero[data-biome='warped'] .layer-mid { background-image: url('img/hero/warped/mid.png'); }
+.hero[data-biome='warped'] .layer-near { background-image: url('img/hero/warped/near.png'); }
+.hero[data-biome='warped'] .layer-fore { background-image: url('img/hero/warped/fore.png'); }
+.hero[data-biome='soul'] .layer-sky { background-image: url('img/hero/soul/sky.png'); }
+.hero[data-biome='soul'] .layer-far { background-image: url('img/hero/soul/far.png'); }
+.hero[data-biome='soul'] .layer-mid { background-image: url('img/hero/soul/mid.png'); }
+.hero[data-biome='soul'] .layer-near { background-image: url('img/hero/soul/near.png'); }
+.hero[data-biome='soul'] .layer-fore { background-image: url('img/hero/soul/fore.png'); }
 
 /* Shimmer across the lava lake: moving highlights, masked to the lava band. */
 .layer-lava::after {
@@ -150,8 +169,8 @@
   top: 38%;
   height: 34%;
   background:
-    radial-gradient(ellipse 30% 55% at 28% 50%, rgba(138, 32, 52, 0.38), transparent 70%),
-    radial-gradient(ellipse 28% 50% at 72% 55%, rgba(160, 70, 50, 0.26), transparent 70%);
+    radial-gradient(ellipse 30% 55% at 28% 50%, var(--fog-1), transparent 70%),
+    radial-gradient(ellipse 28% 50% at 72% 55%, var(--fog-2), transparent 70%);
   animation: fog-drift 46s ease-in-out infinite alternate;
 }
 
@@ -159,9 +178,38 @@
   top: 62%;
   height: 36%;
   background:
-    radial-gradient(ellipse 34% 50% at 40% 55%, rgba(120, 50, 170, 0.22), transparent 70%),
-    radial-gradient(ellipse 30% 50% at 80% 45%, rgba(110, 24, 44, 0.3), transparent 70%);
+    radial-gradient(ellipse 34% 50% at 40% 55%, var(--fog-3), transparent 70%),
+    radial-gradient(ellipse 30% 50% at 80% 45%, var(--fog-4), transparent 70%);
   animation: fog-drift 34s ease-in-out infinite alternate-reverse;
+}
+
+.hero {
+  --fog-1: rgba(138, 32, 52, 0.38);
+  --fog-2: rgba(160, 70, 50, 0.26);
+  --fog-3: rgba(120, 50, 170, 0.22);
+  --fog-4: rgba(110, 24, 44, 0.3);
+}
+
+/* Fog colours follow the game: grey in Basalt Deltas, magenta-purple in Warped Forest, blue in Soul Sand Valley. */
+.hero[data-biome='basalt'] {
+  --fog-1: rgba(190, 186, 200, 0.26);
+  --fog-2: rgba(170, 160, 170, 0.2);
+  --fog-3: rgba(120, 100, 140, 0.18);
+  --fog-4: rgba(150, 140, 150, 0.22);
+}
+
+.hero[data-biome='warped'] {
+  --fog-1: rgba(190, 70, 200, 0.34);
+  --fog-2: rgba(120, 60, 190, 0.28);
+  --fog-3: rgba(60, 200, 190, 0.18);
+  --fog-4: rgba(160, 60, 180, 0.3);
+}
+
+.hero[data-biome='soul'] {
+  --fog-1: rgba(60, 140, 220, 0.36);
+  --fog-2: rgba(80, 170, 230, 0.26);
+  --fog-3: rgba(100, 90, 200, 0.2);
+  --fog-4: rgba(50, 130, 200, 0.3);
 }
 
 .lava-glow {
@@ -260,7 +308,7 @@
 }
 
 .hero-role {
-  margin-top: 1.5rem;
+  margin-top: 2.9rem;
   font-size: clamp(1.05rem, 2.6vw, 1.4rem);
   font-weight: 600;
   line-height: 1.35;
@@ -337,4 +385,172 @@
     transform: none;
     animation: none !important;
   }
+}
+
+@keyframes scene-in {
+  from { opacity: 0; filter: brightness(2.2) saturate(0.4); }
+  to { opacity: 1; filter: none; }
+}
+
+/* ------------------------------------------------------------ creatures
+   Ghasts drift across the sky; striders wade along the lava sea. */
+
+.critter {
+  position: absolute;
+  height: auto;
+  opacity: 0.6;
+}
+
+.critter-ghast {
+  top: 11%;
+  left: -12%;
+  width: 9%;
+  animation: ghast-drift 150s linear -48s infinite, ghast-bob 6s ease-in-out infinite alternate;
+  filter: brightness(0.75) drop-shadow(0 0 14px rgba(255, 255, 255, 0.18));
+}
+
+.critter-strider {
+  top: 72%;
+  left: -8%;
+  width: 4.2%;
+  animation: strider-walk 120s linear -34s infinite, strider-bob 1.4s steps(2) infinite;
+  filter: brightness(0.9) drop-shadow(0 0 8px rgba(255, 106, 26, 0.45));
+}
+
+.hero[data-biome='warped'] .critter-strider {
+  filter: hue-rotate(150deg) brightness(1) drop-shadow(0 0 8px rgba(60, 215, 192, 0.5));
+}
+
+@keyframes ghast-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(1200%); }
+}
+
+@keyframes ghast-bob {
+  from { margin-top: 0; }
+  to { margin-top: 1.4%; }
+}
+
+@keyframes strider-walk {
+  from { transform: translateX(0); }
+  to { transform: translateX(2700%); }
+}
+
+@keyframes strider-bob {
+  from { margin-top: 0; }
+  to { margin-top: -0.5%; }
+}
+
+/* --------------------------------------------------- title-screen splash */
+
+.hero-letters {
+  position: relative;
+}
+
+.hero-splash {
+  position: absolute;
+  right: 0;
+  bottom: -1.4em;
+  z-index: 2;
+  display: block;
+  max-width: 14em;
+  font-size: clamp(0.62rem, 1.7vw, 0.95rem);
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  color: #ffff55;
+  text-shadow: 2px 2px 0 #3f3f15;
+  transform: rotate(-12deg);
+  transform-origin: center;
+  animation: splash-pulse 1.1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes splash-pulse {
+  from { transform: rotate(-12deg) scale(0.94); }
+  to { transform: rotate(-12deg) scale(1.06); }
+}
+
+/* ------------------------------------------------------------ biome picker */
+
+.biome-picker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.25rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline: var(--gutter);
+}
+
+.biome-picker ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.biome-btn {
+  min-height: 44px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.58rem;
+  line-height: 1.3;
+  color: var(--muted);
+  background: rgba(11, 6, 16, 0.78);
+  border: 2px solid var(--edge);
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.biome-btn:hover {
+  color: var(--text);
+  border-color: var(--amber);
+}
+
+.biome-btn.is-on {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(40, 26, 12, 0.85);
+}
+
+.biome-caption {
+  max-width: 34rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-align: center;
+  color: #d8cbd2;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 720px) {
+  .hero-role {
+    margin-top: 1.5rem;
+  }
+  .hero-splash {
+    position: static;
+    margin: 0.7rem auto 0;
+    transform: rotate(-3deg);
+    animation: none;
+  }
+  .hero-letters {
+    display: block;
+  }
+  .biome-btn {
+    flex: 1 1 calc(50% - 0.4rem);
+  }
+  .biome-picker ul {
+    width: 100%;
+    max-width: 24rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .critter {
+    animation: none !important;
+  }
+  .critter-ghast { left: 70%; }
+  .critter-strider { left: 22%; }
+  .hero-splash { animation: none !important; }
 }

@@ -534,3 +534,21 @@
     animation: none;
   }
 }
+
+.loader-status {
+  min-height: 1.2em;
+  font-size: 0.65rem;
+  color: var(--amber);
+}
+
+.loader-tip {
+  max-width: 28rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--muted);
+}
+
+.loader-tip strong {
+  color: #ffff55;
+}

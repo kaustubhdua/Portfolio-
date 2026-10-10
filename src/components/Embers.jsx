@@ -4,14 +4,20 @@ import { useReducedMotion } from '../hooks/useMedia.js';
 /**
  * Floating embers and ash on a single canvas. Pauses when the tab is hidden or the hero
  * is off screen, caps its particle count by viewport size, and draws one static frame
- * for reduced-motion users.
+ * for reduced-motion users. `palette` sets the particle colours and the ash-to-ember ratio of
+ * the current biome; the hero remounts this component when the biome changes.
  */
-export default function Embers() {
+const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(',');
+
+export default function Embers({ palette }) {
   const canvasRef = useRef(null);
   const reduced = useReducedMotion();
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const hi = rgb(palette.hi);
+    const lo = rgb(palette.lo);
+    const ashRgb = palette.ash.join(',');
     const ctx = canvas.getContext('2d');
     let w = 0;
     let h = 0;
@@ -23,7 +29,7 @@ export default function Embers() {
     let particles = [];
 
     const make = (initial) => {
-      const ash = Math.random() < 0.35;
+      const ash = Math.random() < palette.ashRatio;
       return {
         x: Math.random() * w,
         y: initial ? Math.random() * h : h + 10,
@@ -63,10 +69,10 @@ export default function Embers() {
         const py = Math.round(p.y / 2) * 2;
         const s = Math.max(2, Math.round(p.r) * 2);
         if (p.ash) {
-          ctx.fillStyle = `rgba(190,170,180,${0.28 * flicker})`;
+          ctx.fillStyle = `rgba(${ashRgb},${0.28 * flicker})`;
         } else {
           const t = Math.max(0, Math.min(1, 1 - p.y / h));
-          ctx.fillStyle = t > 0.55 ? `rgba(255,210,122,${0.9 * flicker})` : `rgba(255,106,26,${0.85 * flicker})`;
+          ctx.fillStyle = t > 0.55 ? `rgba(${hi},${0.9 * flicker})` : `rgba(${lo},${0.85 * flicker})`;
         }
         ctx.fillRect(px, py, s, s);
       }
@@ -117,7 +123,7 @@ export default function Embers() {
       io.disconnect();
       document.removeEventListener('visibilitychange', sync);
     };
-  }, [reduced]);
+  }, [reduced, palette]);
 
   return <canvas ref={canvasRef} className="embers" aria-hidden="true" />;
 }

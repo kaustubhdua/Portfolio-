@@ -1,0 +1,176 @@
+/* ---------------------------------------------------------------- chat
+   Translucent rows on a dark panel, yellow system lines, like the in-game chat. */
+
+.chat-toggle {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.15rem;
+  color: var(--text);
+  background: linear-gradient(#3d3346, #261e2e);
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.14), inset -3px -4px 0 rgba(0, 0, 0, 0.45), 0 4px 0 #0b0610;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.chat-toggle:hover {
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.chat-toggle[aria-expanded='true'] {
+  color: var(--gold);
+}
+
+.chat {
+  position: fixed;
+  left: 1rem;
+  bottom: 4.75rem;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  width: min(27rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100dvh - 7rem));
+  background: rgba(11, 6, 16, 0.94);
+  border: 3px solid var(--edge);
+  box-shadow: 0 0 0 3px #000, 0 16px 40px rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.chat[hidden] {
+  display: none;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.4rem 0.35rem 0.9rem;
+  font-size: 0.65rem;
+  color: var(--gold);
+  border-bottom: 2px solid var(--basalt-2);
+}
+
+.chat-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+}
+
+.chat-close:hover {
+  color: var(--text);
+}
+
+.chat-log {
+  flex: 1;
+  min-height: 9rem;
+  padding: 0.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-line {
+  margin: 0 0 2px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  overflow-wrap: anywhere;
+}
+
+.chat-line.is-system {
+  color: #ffff55;
+}
+
+.chat-line.is-user {
+  color: #aaaaaa;
+}
+
+.chat-who {
+  color: #55ffff;
+}
+
+.chat-line a {
+  color: #55ffff;
+}
+
+.chat-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 0.5rem 0;
+}
+
+.chat-suggest button {
+  min-height: 44px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--edge);
+}
+
+.chat-suggest button:hover {
+  color: var(--text);
+  border-color: var(--amber);
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.5rem 0.7rem;
+  font: inherit;
+  font-size: 1rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--edge);
+}
+
+.chat-form input:focus {
+  border-color: var(--gold);
+  outline: none;
+}
+
+.chat-form input:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (max-width: 899px) {
+  /* Next to the sound button at the top, so the hotbar stays clear. */
+  .chat-toggle {
+    left: auto;
+    bottom: auto;
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: 3.9rem;
+    width: 44px;
+    height: 44px;
+    z-index: 100;
+  }
+  .chat {
+    left: 0.5rem;
+    right: 0.5rem;
+    top: calc(max(0.75rem, env(safe-area-inset-top)) + 3.25rem);
+    bottom: auto;
+    width: auto;
+    max-height: min(30rem, calc(100dvh - 6rem));
+  }
+}
