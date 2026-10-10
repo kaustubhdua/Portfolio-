@@ -54,6 +54,17 @@ export default function Hero({ ready, onNavigate }) {
     [biomeId],
   );
 
+  const [kickerIndex, setKickerIndex] = useState(0);
+
+  // Rotate the education/location kicker as real text, not just layered opacity.
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timer = window.setInterval(() => {
+      setKickerIndex((index) => (index + 1) % 2);
+    }, 2600);
+    return () => window.clearInterval(timer);
+  }, [reduced]);
+
   // Pointer and scroll parallax. Only two CSS variables change per frame, and updates stop
   // while the hero is off screen.
   useEffect(() => {
@@ -135,7 +146,13 @@ export default function Hero({ ready, onNavigate }) {
       <div className="hero-scrim" aria-hidden="true" />
 
       <div className="hero-content">
-        <p className="hero-kicker pixel">{profile.kicker}</p>
+        <p className="hero-kicker pixel" aria-label="Electronics and Computer Engineering · JIIT Noida">
+          <span key={kickerIndex} className="hero-kicker-frame" aria-hidden="true">
+            <span className="hero-kicker-line">
+              {kickerIndex === 0 ? 'Electronics & Computer Engineering' : 'JIIT Noida'}
+            </span>
+          </span>
+        </p>
         <h1 id="hero-title" className="hero-name pixel">
           <span className="sr-only">{profile.name}</span>
           <span aria-hidden="true" className="hero-letters">
