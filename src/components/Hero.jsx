@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import Embers from './Embers.jsx';
 import { profile } from '../data/profile.js';
@@ -22,6 +22,16 @@ const NAME_WORDS = profile.name.split(' ').map((word) => ({
 export default function Hero({ ready, onNavigate }) {
   const heroRef = useRef(null);
   const reduced = useReducedMotion();
+  const [kickerIndex, setKickerIndex] = useState(0);
+
+  // Rotate the education/location kicker as real text, not just layered opacity.
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timer = window.setInterval(() => {
+      setKickerIndex((index) => (index + 1) % 2);
+    }, 2600);
+    return () => window.clearInterval(timer);
+  }, [reduced]);
 
   // Pointer and scroll parallax. Only two CSS variables change per frame, and updates stop
   // while the hero is off screen.
@@ -95,9 +105,10 @@ export default function Hero({ ready, onNavigate }) {
 
       <div className="hero-content">
         <p className="hero-kicker pixel" aria-label="Electronics and Computer Engineering · JIIT Noida">
-          <span className="hero-kicker-frame" aria-hidden="true">
-            <span className="hero-kicker-line hero-kicker-ecm">Electronics &amp; Computer Engineering</span>
-            <span className="hero-kicker-line hero-kicker-jiit">JIIT Noida</span>
+          <span key={kickerIndex} className="hero-kicker-frame" aria-hidden="true">
+            <span className="hero-kicker-line">
+              {kickerIndex === 0 ? 'Electronics & Computer Engineering' : 'JIIT Noida'}
+            </span>
           </span>
         </p>
         <h1 id="hero-title" className="hero-name pixel">
