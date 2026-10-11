@@ -21,3 +21,14 @@ jobs:
           npm run preview &
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
+
+  # Weekly-style safety net: flags dead or login-walled project links. Reported, never blocking.
+  links:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run check:links

@@ -136,8 +136,27 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
-await browser.close();
+// Per-project share pages and deep links.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
+  await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  const share = new URL('projects/saathi/', BASE).href;
+  const html = await (await ctx.request.get(share)).text();
+  ok('share page carries the project title and description', /og:title" content="Saathi/.test(html) && /og:description/.test(html));
+  await page.goto(share);
+  await page.waitForFunction(() => location.hash === '#project/saathi' || document.querySelector('dialog.dialog')?.open, null, { timeout: 8000 });
+  await page.waitForTimeout(1200);
+  ok('share page opens the matching case study', await page.evaluate(() => document.querySelector('dialog.dialog')?.open && /Saathi/.test(document.querySelector('dialog.dialog h2, dialog.dialog h3')?.textContent ?? '')));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  ok('closing the case study resets the address', await page.evaluate(() => !location.hash.startsWith('#project/')));
+  ok('footer build notes are present', (await page.locator('.build-notes li').count()) >= 4);
+  await ctx.close();
+}
 
+await browser.close();
 ok('no console errors or warnings', errors.length === 0, errors.slice(0, 3).join(' | '));
 let failed = 0;
 for (const r of results) {
