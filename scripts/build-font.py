@@ -75,7 +75,14 @@ fb = FontBuilder(UPM, isTTF=True)
 fb.setupGlyphOrder(glyph_order)
 fb.setupCharacterMap(cmap)
 fb.setupGlyf(glyphs)
-fb.setupHorizontalMetrics({name: (ADVANCE, 0) for name in glyph_order})
+def lsb_of(name):
+    rows = notdef_rows if name == ".notdef" else GLYPHS[chr(int(name[3:], 16))]
+    cols = [i for row in rows for i, ch in enumerate(row) if ch == "#"]
+    return min(cols) * PIXEL if cols else 0
+
+
+# lsb must equal each glyph's xMin, otherwise renderers shift glyphs that have an empty left column.
+fb.setupHorizontalMetrics({name: (ADVANCE, lsb_of(name)) for name in glyph_order})
 fb.setupHorizontalHeader(ascent=ASCENT, descent=DESCENT)
 fb.setupNameTable(
     {

@@ -198,6 +198,9 @@
   align-items: center;
   gap: 0.2rem;
   width: min(22rem, 86vw);
+  padding: 0.3rem 0.6rem 0.4rem;
+  background: rgba(11, 6, 16, 0.78);
+  border-radius: 2px;
   transform: translateX(-50%);
   pointer-events: none;
   transition: opacity 0.3s;
