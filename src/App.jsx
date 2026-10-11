@@ -1,5 +1,6 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import Loader from './components/Loader.jsx';
+import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import Stats from './components/Stats.jsx';
@@ -15,6 +16,7 @@ import { sections, profile } from './data/profile.js';
 import { projects } from './data/projects.js';
 import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
+import { WorldContext, useTheme } from './hooks/useTheme.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
 import { setAmbient } from './lib/audio.js';
 
@@ -42,6 +44,27 @@ export default function App() {
   const [openId, setOpenId] = useState(null);
   const [soundOn, setSoundOn] = useState(false);
   const [warp, setWarp] = useState(0);
+  const [theme, setTheme] = useTheme();
+  const [trip, setTrip] = useState(null); // the world being travelled to, while the portal animation runs
+  const [announce, setAnnounce] = useState('');
+
+  const travel = useCallback(() => {
+    if (trip) return;
+    const next = theme === 'overworld' ? 'nether' : 'overworld';
+    const message = next === 'overworld' ? 'You stepped through the portal into the Overworld: day mode.' : 'You stepped through the portal into the Nether: night mode.';
+    if (reduced) {
+      setTheme(next);
+      setAnnounce(message);
+      return;
+    }
+    setTrip(next);
+  }, [trip, theme, reduced, setTheme]);
+
+  const swapWorld = useCallback(() => {
+    setTheme(trip);
+    setAnnounce(trip === 'overworld' ? 'You stepped through the portal into the Overworld: day mode.' : 'You stepped through the portal into the Nether: night mode.');
+  }, [trip, setTheme]);
+  const endTrip = useCallback(() => setTrip(null), []);
 
   const finishIntro = useCallback(() => {
     setIntro(false);
@@ -106,16 +129,16 @@ export default function App() {
   const project = projects.find((p) => p.id === openId) ?? null;
 
   return (
-    <>
+    <WorldContext.Provider value={theme}>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
       {intro && <Loader onDone={finishIntro} />}
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
       <Hud active={active} />
-      <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} />
+      <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
       <main>
-        <Hero ready={!intro} onNavigate={navigate} />
+        <Hero ready={!intro} onNavigate={navigate} theme={theme} />
         <Stats />
         <PortalRule />
         <Profile />
@@ -150,6 +173,8 @@ export default function App() {
         <ProjectDialog project={project} onClose={() => setOpenId(null)} />
       </Suspense>
       <div key={warp} className={`warp${warp ? ' go' : ''}`} aria-hidden="true" />
-    </>
+      {trip && <PortalTravel to={trip} onSwap={swapWorld} onDone={endTrip} />}
+      <p className="sr-only" role="status">{announce}</p>
+    </WorldContext.Provider>
   );
 }

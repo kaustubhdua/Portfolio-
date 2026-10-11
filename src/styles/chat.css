@@ -160,7 +160,7 @@
     left: auto;
     bottom: auto;
     top: max(0.75rem, env(safe-area-inset-top));
-    right: 3.9rem;
+    right: 7.05rem;
     width: 44px;
     height: 44px;
     z-index: 100;

@@ -5,11 +5,18 @@
  */
 
 export const biomes = {
-  crimson: { name: 'Crimson Forest', note: 'Full-stack platforms' },
-  basalt: { name: 'Basalt Deltas', note: 'Data and optimisation' },
-  wastes: { name: 'Nether Wastes', note: 'Local AI' },
-  soul: { name: 'Soul Sand Valley', note: 'Security and trust' },
+  crimson: { name: 'Crimson Forest', dayName: 'Sunny Meadow', note: 'Full-stack platforms' },
+  basalt: { name: 'Basalt Deltas', dayName: 'Stone Highlands', note: 'Data and optimisation' },
+  wastes: { name: 'Nether Wastes', dayName: 'Golden Hour', note: 'Local AI' },
+  soul: { name: 'Soul Sand Valley', dayName: 'Pine Woods', note: 'Security and trust' },
 };
+
+/** Biome label for the current world (Nether names at night, Overworld names by day). */
+export const biomeName = (id, world) => (world === 'overworld' ? biomes[id].dayName : biomes[id].name);
+
+/** Day-mode card art lives next to the night art, under img/projects/day/. */
+export const projectImage = (project, world) =>
+  world === 'overworld' ? project.image.replace('img/projects/', 'img/projects/day/') : project.image;
 
 export const projects = [
   {

@@ -35,6 +35,35 @@ export const heroBiomes = [
   },
 ];
 
+/**
+ * Overworld (day mode) biomes. Same idea as above, in daylight: pollen and falling leaves in the
+ * meadow, snow-dust in the pines, warm motes at golden hour. Mosslings and glowflies are
+ * original creatures, not game mobs.
+ */
+export const overworldBiomes = [
+  {
+    id: 'meadow',
+    name: 'Sunny Meadow',
+    caption: 'Blue sky, a lake and a stone platform. The portal waits.',
+    creature: 'mossling',
+    particles: { hi: '#fff7c2', lo: '#ffe27a', ash: [120, 190, 90], ashRatio: 0.3 },
+  },
+  {
+    id: 'pine',
+    name: 'Pine Highlands',
+    caption: 'Cool air, tall pines and snow-dusted ridges.',
+    creature: 'glowfly',
+    particles: { hi: '#ffffff', lo: '#d8ecff', ash: [235, 245, 255], ashRatio: 0.85 },
+  },
+  {
+    id: 'golden',
+    name: 'Golden Hour',
+    caption: 'Autumn leaves and a low sun over the water.',
+    creature: 'glowfly',
+    particles: { hi: '#ffe7a0', lo: '#ffb347', ash: [220, 150, 60], ashRatio: 0.55 },
+  },
+];
+
 /** Short true facts shown on the title screen, like Minecraft's yellow splash text. */
 export const splashes = [
   'ECM, not ECE!',

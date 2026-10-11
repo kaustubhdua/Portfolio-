@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { FaVolumeHigh, FaVolumeXmark } from 'react-icons/fa6';
+import { FaMoon, FaSun, FaVolumeHigh, FaVolumeXmark } from 'react-icons/fa6';
 import Sprite from './Sprite.jsx';
 import { sections } from '../data/profile.js';
 
-export default function Nav({ active, onNavigate, soundOn, onToggleSound }) {
+export default function Nav({ active, onNavigate, soundOn, onToggleSound, theme, onToggleTheme, travelling }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,6 +40,17 @@ export default function Nav({ active, onNavigate, soundOn, onToggleSound }) {
         </ul>
         <span className="nav-tip pixel" aria-hidden="true">{current.label}</span>
       </nav>
+      <button
+        type="button"
+        className="theme-toggle"
+        data-world={theme}
+        aria-label={theme === 'overworld' ? 'Travel to the Nether (night mode)' : 'Travel to the Overworld (day mode)'}
+        disabled={travelling}
+        onClick={onToggleTheme}
+      >
+        {theme === 'overworld' ? <FaSun aria-hidden="true" /> : <FaMoon aria-hidden="true" />}
+        <span className="theme-toggle-tip pixel" aria-hidden="true">{theme === 'overworld' ? 'Day' : 'Night'}</span>
+      </button>
       <button
         type="button"
         className="sound-toggle"
