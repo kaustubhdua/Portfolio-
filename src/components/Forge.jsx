@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FaGithub, FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
 import { biomes, projects, explored } from '../data/projects.js';
-import { sections } from '../data/profile.js';
+import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
 const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight' };
@@ -68,7 +68,7 @@ export default function Forge({ onOpen }) {
       </div>
 
       <Reveal className="explored">
-        <h3 className="sub-title pixel">Side quests · forks and prototypes</h3>
+        <h3 className="sub-title pixel">More from GitHub · side quests</h3>
         <ul className="explored-grid">
           {explored.map((e) => (
             <li key={e.name} className="panel explored-item">
@@ -84,6 +84,11 @@ export default function Forge({ onOpen }) {
             </li>
           ))}
         </ul>
+        <p className="explored-more">
+          <a className="btn btn-secondary btn-sm pixel" href={profile.links.github + '?tab=repositories'} target="_blank" rel="noopener noreferrer">
+            All repositories on GitHub<span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
       </Reveal>
     </Section>
   );
