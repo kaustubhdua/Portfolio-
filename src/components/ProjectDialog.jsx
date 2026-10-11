@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { FaGithub, FaArrowUpRightFromSquare, FaXmark } from 'react-icons/fa6';
-import { biomes } from '../data/projects.js';
+import { biomeName, projectImage } from '../data/projects.js';
+import { useWorld } from '../hooks/useTheme.js';
 
 /** Case study in a native <dialog>: focus trap, Escape and focus restoration come from the platform. */
 export default function ProjectDialog({ project, onClose }) {
+  const world = useWorld();
   const ref = useRef(null);
 
   useEffect(() => {
@@ -30,9 +32,9 @@ export default function ProjectDialog({ project, onClose }) {
         <button type="button" className="dialog-close" aria-label="Close case study" onClick={() => ref.current.close()}>
           <FaXmark aria-hidden="true" />
         </button>
-        <img className="dialog-img" src={project.image} alt="" width="320" height="180" />
+        <img className="dialog-img" src={projectImage(project, world)} alt="" width="320" height="180" />
         <div className="dialog-body">
-          <p className="card-kind pixel">{biomes[project.biome].name} · {project.kind}</p>
+          <p className="card-kind pixel">{biomeName(project.biome, world)} · {project.kind}</p>
           <h2 id="case-title" className="pixel dialog-title">{project.name}</h2>
           <p className="dialog-tag">{project.tagline}</p>
 

@@ -136,6 +136,51 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
+// Day / night worlds: toggle, portal trip, persistence, phone reachability, reduced motion.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
+  await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await page.goto(BASE);
+  await page.waitForTimeout(1200);
+  const toggle = page.locator('.theme-toggle');
+  ok('starts in the Nether (night)', (await page.evaluate(() => document.documentElement.dataset.theme)) !== 'overworld');
+  await toggle.click();
+  await page.waitForSelector('.travel', { timeout: 2000 });
+  ok('portal travel animation plays', true);
+  ok('toggle is disabled during the trip', await toggle.isDisabled());
+  await page.waitForSelector('.travel', { state: 'detached', timeout: 6000 });
+  ok('day mode applied after the trip', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
+  ok('toggle label offers the way back', /Nether/.test(await toggle.getAttribute('aria-label')));
+  ok('status message announces the new world', /Overworld/.test(await page.locator('[role="status"].sr-only').textContent()));
+  await page.reload();
+  ok('chosen world is remembered', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
+  await ctx.close();
+
+  const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  const pp = await phone.newPage();
+  await pp.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await pp.goto(BASE);
+  await pp.waitForTimeout(1000);
+  await pp.evaluate(() => document.getElementById('forge').scrollIntoView({ behavior: 'instant' }));
+  await pp.waitForTimeout(500);
+  const box = await pp.locator('.theme-toggle').boundingBox();
+  ok('phone: day/night button stays on screen after scrolling', box && box.y >= 0 && box.y + box.height <= 844 && box.x + box.width <= 390, JSON.stringify(box));
+  const sbox = await pp.locator('.sound-toggle').boundingBox();
+  ok('phone: sound button stays on screen after scrolling', sbox && sbox.y >= 0 && sbox.y < 100, JSON.stringify(sbox));
+  await phone.close();
+
+  const calm = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  const cp = await calm.newPage();
+  await cp.goto(BASE);
+  await cp.waitForTimeout(800);
+  await cp.locator('.theme-toggle').click();
+  await cp.waitForTimeout(200);
+  ok('reduced motion: world swaps instantly with no portal animation', (await cp.locator('.travel').count()) === 0 && (await cp.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
+  await calm.close();
+}
+
 // Per-project share pages and deep links.
 {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });

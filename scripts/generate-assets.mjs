@@ -11,6 +11,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Raster, encodePng, hex, lerpColor, shade } from './lib/raster.mjs';
 import * as S from './lib/scene.mjs';
+import * as O from './lib/overworld.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicPath = (rel) => path.join(root, 'public', rel);
@@ -81,6 +82,16 @@ for (const name of ['crimson', 'basalt', 'warped', 'soul']) {
   await save(`img/hero/${name}/fore.png`, S.fore(b));
 }
 
+console.log('Overworld hero layers');
+for (const [name, b] of Object.entries(O.OVERWORLD_BIOMES)) {
+  await save(`img/hero/${name}/sky.png`, O.sky(b));
+  await save(`img/hero/${name}/far.png`, O.far(b));
+  await save(`img/hero/${name}/water.png`, O.water(b));
+  await save(`img/hero/${name}/mid.png`, O.mid(b));
+  await save(`img/hero/${name}/near.png`, O.near(b));
+  await save(`img/hero/${name}/fore.png`, O.fore(b));
+}
+
 console.log('Textures');
 await save('img/tex/portal-tile.png', tile);
 await save('img/tex/obsidian.png', obsidian);
@@ -133,6 +144,36 @@ for (const t of thumbs) {
     }
   }
   await save(`img/projects/${t.id}.png`, r);
+}
+
+console.log('Day-mode project thumbnails');
+const dayBiome = { crimson: 'meadow', basalt: 'pine', wastes: 'golden', soul: 'pine' };
+for (const t of thumbs) {
+  const b = O.OVERWORLD_BIOMES[dayBiome[t.biome]];
+  const r = new Raster(S.W, S.H);
+  r.blit(O.sky(b, t.seed), 0, 0);
+  r.blit(O.far(b, t.seed + 1), 0, 0);
+  r.blit(O.water(b, t.seed + 2), 0, 0);
+  r.blit(O.mid(b, t.seed + 3), 0, 0);
+  const sprite = spriteRaster(t.sprite);
+  const scale = 6;
+  const size = 8 * scale;
+  const ex = S.CX - size / 2;
+  const ey = 90;
+  S.glowDisc(r, S.CX, ey + size / 2, 54, b.sun.glow, 0.7);
+  for (const [ox, oy] of [[-2, 0], [2, 0], [0, -2], [0, 2], [-2, -2], [2, 2], [-2, 2], [2, -2]]) {
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        if (sprite.isOpaque(x, y)) r.rect(ex + x * scale + ox, ey + y * scale + oy, scale, scale, hex('#14210f'));
+      }
+    }
+  }
+  r.blit(sprite, ex, ey, scale);
+  for (let x = -22; x <= 22; x++) {
+    const h = Math.abs(x) < 14 ? 2 : 1;
+    for (let k = 0; k < h; k++) r.set(S.CX + x, S.PLATFORM_Y - 1 + k, hex('#4a4a4a'));
+  }
+  await save(`img/projects/day/${t.id}.png`, r);
 }
 
 console.log('Social card');

@@ -3,7 +3,7 @@ import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn } from 'react-icons
 import Embers from './Embers.jsx';
 import Sprite from './Sprite.jsx';
 import { profile } from '../data/profile.js';
-import { heroBiomes, splashes } from '../data/biomes.js';
+import { heroBiomes, overworldBiomes, splashes } from '../data/biomes.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
 
 const LAYERS = [
@@ -14,12 +14,15 @@ const LAYERS = [
   { name: 'near', depth: 42 },
 ];
 
-const BIOME_LAYERS = ['sky', 'far', 'mid', 'near', 'fore'];
+const BIOME_LAYERS = {
+  nether: ['sky', 'far', 'mid', 'near', 'fore'],
+  overworld: ['sky', 'far', 'water', 'mid', 'near', 'fore'],
+};
 
 /** Loads every layer of a biome so switching never shows a half-painted scene. */
-function preloadBiome(id) {
+function preloadBiome(id, theme = 'nether') {
   return Promise.all(
-    BIOME_LAYERS.map(
+    BIOME_LAYERS[theme].map(
       (name) =>
         new Promise((resolve) => {
           const img = new Image();
@@ -38,20 +41,23 @@ const NAME_WORDS = profile.name.split(' ').map((word) => ({
   letters: [...word].map((ch) => ({ ch, index: letterIndex++ })),
 }));
 
-export default function Hero({ ready, onNavigate }) {
+export default function Hero({ ready, onNavigate, theme = 'nether' }) {
   const heroRef = useRef(null);
   const reduced = useReducedMotion();
-  const [biomeId, setBiomeId] = useState(heroBiomes[0].id);
   const [splash] = useState(() => splashes[Math.floor(Math.random() * splashes.length)]);
-  const biome = heroBiomes.find((b) => b.id === biomeId);
+  const biomes = theme === 'overworld' ? overworldBiomes : heroBiomes;
+  // Each world remembers the biome the visitor picked in it.
+  const [picked, setPicked] = useState({ nether: heroBiomes[0].id, overworld: overworldBiomes[0].id });
+  const biome = biomes.find((b) => b.id === picked[theme]) ?? biomes[0];
+  const biomeId = biome.id;
 
   const chooseBiome = useCallback(
     async (id) => {
       if (id === biomeId) return;
-      await preloadBiome(id);
-      setBiomeId(id);
+      await preloadBiome(id, theme);
+      setPicked((prev) => ({ ...prev, [theme]: id }));
     },
-    [biomeId],
+    [biomeId, theme],
   );
 
   const [kickerIndex, setKickerIndex] = useState(0);
@@ -110,7 +116,7 @@ export default function Hero({ ready, onNavigate }) {
     };
   }, [reduced]);
 
-  const creatureLayer = biome.creature === 'wisp' ? 'sky' : 'lava';
+  const creatureLayer = biome.creature === 'wisp' || biome.creature === 'glowfly' ? 'sky' : 'lava';
   const renderLayer = (l) => (
     <div key={l.name} className={`layer layer-${l.name}`} style={{ '--depth': l.depth }}>
       {l.name === creatureLayer && <Sprite name={biome.creature} size={64} className={`critter critter-${biome.creature}`} />}
@@ -123,17 +129,19 @@ export default function Hero({ ready, onNavigate }) {
       ref={heroRef}
       className={`hero${ready ? ' is-ready' : ''}`}
       data-biome={biome.id}
+      data-world={theme}
       aria-labelledby="hero-title"
       tabIndex={-1}
     >
       <div className="stage" aria-hidden="true">
-        <div className="scene" key={biome.id}>
+        <div className="scene" key={`${theme}-${biome.id}`}>
           {LAYERS.slice(0, 3).map(renderLayer)}
           <div className="layer-portal-wrap" style={{ '--depth': 22 }}>
             <div className="portal-glow" />
             <div className="portal">
               <div className="portal-surface" />
             </div>
+            <Sprite name="traveller" size={16} className="traveller" />
           </div>
           {LAYERS.slice(3).map(renderLayer)}
           <div className="layer layer-fore" style={{ '--depth': 64 }} />
@@ -141,7 +149,7 @@ export default function Hero({ ready, onNavigate }) {
         <div className="fog fog-a" />
         <div className="fog fog-b" />
         <div className="lava-glow" />
-        <Embers key={biome.id} palette={biome.particles} />
+        <Embers key={`${theme}-${biome.id}`} palette={biome.particles} />
       </div>
       <div className="hero-scrim" aria-hidden="true" />
 
@@ -197,15 +205,15 @@ export default function Hero({ ready, onNavigate }) {
 
       <div className="biome-picker" role="group" aria-label="Choose a Nether biome for the background">
         <ul>
-          {heroBiomes.map((b) => (
+          {biomes.map((b) => (
             <li key={b.id}>
               <button
                 type="button"
                 className={`biome-btn pixel${b.id === biome.id ? ' is-on' : ''}`}
                 aria-pressed={b.id === biome.id}
                 onClick={() => chooseBiome(b.id)}
-                onPointerEnter={() => preloadBiome(b.id)}
-                onFocus={() => preloadBiome(b.id)}
+                onPointerEnter={() => preloadBiome(b.id, theme)}
+                onFocus={() => preloadBiome(b.id, theme)}
               >
                 {b.name}
               </button>

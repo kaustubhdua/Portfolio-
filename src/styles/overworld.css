@@ -1,0 +1,322 @@
+/* ===========================================================================
+   Overworld (day mode)
+   The Nether theme is the default; setting data-theme="overworld" on <html> swaps the design
+   tokens for daylight ones and restyles the few surfaces that hard-code dark colours. Panels
+   take the grey bevelled look of the game's inventory screen, buttons are stone and grass.
+   =========================================================================== */
+
+[data-theme='overworld'] {
+  color-scheme: light;
+  --obsidian: #d3e9fb;
+  --charcoal: #c6c6c6;
+  --basalt: #d4d4d4;
+  --basalt-2: #9a9a9a;
+  --edge: #4d4d4d;
+  --crimson: #b3261e;
+  --burgundy: #7d1a14;
+  --lava: #e07a1f;
+  --amber: #7a4d00;
+  --gold: #6b4300;
+  --portal: #7a35d8;
+  --portal-deep: #4b1a99;
+  --text: #1b1b1b;
+  --muted: #333333;
+  --dim: #4a4a4a;
+  --accent-text-day: #1f4d14;
+}
+
+/* A little sky behind the whole page, fading to plain light below the hero. */
+[data-theme='overworld'] body {
+  background: linear-gradient(#bfe0fb, var(--obsidian) 900px);
+  background-color: var(--obsidian);
+}
+
+[data-theme='overworld'] .section {
+  background: radial-gradient(ellipse 60% 38% at 50% 0%, rgba(255, 255, 255, 0.55), transparent 72%);
+}
+
+[data-theme='overworld'] .section-title,
+[data-theme='overworld'] .dialog-title,
+[data-theme='overworld'] .stat-num {
+  color: #1b1b1b;
+  text-shadow: 0 0.08em 0 rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='overworld'] .sub-title,
+[data-theme='overworld'] .panel h3,
+[data-theme='overworld'] .panel h4 {
+  color: #1f4d14;
+}
+
+/* Inventory-screen panels: light grey, white top-left bevel, dark bottom-right bevel. */
+[data-theme='overworld'] .panel,
+[data-theme='overworld'] .card,
+[data-theme='overworld'] .adv {
+  background: #c6c6c6;
+  border: 2px solid #1b1b1b;
+  box-shadow: inset 3px 3px 0 #ffffff, inset -3px -3px 0 #7d7d7d, 0 5px 0 rgba(40, 60, 30, 0.35);
+}
+
+[data-theme='overworld'] .card {
+  border-top: 4px solid var(--accent, var(--crimson));
+}
+
+[data-theme='overworld'] .card:hover,
+[data-theme='overworld'] .card:focus-within {
+  box-shadow: inset 3px 3px 0 #ffffff, inset -3px -3px 0 #7d7d7d, 0 9px 0 rgba(40, 60, 30, 0.35), 0 0 22px color-mix(in srgb, var(--accent, var(--crimson)) 35%, transparent);
+}
+
+[data-theme='overworld'] .about-p,
+[data-theme='overworld'] .info-used,
+[data-theme='overworld'] .arch dd {
+  color: #262626;
+}
+
+[data-theme='overworld'] .arch > div,
+[data-theme='overworld'] .chips li,
+[data-theme='overworld'] .chip-btn {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme='overworld'] .chip-btn:hover {
+  background: #fff;
+}
+
+[data-theme='overworld'] .motto {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='overworld'] .badges li {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='overworld'] .status {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Item slots. */
+[data-theme='overworld'] .slot {
+  background: #8b8b8b;
+  border-color: #373737 #ffffff #ffffff #373737;
+}
+
+[data-theme='overworld'] .slot:hover {
+  background: #a3a3a3;
+}
+
+[data-theme='overworld'] .slot.is-selected {
+  background: #b8d8a0;
+  box-shadow: 0 0 0 2px #1b1b1b, 0 0 14px rgba(80, 160, 40, 0.5);
+}
+
+[data-theme='overworld'] .avatar,
+[data-theme='overworld'] .info-icon,
+[data-theme='overworld'] .adv-icon {
+  background: #8b8b8b;
+  box-shadow: inset 0 0 0 3px #373737, inset 3px 3px 0 #555, 0 0 0 2px #1b1b1b;
+}
+
+/* Tags laid over card art stay dark so they read on the picture. */
+[data-theme='overworld'] .biome-tag,
+[data-theme='overworld'] .stage-tag {
+  color: #fff;
+  background: rgba(15, 25, 15, 0.82);
+}
+
+[data-theme='overworld'] .stage-tag.is-live {
+  color: #b4ff5c;
+}
+
+/* Buttons: stone and grass. */
+[data-theme='overworld'] .btn,
+[data-theme='overworld'] .icon-btn {
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.55);
+}
+
+[data-theme='overworld'] .btn-primary {
+  background: linear-gradient(#6fc23a, #3f8f22);
+  box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -4px 0 rgba(0, 0, 0, 0.35), 0 4px 0 #1f4d14;
+}
+
+[data-theme='overworld'] .btn-secondary,
+[data-theme='overworld'] .icon-btn {
+  background: linear-gradient(#8f8f8f, #6a6a6a);
+  box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -4px 0 rgba(0, 0, 0, 0.35), 0 4px 0 #2b2b2b;
+}
+
+[data-theme='overworld'] .btn:hover,
+[data-theme='overworld'] .icon-btn:hover {
+  color: #fff;
+}
+
+/* Section links and prose accents. */
+[data-theme='overworld'] a {
+  color: #1d4fa8;
+}
+
+[data-theme='overworld'] .btn,
+[data-theme='overworld'] .nav-link,
+[data-theme='overworld'] .nav-brand,
+[data-theme='overworld'] .icon-btn {
+  color: inherit;
+}
+
+[data-theme='overworld'] .biome-crimson { --accent-text: #a8281f; }
+[data-theme='overworld'] .biome-basalt { --accent-text: #4a4a56; }
+[data-theme='overworld'] .biome-wastes { --accent-text: #9a4a0a; }
+[data-theme='overworld'] .biome-soul { --accent-text: #0c6b63; }
+
+/* ------------------------------------------------------------- navigation */
+
+[data-theme='overworld'] .topbar.is-solid {
+  background: rgba(198, 198, 198, 0.94);
+  border-bottom-color: #1b1b1b;
+}
+
+[data-theme='overworld'] .nav-link {
+  color: #2a2a2a;
+}
+
+[data-theme='overworld'] .nav-link:hover {
+  color: #000;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme='overworld'] .nav-link.is-active {
+  color: #1f4d14;
+  border-color: #1f4d14;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme='overworld'] .nav-brand {
+  color: #1b1b1b;
+}
+
+/* On the hero (before the bar turns solid) the brand and links sit on the sky. */
+[data-theme='overworld'] .topbar:not(.is-solid) .nav-brand,
+[data-theme='overworld'] .topbar:not(.is-solid) .nav-link {
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(6, 20, 44, 0.9);
+}
+
+[data-theme='overworld'] .topbar:not(.is-solid) .nav-link.is-active {
+  color: #fff3b0;
+  border-color: #fff3b0;
+  background: rgba(10, 32, 64, 0.45);
+}
+
+[data-theme='overworld'] .topbar:not(.is-solid) .nav-link:hover {
+  background: rgba(10, 32, 64, 0.45);
+}
+
+[data-theme='overworld'] .sound-toggle,
+[data-theme='overworld'] .theme-toggle,
+[data-theme='overworld'] .chat-toggle {
+  color: #fff;
+  background: linear-gradient(#8f8f8f, #6a6a6a);
+  border-color: #1b1b1b;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.45), inset -2px -2px 0 rgba(0, 0, 0, 0.35);
+}
+
+[data-theme='overworld'] .sound-toggle[aria-pressed='true'],
+[data-theme='overworld'] .theme-toggle[aria-pressed='true'] {
+  color: #fff3b0;
+}
+
+[data-theme='overworld'] .chat-toggle {
+  border-width: 3px;
+}
+
+@media (max-width: 899px) {
+  [data-theme='overworld'] .nav {
+    background: rgba(198, 198, 198, 0.96);
+    border-top-color: #1b1b1b;
+  }
+
+  [data-theme='overworld'] .nav-link {
+    background: #8b8b8b;
+    border-color: #373737;
+  }
+
+  [data-theme='overworld'] .nav-link.is-active {
+    border-color: #fff;
+    box-shadow: inset 0 0 0 2px #000;
+  }
+}
+
+/* ----------------------------------------------------------------- footer */
+
+[data-theme='overworld'] .footer {
+  color: #333;
+  border-top-color: #1b1b1b;
+}
+
+/* ----------------------------------------------------------------- dialog */
+
+[data-theme='overworld'] .dialog {
+  box-shadow: 0 0 0 3px #1b1b1b, 0 20px 60px rgba(20, 40, 20, 0.5);
+}
+
+[data-theme='overworld'] .dialog::backdrop {
+  background: rgba(20, 40, 70, 0.55);
+}
+
+[data-theme='overworld'] .dialog-close {
+  color: #fff;
+  background: #6a6a6a;
+}
+
+/* ------------------------------------------------------------------- chat */
+
+[data-theme='overworld'] .chat {
+  background: rgba(40, 44, 40, 0.95);
+}
+
+/* ------------------------------------------------------------------ toast */
+
+[data-theme='overworld'] .toast {
+  background: #c6c6c6;
+  color: #1b1b1b;
+  box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 #7d7d7d, 0 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Light flashes through the portal rule and the pointer spotlight. */
+[data-theme='overworld'] .panel::before,
+[data-theme='overworld'] .card::before,
+[data-theme='overworld'] .adv::before,
+[data-theme='overworld'] .slot-step::before {
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
+}
+
+/* Filter chips and flagship tags need light-surface colours. */
+[data-theme='overworld'] .filter {
+  color: #1b1b1b;
+  background: #c6c6c6;
+  border-color: #1b1b1b;
+}
+
+[data-theme='overworld'] .filter.is-on {
+  color: #fff;
+  background: #3f8f22;
+  border-color: #1f4d14;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='overworld'] .flagship-tag {
+  color: #2a1c00;
+  background: #ffd84a;
+  border-color: #1b1b1b;
+}
+
+/* ----------------------------------------------- contrast fixes found in review */
+[data-theme='overworld'] .glyph { color: #4a2f00; }
+[data-theme='overworld'] .hero .btn-primary { color: #04200a; }
+[data-theme='overworld'] .hero .btn-secondary { color: #101010; }
+[data-theme='overworld'] .hero-kicker { text-shadow: 0 1px 4px rgba(10, 32, 64, 0.85); }
+[data-theme='overworld'] .filter.is-on { background: #2f7a18; border-color: #14400a; color: #fff; }
+[data-theme='overworld'] .hero-role,
+[data-theme='overworld'] .hero-intro { text-shadow: 0 1px 6px rgba(5, 20, 45, 0.9), 0 0 2px rgba(5, 20, 45, 0.7); }
+.hero[data-world='overworld'] .biome-btn { background: rgba(8, 26, 54, 0.86); }
+[data-theme='overworld'] .btn { text-shadow: none; }

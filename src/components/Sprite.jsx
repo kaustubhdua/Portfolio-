@@ -1,10 +1,12 @@
 import { memo } from 'react';
 import data from '../data/sprites.json';
 
-/** Renders one of the 8x8 pixel sprites as crisp inline SVG. */
+/** Renders a pixel sprite (8 wide, 8 or more tall) as crisp inline SVG. */
 function Sprite({ name, size = 32, className = '' }) {
   const rows = data.sprites[name];
   if (!rows) return null;
+  const cols = rows[0].length;
+  const height = Math.round((size * rows.length) / cols);
   const rects = [];
   rows.forEach((row, y) => {
     [...row].forEach((ch, x) => {
@@ -16,8 +18,8 @@ function Sprite({ name, size = 32, className = '' }) {
     <svg
       className={`sprite ${className}`}
       width={size}
-      height={size}
-      viewBox="0 0 8 8"
+      height={height}
+      viewBox={`0 0 ${cols} ${rows.length}`}
       shapeRendering="crispEdges"
       aria-hidden="true"
       focusable="false"

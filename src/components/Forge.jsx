@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { FaGithub, FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
-import { biomes, projects, explored } from '../data/projects.js';
+import { biomeName, projectImage, projects, explored } from '../data/projects.js';
+import { useWorld } from '../hooks/useTheme.js';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
 const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight' };
 
 export function ProjectCard({ project, onOpen, delay }) {
+  const world = useWorld();
   const extra = project.stack.length - 4;
   return (
     <Reveal as="article" delay={delay} className={`card biome-${project.biome}`}>
       <div className="card-media">
-        <img src={project.image} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
-        <span className="biome-tag pixel">{biomes[project.biome].name}</span>
+        <img src={projectImage(project, world)} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
+        <span className="biome-tag pixel">{biomeName(project.biome, world)}</span>
         {project.flagship && <span className="flagship-tag pixel">Flagship</span>}
         <span className={`stage-tag pixel${project.live ? ' is-live' : ''}`}>{project.live && project.stage !== 'Live site' ? `${project.stage} · Live` : project.stage}</span>
       </div>
@@ -48,6 +50,7 @@ export function ProjectCard({ project, onOpen, delay }) {
 }
 
 export default function Forge({ onOpen }) {
+  const world = useWorld();
   const [filter, setFilter] = useState('all');
   const shown = filter === 'all' ? projects : projects.filter((p) => p.biome === filter);
   const present = [...new Set(projects.map((p) => p.biome))];
@@ -55,7 +58,7 @@ export default function Forge({ onOpen }) {
   return (
     <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits. Start with the three flagships.`}>
       <div className="filters" role="group" aria-label="Filter projects by biome">
-        {[['all', 'All biomes'], ...present.map((b) => [b, biomes[b].name])].map(([id, name]) => (
+        {[['all', 'All biomes'], ...present.map((b) => [b, biomeName(b, world)])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>
             {name}
           </button>

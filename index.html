@@ -9,7 +9,19 @@
       content="Portfolio of Kaustubh Dua, an Electronics & Computer Engineering (ECM) student at JIIT Noida building AI, data and systems products. Explore the Nether."
     />
     <meta name="theme-color" content="#0b0610" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      /* Apply the saved world before first paint so day mode never flashes dark. */
+      try {
+        if (localStorage.getItem("portfolio-world") === "overworld") document.documentElement.dataset.theme = "overworld";
+      } catch (e) {}
+      /* Preload the sky of whichever world will show first. */
+      var sky = document.createElement("link");
+      sky.rel = "preload";
+      sky.as = "image";
+      sky.href = "./img/hero/" + (document.documentElement.dataset.theme === "overworld" ? "meadow" : "crimson") + "/sky.png";
+      document.head.appendChild(sky);
+    </script>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href="%SITE_URL%/" />
     <meta property="og:type" content="website" />
@@ -23,7 +35,6 @@
     <meta name="twitter:title" content="Kaustubh Dua · ECM student & software developer" />
     <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
     <link rel="preload" href="./fonts/nether-pixel.woff" as="font" type="font/woff" crossorigin />
-    <link rel="preload" href="./img/hero/crimson/sky.png" as="image" />
     <!--@STYLES-->
       <script type="application/ld+json">
       {
