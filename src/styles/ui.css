@@ -573,3 +573,14 @@
   animation: none;
   transition: transform 0.25s ease-out;
 }
+
+/* Keep the last line of the footer clear of the fixed XP bar and hotbar. */
+.footer {
+  padding-bottom: calc(3rem + 3.2rem);
+}
+
+@media (max-width: 899px) {
+  .footer {
+    padding-bottom: calc(var(--hotbar-h) + env(safe-area-inset-bottom) + 4.5rem);
+  }
+}
