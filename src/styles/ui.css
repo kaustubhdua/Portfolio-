@@ -584,3 +584,29 @@
     padding-bottom: calc(var(--hotbar-h) + env(safe-area-inset-bottom) + 4.5rem);
   }
 }
+
+.build-notes {
+  max-width: 44rem;
+  margin: 1.25rem auto 0;
+  text-align: left;
+}
+
+.build-notes summary {
+  cursor: pointer;
+  text-align: center;
+  color: var(--muted);
+  min-height: 44px;
+  line-height: 44px;
+}
+
+.build-notes summary:hover {
+  color: var(--gold);
+}
+
+.build-notes ul {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 0.25rem 1.5rem;
+  list-style: square;
+  color: var(--muted);
+}
