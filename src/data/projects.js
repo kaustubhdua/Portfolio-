@@ -282,9 +282,30 @@ export const explored = [
   },
   {
     name: 'Smart Bike Taxi',
-    kind: 'Prototype',
-    text: 'A platform for bike-taxi workflows.',
+    kind: 'Academic simulation · C++17',
+    text: 'A terminal ride-booking simulation on a small Noida road network: Dijkstra shortest paths, a FIFO request queue, nearest-driver dispatch, fare estimates and local persistence. Not connected to real riders, maps or payments.',
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
+    live: null,
+  },
+  {
+    name: 'JIIT Toppers',
+    kind: 'Foundation prototype · Next.js',
+    text: 'A student-first workspace idea for JIIT: academics, study resources, exam prep and campus info. Currently a UI scaffold with local attendance and SGPA estimators; there is no database, login or official JIIT data.',
+    repo: 'https://github.com/kaustubhdua/Jiit-toppers-',
+    live: null,
+  },
+  {
+    name: 'Weather Core Matrix',
+    kind: 'Small project · vanilla JS',
+    text: 'A lightweight weather dashboard: search a city and see current conditions. Plain HTML, CSS and JavaScript with no build step.',
+    repo: 'https://github.com/kaustubhdua/weather-core-matrix',
+    live: null,
+  },
+  {
+    name: 'Nord Studio Task Manager',
+    kind: 'Small project · vanilla JS',
+    text: 'A compact task manager with priorities, all/active/completed filters and a remaining-tasks counter. No framework or build step.',
+    repo: 'https://github.com/kaustubhdua/nord-studio-task-manager',
     live: null,
   },
 ];
