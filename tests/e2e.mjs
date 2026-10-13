@@ -211,6 +211,11 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('share page opens the matching case study', await page.evaluate(() => document.querySelector('dialog.dialog')?.open && /Saathi/.test(document.querySelector('dialog.dialog h2, dialog.dialog h3')?.textContent ?? '')));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
+  await page.evaluate(() => { location.hash = '#project/nirdhoom'; });
+  await page.waitForTimeout(900);
+  ok('a #project link opens its case study on an already-open page', await page.evaluate(() => document.querySelector('dialog.dialog')?.open === true));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
   ok('closing the case study resets the address', await page.evaluate(() => !location.hash.startsWith('#project/')));
   ok('footer build notes are present', (await page.locator('.build-notes li').count()) >= 4);
   await ctx.close();

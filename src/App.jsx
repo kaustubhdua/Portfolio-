@@ -145,6 +145,18 @@ export default function App() {
     }
   }, []);
 
+  // Back/forward buttons and pasted #project/... links work while the page is already open.
+  useEffect(() => {
+    const onHash = () => {
+      const id = window.location.hash.slice(1);
+      const shared = id.startsWith('project/') ? projects.find((p) => p.id === id.slice(8)) : null;
+      if (shared) setOpenId(shared.id);
+      else if (id && document.getElementById(id)) document.getElementById(id).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, [reduced]);
+
   // Keep the address bar shareable while a case study is open.
   useEffect(() => {
     if (openId) history.replaceState(null, '', `#project/${openId}`);
