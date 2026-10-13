@@ -610,3 +610,65 @@
   list-style: square;
   color: var(--muted);
 }
+
+/* Game-style world loading screen: tiled block texture, spinning block, real percentage. */
+.loader-world {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    url('img/tex/dirt.png') 0 0 / 80px 80px;
+  image-rendering: pixelated;
+}
+.loader-world.loader-nether {
+  background:
+    linear-gradient(rgba(20, 0, 0, 0.5), rgba(20, 0, 0, 0.6)),
+    url('img/tex/netherrack.png') 0 0 / 80px 80px;
+}
+.loader-world .loader-title { font-size: clamp(0.8rem, 3vw, 1.05rem); color: #fff; text-shadow: 2px 2px 0 #3a3a3a; }
+.loader-world .loader-bar { width: min(20rem, 72vw); height: 10px; padding: 0; background: #000; border: 2px solid #5a5a5a; box-shadow: 0 0 0 2px #000; }
+.loader-world .loader-bar span.is-live { background: linear-gradient(#8aff6a, #3fae2a); }
+.loader-cube {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  transform-style: preserve-3d;
+  animation: cube-spin 6s linear infinite;
+  margin-bottom: 1.5rem;
+}
+.loader-cube i {
+  position: absolute;
+  inset: 0;
+  background: url('img/tex/dirt.png') center / 100% 100%;
+  image-rendering: pixelated;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+}
+.loader-nether .loader-cube i { background-image: url('img/tex/netherrack.png'); }
+.loader-cube i:nth-child(1) { transform: translateZ(32px); }
+.loader-cube i:nth-child(2) { transform: rotateY(90deg) translateZ(32px); filter: brightness(0.8); }
+.loader-cube i:nth-child(3) { transform: rotateY(180deg) translateZ(32px); }
+.loader-cube i:nth-child(4) { transform: rotateY(-90deg) translateZ(32px); filter: brightness(0.8); }
+.loader-cube i:nth-child(5) { transform: rotateX(90deg) translateZ(32px); filter: brightness(1.2); }
+.loader-cube i:nth-child(6) { transform: rotateX(-90deg) translateZ(32px); filter: brightness(0.6); }
+@keyframes cube-spin {
+  from { transform: rotateX(-24deg) rotateY(0deg); }
+  to { transform: rotateX(-24deg) rotateY(360deg); }
+}
+@media (prefers-reduced-motion: reduce) { .loader-cube { animation: none; transform: rotateX(-24deg) rotateY(35deg); } }
+
+.travel-swirl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  mix-blend-mode: normal;
+}
+.travel-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18%;
+  text-align: center;
+  font-size: clamp(0.7rem, 2.4vw, 0.95rem);
+  color: #fff;
+  text-shadow: 2px 2px 0 #20083a;
+}

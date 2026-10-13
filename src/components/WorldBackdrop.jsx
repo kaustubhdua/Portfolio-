@@ -1,27 +1,36 @@
-import { useEffect, useRef } from 'react';
-import { onDive } from '../lib/voxel/travel.js';
+import { useEffect, useRef, useState } from 'react';
+import { mobSound } from '../lib/audio.js';
+import { onDive, setLoad } from '../lib/voxel/travel.js';
+
+// Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
+const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel,.card,.stat,.chat,.hud,.biome-picker,[role="dialog"]';
 
 /**
  * The fixed full-screen 3D world behind the page. Scrolling walks the camera down the village road
- * (day) or across the fortress bridge (night). The engine is loaded lazily; when WebGL 2 is
- * missing the page keeps its 2D scenes.
+ * (day) or across the fortress bridge (night). Click any creature in empty space to poke it.
+ * The engine loads lazily; without WebGL 2 the page keeps its 2D scenes.
  */
 export default function WorldBackdrop({ world, sections, reduced }) {
   const canvasRef = useRef(null);
   const rendererRef = useRef(null);
   const worldRef = useRef(world);
   worldRef.current = world;
+  const [bubble, setBubble] = useState(null);
 
   useEffect(() => {
-    // Visitors (and the generic tests) can opt out with localStorage 'portfolio-3d' = 'off'.
     try {
-      if (localStorage.getItem('portfolio-3d') === 'off') return undefined;
+      if (localStorage.getItem('portfolio-3d') === 'off') {
+        setLoad(1);
+        return undefined;
+      }
     } catch {
       /* storage blocked: carry on with 3D */
     }
     let cancelled = false;
     let renderer = null;
+    let bubbleTimer = 0;
     const root = document.documentElement;
+    let cleanup = () => {};
     import('../lib/voxel/renderer.js')
       .then(({ createWorldRenderer }) => {
         if (cancelled) return;
@@ -29,24 +38,58 @@ export default function WorldBackdrop({ world, sections, reduced }) {
           sections,
           reduced,
           onContextLost: () => delete root.dataset.threed,
+          onProgress: setLoad,
         });
-        if (!renderer) return;
+        if (!renderer) {
+          setLoad(1);
+          return;
+        }
         rendererRef.current = renderer;
         renderer.setWorld(worldRef.current);
         renderer.start();
         const stopDive = onDive((v) => renderer.setDive(v));
-        renderer.stopDive = stopDive;
         renderer.ready.then(() => {
           if (!cancelled) root.dataset.threed = 'on';
         });
-        // Build the other world quietly so the portal trip lands instantly.
         setTimeout(() => !cancelled && renderer.prepare(worldRef.current === 'nether' ? 'overworld' : 'nether'), 2500);
+
+        const free = (e) => !e.target.closest?.(SOLID_UI);
+        let hovering = false;
+        const onMove = (e) => {
+          if (e.pointerType === 'touch') return;
+          const hit = free(e) && renderer.pick(e.clientX, e.clientY);
+          if (Boolean(hit) !== hovering) {
+            hovering = Boolean(hit);
+            root.classList.toggle('mob-hover', hovering);
+          }
+        };
+        const onClick = (e) => {
+          if (!free(e) || window.getSelection()?.toString()) return;
+          const hit = renderer.pick(e.clientX, e.clientY, true);
+          if (!hit) return;
+          mobSound(hit.name, hit.kind);
+          clearTimeout(bubbleTimer);
+          setBubble({ ...hit, id: Date.now() });
+          bubbleTimer = setTimeout(() => setBubble(null), 3200);
+        };
+        window.addEventListener('pointermove', onMove, { passive: true });
+        window.addEventListener('click', onClick);
+        cleanup = () => {
+          stopDive();
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('click', onClick);
+          root.classList.remove('mob-hover');
+          clearTimeout(bubbleTimer);
+        };
       })
-      .catch((err) => console.error('3D world unavailable', err));
+      .catch((err) => {
+        setLoad(1);
+        console.error('3D world unavailable', err);
+      });
     return () => {
       cancelled = true;
       delete root.dataset.threed;
-      renderer?.stopDive?.();
+      cleanup();
       renderer?.dispose();
       rendererRef.current = null;
     };
@@ -56,5 +99,20 @@ export default function WorldBackdrop({ world, sections, reduced }) {
     rendererRef.current?.setWorld(world);
   }, [world]);
 
-  return <canvas ref={canvasRef} className="world-canvas" aria-hidden="true" />;
+  return (
+    <>
+      <canvas ref={canvasRef} className="world-canvas" aria-hidden="true" />
+      {bubble && (
+        <div
+          key={bubble.id}
+          className={`mob-bubble ${bubble.kind}`}
+          style={{ left: Math.min(Math.max(bubble.x, 150), window.innerWidth - 150), top: Math.min(Math.max(bubble.y, 90), window.innerHeight - 40) }}
+          role="status"
+        >
+          <b className="pixel">{bubble.name}</b>
+          <span>{bubble.line}</span>
+        </div>
+      )}
+    </>
+  );
 }

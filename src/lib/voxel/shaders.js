@@ -150,9 +150,13 @@ uniform float uFogFar;
 uniform float uTime;
 out vec3 vCol;
 out float vFog;
+out vec3 vLocal;
+out vec3 vNor;
 void main() {
   mat4 m = mat4(aM0, aM1, aM2, aM3);
   vec4 wp = m * vec4(aPos, 1.0);
+  vLocal = aPos * vec3(length(aM0.xyz), length(aM1.xyz), length(aM2.xyz));
+  vNor = aNor;
   gl_Position = uVP * wp;
   vec3 n = normalize(mat3(m) * aNor);
   vec3 col = aCol.rgb;
@@ -174,10 +178,17 @@ export const ENTITY_FS = `#version 300 es
 precision highp float;
 in vec3 vCol;
 in float vFog;
+in vec3 vLocal;
+in vec3 vNor;
 uniform vec3 uFog;
 out vec4 outColor;
+float h3(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
 void main() {
-  outColor = vec4(mix(vCol, uFog, vFog), 1.0);
+  // pixel-grid grain (1/16 block) so each box reads as a painted skin, not a flat colour
+  vec3 cell = floor((vLocal + 8.0) * 16.0 + vNor * 0.01);
+  float n = h3(cell) - 0.5;
+  vec3 c = vCol * (1.0 + n * 0.16);
+  outColor = vec4(mix(c, uFog, vFog), 1.0);
 }`;
 
 export const PART_VS = `#version 300 es

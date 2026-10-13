@@ -62,7 +62,7 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
 /** Creates the world renderer. Returns null when WebGL 2 is not available. */
-export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost } = {}) {
+export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress } = {}) {
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance', depth: true });
   if (!gl) return null;
 
@@ -133,7 +133,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeData), gl.STATIC_DRAW);
   const instBuffer = gl.createBuffer();
-  const writer = new InstanceWriter(1000);
+  const writer = new InstanceWriter(2200);
   gl.bindBuffer(gl.ARRAY_BUFFER, instBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, writer.data.byteLength, gl.DYNAMIC_DRAW);
   const entityVao = gl.createVertexArray();
@@ -208,6 +208,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       }
       if (step.value) uploadSlab(w, step.value);
     }
+    if (w.name === current) onProgress?.(Math.min(1, w.slabs.filter(Boolean).length / 4));
     if (!firstReady && worlds[current]?.slabs.filter(Boolean).length >= 4) {
       firstReady = true;
       canvas.dataset.state = 'ready';
@@ -312,6 +313,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
   };
 
+  let pickCam = null;
   let simTime = 0;
   let last = performance.now();
   let raf = 0;
@@ -364,6 +366,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
         -dot(r, pos), -dot(u, pos), dot(f, pos), 1,
       ]);
       const vp = mul(perspective(fovy, aspect, 0.1, 400), view);
+      pickCam = { pos, r, u, f, tx: Math.tan(fovy / 2) * aspect, ty: Math.tan(fovy / 2), vp };
       const camPos = { x: pos[0], y: pos[1], z: pos[2], far: look.far + 8 };
 
       gl.viewport(0, 0, width, height);
@@ -409,7 +412,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
 
       // characters
       writer.reset();
-      for (const actor of w.actors) actor(simTime, writer);
+      for (const actor of w.actors) actor.draw(simTime, writer);
       gl.useProgram(entity.p);
       gl.disable(gl.CULL_FACE);
       gl.uniformMatrix4fv(entity.u.uVP, false, vp);
@@ -529,6 +532,44 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       ensureWorld(current);
       kick();
       schedule();
+    },
+    /**
+     * Finds the creature under a screen point. With poke = true it also reacts (hop or flash) and
+     * returns where on screen to show its speech bubble.
+     */
+    pick(clientX, clientY, poke = false) {
+      const w = worlds[current];
+      if (!w || !pickCam) return null;
+      const nx = (clientX / window.innerWidth) * 2 - 1;
+      const ny = 1 - (clientY / window.innerHeight) * 2;
+      const { pos, r, u, f, tx, ty, vp } = pickCam;
+      const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
+      let best = null;
+      let bestT = 60;
+      for (const a of w.actors) {
+        if (!a.pick) continue;
+        const c = [a.pos[0], a.pos[1] + a.h * 0.9, a.pos[2]];
+        const oc = [c[0] - pos[0], c[1] - pos[1], c[2] - pos[2]];
+        const t = dot(oc, d);
+        if (t < 0.5) continue;
+        const dist2 = dot(oc, oc) - t * t;
+        const rad = a.r * (0.9 + Math.min(t, 30) * 0.015);
+        if (dist2 <= rad * rad && t < bestT) {
+          best = a;
+          bestT = t;
+        }
+      }
+      if (!best) return null;
+      if (poke) {
+        best.poke(simTime);
+        dirty = true;
+        schedule();
+      }
+      const c = [best.pos[0], best.pos[1] + best.h * 1.9 + 0.5, best.pos[2], 1];
+      const clip = [0, 0, 0, 0].map((_, i) => vp[i] * c[0] + vp[4 + i] * c[1] + vp[8 + i] * c[2] + vp[12 + i]);
+      const sx = ((clip[0] / clip[3]) * 0.5 + 0.5) * window.innerWidth;
+      const sy = (0.5 - (clip[1] / clip[3]) * 0.5) * window.innerHeight;
+      return { name: best.name, line: best.line, kind: best.kind, x: sx, y: sy };
     },
     get progress() {
       return progress;

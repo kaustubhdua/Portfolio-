@@ -1,66 +1,93 @@
 import { useEffect, useRef, useState } from 'react';
 import { tips } from '../data/biomes.js';
+import { getLoad, onLoad } from '../lib/voxel/travel.js';
 
-const MIN_MS = 900;
-const MAX_MS = 4000;
-// The lava layer is shared by every biome; the rest belong to the default Crimson Forest.
-const LAYERS = ['img/hero/lava.png', ...['sky', 'far', 'mid', 'near', 'fore'].map((n) => `img/hero/crimson/${n}.png`)];
-const STEPS = ['Lighting the portal...', 'Building terrain...', 'Spawning embers...'];
+const MIN_MS = 1400;
+const MAX_MS = 9000;
+const PHASES = [
+  [0, 'Loading world'],
+  [0.12, 'Generating terrain'],
+  [0.4, 'Building terrain'],
+  [0.7, 'Preparing spawn area'],
+];
+
+const savedWorld = () => {
+  try {
+    return localStorage.getItem('portfolio-world') === 'overworld' ? 'overworld' : 'nether';
+  } catch {
+    return 'nether';
+  }
+};
 
 /**
- * World-entry screen that tracks the real work: the hero art is decoded in the background and
- * the bar fills as each layer arrives. It stays for at least a moment so it never flashes, gives
- * up waiting after a few seconds, and is skippable by button, click or key. Never shown to
- * reduced-motion users or on repeat visits in the same session.
+ * World-entry screen in the style of the game's own: a tiled block-texture background, a status
+ * line and a percentage. The percentage is real: it follows the 3D world being built behind it
+ * (or jumps straight to 100% when the page runs without 3D). It stays for at least a moment so it
+ * never flashes, gives up waiting after a few seconds, and is skippable by button, click or key.
+ * Never shown to reduced-motion users or on repeat visits in the same session.
  */
 export default function Loader({ onDone }) {
   const buttonRef = useRef(null);
-  const [loaded, setLoaded] = useState(0);
+  const [progress, setProgress] = useState(getLoad());
+  const [world] = useState(savedWorld);
   const [tip] = useState(() => tips[Math.floor(Math.random() * tips.length)]);
 
   useEffect(() => {
     buttonRef.current?.focus({ preventScroll: true });
     const started = performance.now();
     let finished = false;
+    let doneTimer = 0;
     const finish = () => {
       if (finished) return;
       finished = true;
       onDone();
     };
-    let count = 0;
     const timers = [setTimeout(finish, MAX_MS)];
-    const settle = () => {
-      count += 1;
-      setLoaded(count);
-      if (count === LAYERS.length) timers.push(setTimeout(finish, Math.max(0, MIN_MS - (performance.now() - started))));
+    const check = (v) => {
+      setProgress(v);
+      if (v >= 1 && !doneTimer) doneTimer = setTimeout(finish, Math.max(300, MIN_MS - (performance.now() - started)));
     };
-    for (const src of LAYERS) {
-      const img = new Image();
-      img.onload = settle;
-      img.onerror = settle;
-      img.src = src;
-    }
+    check(getLoad());
+    const off = onLoad(check);
     const onKey = (e) => {
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') finish();
     };
     window.addEventListener('keydown', onKey);
     return () => {
       finished = true;
+      off();
+      clearTimeout(doneTimer);
       timers.forEach(clearTimeout);
       window.removeEventListener('keydown', onKey);
     };
   }, [onDone]);
 
-  const progress = loaded / LAYERS.length;
-  const step = Math.min(STEPS.length - 1, Math.floor(progress * STEPS.length));
+  // Ease the shown number so it never jumps backwards or stalls visibly.
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      setShown((s) => {
+        const next = s + (progress - s) * 0.12 + 0.002;
+        return Math.min(progress, next);
+      });
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [progress]);
+
+  const percent = Math.min(100, Math.floor(shown * 100));
+  const phase = [...PHASES].reverse().find(([at]) => shown >= at)[1];
 
   return (
-    <div className="loader" role="status" aria-live="polite" onClick={onDone}>
-      <div className="loader-portal" aria-hidden="true" />
-      <p className="loader-title pixel">Entering the Nether</p>
-      <p className="loader-status pixel" aria-hidden="true">{STEPS[step]}</p>
+    <div className={`loader loader-world loader-${world}`} role="status" aria-live="polite" onClick={onDone}>
+      <div className="loader-cube" aria-hidden="true">
+        <i /><i /><i /><i /><i /><i />
+      </div>
+      <p className="loader-title pixel">{phase}{percent > 0 && percent < 100 ? `: ${percent}%` : ''}</p>
       <div className="loader-bar" aria-hidden="true">
-        <span className="is-live" style={{ transform: `scaleX(${progress})` }} />
+        <span className="is-live" style={{ transform: `scaleX(${shown})` }} />
       </div>
       <p className="loader-tip"><strong>Did you know?</strong> {tip}</p>
       <button ref={buttonRef} type="button" className="loader-skip pixel" onClick={onDone}>
