@@ -230,7 +230,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const canvas = page.locator('canvas.world-canvas');
   ok('3D world starts and is hidden from assistive tech', (await canvas.getAttribute('aria-hidden')) === 'true' && (await canvas.getAttribute('data-state')) === 'ready');
   ok('3D world starts in the Nether fortress', (await canvas.getAttribute('data-world')) === 'nether');
-  await page.waitForTimeout(1500);
+  await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.frames) > 3, null, { timeout: 20000 }).catch(() => {});
   ok('3D world draws frames', Number(await canvas.getAttribute('data-frames')) > 3);
   const stops = [['profile', 1], ['forge', 3], ['world', 5], ['contact', 6]];
   for (const [id, n] of stops) {
