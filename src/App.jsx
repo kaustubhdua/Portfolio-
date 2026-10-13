@@ -5,6 +5,7 @@ import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import WorldBackdrop from './components/WorldBackdrop.jsx';
 import FallbackBackdrop from './components/FallbackBackdrop.jsx';
+import CommandPalette from './components/CommandPalette.jsx';
 import Stats from './components/Stats.jsx';
 import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
@@ -137,6 +138,7 @@ export default function App() {
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
+      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
       <WorldBackdrop world={theme} sections={ids} reduced={reduced} />
@@ -170,6 +172,7 @@ export default function App() {
             <li>The portal is plain CSS, with parallax driven by two CSS variables; animation pauses off screen and respects reduced-motion settings.</li>
             <li>Case studies use the native dialog element, and navigation works fully by keyboard.</li>
             <li>The chat is a rule-based helper that runs in your browser. It uses no AI service and sends nothing anywhere.</li>
+            <li>Press Ctrl or Cmd + K for a command menu: jump to a section, open a case study, copy the email address or switch worlds.</li>
             <li>Browser tests run on every push and check layout at ten screen widths, keyboard use and console errors.</li>
           </ul>
         </details>

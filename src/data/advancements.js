@@ -45,7 +45,7 @@ export const advancements = [
     frame: 'task',
     category: 'Education',
     title: 'Electronics Meets Code',
-    text: 'Studying Electronics & Computer Engineering (ECM) at the Jaypee Institute of Information Technology, Noida.',
+    text: 'Studying Electronics & Computer Engineering (ECM) at the Jaypee Institute of Information Technology, Noida. Class of 2029.',
     sprite: 'cap',
   },
 ];

@@ -7,6 +7,7 @@ const meta = sections.find((s) => s.id === 'profile');
 const facts = [
   ['Program', profile.program],
   ['Institution', profile.institution],
+  ['Graduating', `Class of ${profile.graduation}`],
   ['Focus', 'AI, data, systems and product engineering'],
   ['Working with', profile.stack.join(', ')],
 ];

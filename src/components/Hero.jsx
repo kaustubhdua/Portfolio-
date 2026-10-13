@@ -154,10 +154,10 @@ export default function Hero({ ready, onNavigate, theme = 'nether' }) {
       <div className="hero-scrim" aria-hidden="true" />
 
       <div className="hero-content">
-        <p className="hero-kicker pixel" aria-label="Electronics and Computer Engineering · JIIT Noida">
+        <p className="hero-kicker pixel" aria-label="Electronics and Computer Engineering · JIIT Noida · Class of 2029">
           <span key={kickerIndex} className="hero-kicker-frame" aria-hidden="true">
             <span className="hero-kicker-line">
-              {kickerIndex === 0 ? 'Electronics & Computer Engineering' : 'JIIT Noida'}
+              {kickerIndex === 0 ? 'Electronics & Computer Engineering' : 'JIIT Noida · Class of 2029'}
             </span>
           </span>
         </p>

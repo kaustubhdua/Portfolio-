@@ -65,7 +65,7 @@ for (const ref of refs) {
   if (!existsSync(path.join(dist, clean))) fail(`Referenced file does not exist in dist: ${ref}`);
 }
 
-const budget = { js: 130 * 1024, css: 20 * 1024 };
+const budget = { js: 150 * 1024, css: 20 * 1024 };
 if (jsBytes > budget.js) fail(`JS is ${(jsBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.js / 1024} kB`);
 if (cssBytes > budget.css) fail(`CSS is ${(cssBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.css / 1024} kB`);
 

@@ -1,7 +1,8 @@
 /**
  * Identity and copy. Everything here comes from the public GitHub profile and
  * profile README of kaustubhdua. Nothing is invented: when something is not
- * published (graduation year, awards, certifications, email) it is left out.
+ * published (awards, certifications, grades) it is left out. The graduation year (2029) was
+ * given directly by the owner.
  */
 export const profile = {
   name: 'Kaustubh Dua',
@@ -12,6 +13,7 @@ export const profile = {
   stack: ['Python', 'TypeScript', 'React', 'Next.js', 'FastAPI', 'PostgreSQL'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
+  graduation: '2029',
   about: [
     'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, interested in software engineering and problem-solving.',
     'I like turning complex workflows into useful tools, with clear system boundaries, careful validation and thoughtful UX.',
