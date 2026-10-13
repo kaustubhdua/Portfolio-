@@ -10,7 +10,7 @@ const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel
  * (day) or across the fortress bridge (night). Click any creature in empty space to poke it.
  * The engine loads lazily; without WebGL 2 the page keeps its 2D scenes.
  */
-export default function WorldBackdrop({ world, sections, reduced }) {
+export default function WorldBackdrop({ world, sections, reduced, disabled = false }) {
   const canvasRef = useRef(null);
   const rendererRef = useRef(null);
   const worldRef = useRef(world);
@@ -19,7 +19,7 @@ export default function WorldBackdrop({ world, sections, reduced }) {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem('portfolio-3d') === 'off') {
+      if (disabled || localStorage.getItem('portfolio-3d') === 'off') {
         setLoad(1);
         setMode('off');
         return undefined;
@@ -98,7 +98,7 @@ export default function WorldBackdrop({ world, sections, reduced }) {
       renderer?.dispose();
       rendererRef.current = null;
     };
-  }, [sections, reduced]);
+  }, [sections, reduced, disabled]);
 
   useEffect(() => {
     rendererRef.current?.setWorld(world);
@@ -106,7 +106,7 @@ export default function WorldBackdrop({ world, sections, reduced }) {
 
   return (
     <>
-      <canvas ref={canvasRef} className="world-canvas" aria-hidden="true" />
+      <canvas key={disabled ? 'off' : 'on'} ref={canvasRef} className="world-canvas" aria-hidden="true" />
       {bubble && (
         <div
           key={bubble.id}

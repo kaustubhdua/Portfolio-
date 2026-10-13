@@ -41,7 +41,7 @@ const NAME_WORDS = profile.name.split(' ').map((word) => ({
   letters: [...word].map((ch) => ({ ch, index: letterIndex++ })),
 }));
 
-export default function Hero({ ready, onNavigate, theme = 'nether' }) {
+export default function Hero({ ready, onNavigate, theme = 'nether', quick = false, onQuick }) {
   const heroRef = useRef(null);
   const reduced = useReducedMotion();
   const [splash] = useState(() => splashes[Math.floor(Math.random() * splashes.length)]);
@@ -188,6 +188,9 @@ export default function Hero({ ready, onNavigate, theme = 'nether' }) {
           <a className="btn btn-secondary pixel" href="#forge" onClick={(e) => onNavigate(e, 'forge')}>
             View Projects
           </a>
+          <button type="button" className="btn btn-quiet pixel quick-btn" aria-pressed={quick} onClick={onQuick}>
+            {quick ? '3D view' : 'Quick view'}
+          </button>
           <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
             <FaGithub aria-hidden="true" />
           </a>

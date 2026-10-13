@@ -111,3 +111,15 @@ html.mob-hover body { cursor: pointer; }
   .panel, .card { box-shadow: none !important; background: #fff !important; border: 1px solid #999 !important; color: #000 !important; }
   a { color: #000 !important; }
 }
+
+/* Quick view: no scenery at all, just the content on a plain background. */
+html[data-quick='on'] .fallback-backdrop,
+html[data-quick='on'] .world-canvas { display: none; }
+.btn-quiet {
+  background: transparent;
+  border: 3px solid var(--edge);
+  color: var(--muted);
+}
+.btn-quiet:hover,
+.btn-quiet:focus-visible,
+.btn-quiet[aria-pressed='true'] { color: var(--text); border-color: var(--gold); }

@@ -50,6 +50,28 @@ export default function App() {
   const [theme, setTheme] = useTheme();
   const [trip, setTrip] = useState(null); // the world being travelled to, while the portal animation runs
   const [announce, setAnnounce] = useState('');
+  // "Quick view" turns the 3D scenery off for visitors who just want the content.
+  const [quick, setQuick] = useState(() => {
+    try {
+      return localStorage.getItem('portfolio-quick') === 'on';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    document.documentElement.dataset.quick = quick ? 'on' : 'off';
+    try {
+      localStorage.setItem('portfolio-quick', quick ? 'on' : 'off');
+    } catch {
+      /* preference just will not be remembered */
+    }
+  }, [quick]);
+  const toggleQuick = useCallback(() => {
+    setQuick((q) => {
+      setAnnounce(q ? '3D scenery turned on.' : 'Quick view on: 3D scenery turned off.');
+      return !q;
+    });
+  }, []);
 
   const travel = useCallback(() => {
     if (trip) return;
@@ -138,13 +160,13 @@ export default function App() {
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
-      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} />
+      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
-      <WorldBackdrop world={theme} sections={ids} reduced={reduced} />
+      <WorldBackdrop world={theme} sections={ids} reduced={reduced} disabled={quick} />
       <FallbackBackdrop world={theme} sections={ids} active={active} />
       <main>
-        <Hero ready={!intro} onNavigate={navigate} theme={theme} />
+        <Hero ready={!intro} onNavigate={navigate} theme={theme} quick={quick} onQuick={toggleQuick} />
         <Stats />
         <PortalRule />
         <Profile />

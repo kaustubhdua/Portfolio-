@@ -6,7 +6,7 @@ import { profile, sections } from '../data/profile.js';
  * Ctrl/Cmd + K opens a keyboard-first launcher, like the command menus in professional tools:
  * jump to a section, open a case study, grab a link, copy the email, switch world or toggle sound.
  */
-export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound, soundOn, world }) {
+export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick }) {
   const dialogRef = useRef(null);
   const inputRef = useRef(null);
   const [query, setQuery] = useState('');
@@ -37,9 +37,10 @@ export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound,
         },
       },
       { id: 'world', group: 'Actions', label: world === 'overworld' ? 'Travel to the Nether (night mode)' : 'Travel to the Overworld (day mode)', run: onTravel },
+      { id: 'quick', group: 'Actions', label: quick ? 'Turn 3D scenery back on' : 'Quick view: turn 3D scenery off', run: onQuick },
       { id: 'sound', group: 'Actions', label: soundOn ? 'Turn ambient sound off' : 'Turn ambient sound on', run: onSound },
     ];
-  }, [onGo, onOpenProject, onTravel, onSound, soundOn, world]);
+  }, [onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick]);
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();

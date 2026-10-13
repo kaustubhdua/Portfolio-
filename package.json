@@ -17,6 +17,7 @@
     "verify": "npm run lint && npm run build && npm run check",
     "test:e2e": "node tests/e2e.mjs",
     "test:world": "node tests/world.mjs",
+    "audit": "node scripts/audit.mjs",
     "check:links": "node scripts/links.mjs"
   },
   "dependencies": {

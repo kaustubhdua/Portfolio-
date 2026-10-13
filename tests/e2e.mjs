@@ -241,6 +241,13 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('clicking bare ground digs a block out', Number((await canvas.getAttribute('data-dug')) ?? 0) >= 1);
   await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.locator('.quick-btn').click();
+  await page.waitForTimeout(500);
+  ok('Quick view hides the 3D scenery and remembers the choice', await page.evaluate(() => document.documentElement.dataset.quick === 'on' && getComputedStyle(document.querySelector('canvas.world-canvas')).display === 'none' && localStorage.getItem('portfolio-quick') === 'on'));
+  ok('Quick view leaves every section readable', (await page.locator('main section.section').count()) >= 5);
+  await page.locator('.quick-btn').click();
+  ok('3D view comes back', await page.evaluate(() => document.documentElement.dataset.quick === 'off'));
   ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld');
   await ctx.close();
 }
