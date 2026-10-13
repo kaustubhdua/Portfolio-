@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { setDive } from '../lib/voxel/travel.js';
 
 /**
  * Full-screen "walk through the Nether portal" transition between the two worlds.
@@ -26,6 +27,28 @@ export default function PortalTravel({ to, onSwap, onDone }) {
     ];
     return () => timers.forEach(clearTimeout);
   }, [onSwap, onDone]);
+
+  // The 3D camera lunges toward the portal while it grows, then settles back on the far side.
+  useEffect(() => {
+    let raf = 0;
+    const t0 = performance.now();
+    const ease = (x) => x * x * (3 - 2 * x);
+    const tick = (now) => {
+      const t = now - t0;
+      let v;
+      if (t < IN_MS) v = ease(t / IN_MS);
+      else if (t < IN_MS + HOLD_MS) v = 1;
+      else v = 1 - ease(Math.min(1, (t - IN_MS - HOLD_MS) / OUT_MS));
+      setDive(v);
+      if (t < IN_MS + HOLD_MS + OUT_MS) raf = requestAnimationFrame(tick);
+      else setDive(0);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      setDive(0);
+    };
+  }, []);
 
   return (
     <div className="travel" data-phase={phase} data-to={to} aria-hidden="true">

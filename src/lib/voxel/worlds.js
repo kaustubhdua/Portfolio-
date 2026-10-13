@@ -1,0 +1,487 @@
+import { B } from './blocks.js';
+import { Grid, rng, vnoise } from './grid.js';
+import { CENTER_X, STOP_Z, sampleCamera, stopsFor } from './journey.js';
+
+export const SIZE = { w: 64, h: 44, l: 216 };
+export const GY = 12; // Overworld ground level: the top face of the grass is at y = 12
+export const BY = 20; // Nether bridge deck level
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+/** Wall of mountains / cavern rock around the playable valley so the world never ends in the void. */
+const edgeWall = (x, z) => {
+  const e = Math.min(x, SIZE.w - 1 - x, z, SIZE.l - 1 - z);
+  return Math.pow(clamp((11 - e) / 11, 0, 1), 1.4);
+};
+
+function carveCorridor(g, stops, surface, top) {
+  const out = {};
+  for (let i = 0; i <= 600; i++) {
+    sampleCamera(stops, (i / 600) * (stops.length - 1), out);
+    const cx = Math.floor(out.x);
+    const cz = Math.floor(out.z);
+    for (let x = cx - 3; x <= cx + 3; x++)
+      for (let z = cz - 2; z <= cz + 2; z++)
+        for (let y = surface; y <= surface + top; y++) g.set(x, y, z, B.AIR);
+  }
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Overworld: a village                                                                         */
+/* ------------------------------------------------------------------------------------------ */
+
+function buildVillage() {
+  const g = new Grid(SIZE.w, SIZE.h, SIZE.l);
+  const rand = rng(1991);
+  const n1 = vnoise(11);
+  const n2 = vnoise(23);
+  const taken = new Uint8Array(SIZE.w * SIZE.l);
+  const reserve = (x0, z0, x1, z1, m = 1) => {
+    for (let z = z0 - m; z <= z1 + m; z++) for (let x = x0 - m; x <= x1 + m; x++) if (x >= 0 && z >= 0 && x < SIZE.w && z < SIZE.l) taken[z * SIZE.w + x] = 1;
+  };
+  const isTaken = (x, z) => taken[z * SIZE.w + x] === 1;
+
+  const pond = { x: 17, z: 180, r: 6 };
+  // Terrain
+  for (let z = 0; z < SIZE.l; z++) {
+    for (let x = 0; x < SIZE.w; x++) {
+      const dist = Math.abs(x - CENTER_X);
+      const ramp = clamp((dist - 8) / 10, 0, 1);
+      const n = n1(x / 9, z / 9) * 0.7 + n2(x / 4, z / 4) * 0.3;
+      let h = GY + Math.round(ramp * (n * 8 - 2.5)) + Math.round(edgeWall(x, z) * 30);
+      const pd = Math.hypot(x - pond.x, (z - pond.z) * 1.1);
+      if (pd < pond.r) h = Math.min(h, GY - 3 + Math.floor(pd / 3));
+      h = clamp(h, 3, SIZE.h - 6);
+      for (let y = 0; y < h; y++) {
+        let id = B.STONE;
+        if (y === h - 1) id = h > 28 ? B.SNOW_GRASS : B.GRASS;
+        else if (y >= h - 4) id = h > 28 ? B.STONE : B.DIRT;
+        g.set(x, y, z, id);
+      }
+      if (h <= GY - 1) {
+        for (let y = h; y <= GY - 2; y++) g.set(x, y, z, B.WATER);
+        if (h <= GY - 2) g.set(x, h - 1, z, B.SAND);
+      }
+      if (dist <= 3) {
+        g.set(x, GY - 1, z, B.PATH);
+      } else if (dist === 4 && rand() < 0.45) {
+        g.set(x, GY - 1, z, B.PATH);
+      }
+    }
+  }
+  reserve(CENTER_X - 5, 0, CENTER_X + 5, SIZE.l, 0);
+
+  const flatten = (x0, z0, x1, z1, height) => {
+    for (let z = z0 - 1; z <= z1 + 1; z++)
+      for (let x = x0 - 1; x <= x1 + 1; x++) {
+        for (let y = 0; y < GY - 1; y++) if (g.get(x, y, z) === B.AIR || g.get(x, y, z) === B.WATER) g.set(x, y, z, B.DIRT);
+        g.set(x, GY - 1, z, B.GRASS);
+        for (let y = GY; y <= GY + height + 8; y++) g.set(x, y, z, B.AIR);
+      }
+    reserve(x0, z0, x1, z1, 2);
+  };
+
+  const lampPost = (x, z, h = 3) => {
+    g.fill(x, GY, z, x, GY + h - 1, z, B.SPRUCE_LOG);
+    g.set(x, GY + h, z, B.LAMP);
+  };
+
+  const house = (x0, z0, w, d, h, doorEast, roof = B.ROOF, wall = B.PLANKS) => {
+    const x1 = x0 + w - 1;
+    const z1 = z0 + d - 1;
+    flatten(x0 - 1, z0 - 1, x1 + 1, z1 + 1, h + 4);
+    g.fill(x0, GY - 1, z0, x1, GY - 1, z1, B.PLANKS);
+    g.shell(x0, GY, z0, x1, GY + h - 1, z1, wall);
+    g.fill(x0 + 1, GY, z0 + 1, x1 - 1, GY + h - 2, z1 - 1, B.AIR);
+    g.fill(x0 + 1, GY + h - 1, z0 + 1, x1 - 1, GY + h - 1, z1 - 1, B.PLANKS);
+    for (const cx of [x0, x1]) for (const cz of [z0, z1]) g.fill(cx, GY, cz, cx, GY + h - 1, cz, B.LOG);
+    const dz = z0 + Math.floor(d / 2);
+    const dx = doorEast ? x1 : x0;
+    g.fill(dx, GY, dz, dx, GY + 1, dz, B.AIR);
+    for (let k = 2; k < d - 2; k += 3) {
+      g.fill(x0, GY + 1, z0 + k, x0, GY + 2, z0 + k, B.GLASS);
+      g.fill(x1, GY + 1, z0 + k, x1, GY + 2, z0 + k, B.GLASS);
+      g.set(dx, GY + 1, z0 + k, k === dz - z0 ? B.AIR : B.GLASS);
+    }
+    g.fill(dx, GY, dz, dx, GY + 1, dz, B.AIR);
+    for (let k = 0; k < Math.ceil(Math.min(w, d) / 2) + 1; k++) {
+      g.fill(x0 - 1 + k, GY + h + k, z0 - 1 + k, x1 + 1 - k, GY + h + k, z1 + 1 - k, roof);
+      if (x1 + 1 - k < x0 - 1 + k || z1 + 1 - k < z0 - 1 + k) break;
+    }
+    // clear the inside again after the ceiling pass of the roof loop
+    g.fill(x0 + 1, GY, z0 + 1, x1 - 1, GY + h - 2, z1 - 1, B.AIR);
+    g.set(Math.floor((x0 + x1) / 2), GY + h - 2, Math.floor((z0 + z1) / 2), B.LAMP);
+    // porch lamp
+    lampPost(doorEast ? x1 + 2 : x0 - 2, dz + 2, 2);
+  };
+
+  // gate
+  for (const x of [28, 36]) {
+    g.fill(x, GY, 17, x, GY + 6, 17, B.SPRUCE_LOG);
+    g.set(x, GY + 7, 17, B.LAMP);
+  }
+  g.fill(28, GY + 6, 17, 36, GY + 6, 17, B.SPRUCE_PLANKS);
+  g.fill(31, GY + 3, 17, 33, GY + 5, 17, B.WOOL_RED);
+  reserve(26, 15, 38, 19, 0);
+
+  // houses
+  house(14, 22, 8, 7, 4, true);
+  house(44, 26, 8, 8, 5, false);
+  house(13, 50, 9, 8, 5, true, B.ROOF, B.COBBLE);
+  house(45, 52, 7, 7, 4, false);
+  house(44, 92, 8, 8, 4, false);
+  house(13, 150, 8, 8, 5, true);
+  house(45, 176, 8, 7, 4, false);
+
+  // well near the profile stop
+  flatten(40, 40, 44, 44, 5);
+  g.shell(41, GY, 41, 43, GY + 1, 43, B.COBBLE);
+  g.set(42, GY, 42, B.WATER);
+  g.set(42, GY - 1, 42, B.WATER);
+  for (const [x, z] of [[41, 41], [43, 41], [41, 43], [43, 43]]) g.fill(x, GY + 2, z, x, GY + 3, z, B.SPRUCE_LOG);
+  g.fill(41, GY + 4, 41, 43, GY + 4, 43, B.ROOF);
+  for (let z = 25; z < 200; z += 12) {
+    lampPost(27, z);
+    lampPost(37, z + 6);
+  }
+
+  // market stalls
+  const stall = (x0, z0, w, d) => {
+    flatten(x0, z0, x0 + w - 1, z0 + d - 1, 4);
+    for (const x of [x0, x0 + w - 1]) for (const z of [z0, z0 + d - 1]) g.fill(x, GY, z, x, GY + 2, z, B.SPRUCE_LOG);
+    for (let x = x0; x < x0 + w; x++) for (let z = z0; z < z0 + d; z++) g.set(x, GY + 3, z, (x + z) % 2 ? B.WOOL_RED : B.WOOL_WHITE);
+    g.fill(x0 + 1, GY, z0 + d - 1, x0 + w - 2, GY, z0 + d - 1, B.BARREL);
+    g.set(x0 + 1, GY, z0, B.HAY);
+    g.set(x0 + w - 2, GY, z0, B.BARREL);
+    g.set(x0 + 1, GY + 1, z0, B.CROP);
+  };
+  stall(38, 64, 5, 5);
+  stall(38, 72, 5, 5);
+  stall(21, 67, 5, 5);
+  stall(45, 80, 5, 4);
+
+  // blacksmith (open front toward the road)
+  flatten(14, 92, 26, 108, 10);
+  g.fill(14, GY - 1, 92, 26, GY - 1, 108, B.COBBLE);
+  g.shell(14, GY, 92, 26, GY + 5, 108, B.STONE_BRICK);
+  g.fill(15, GY, 93, 25, GY + 4, 107, B.AIR);
+  g.fill(26, GY, 95, 26, GY + 3, 105, B.AIR); // wide open front
+  for (const z of [95, 105]) g.fill(26, GY, z, 26, GY + 4, z, B.SPRUCE_LOG);
+  g.fill(26, GY + 4, 95, 26, GY + 4, 105, B.SPRUCE_PLANKS);
+  for (let k = 0; k < 8; k++) g.fill(13 + k, GY + 6 + k, 91 + k, 27 - k, GY + 6 + k, 109 - k, B.ROOF);
+  g.fill(15, GY, 93, 25, GY + 4, 107, B.AIR);
+  g.fill(17, GY - 1, 99, 19, GY - 1, 101, B.LAVA);
+  g.shell(16, GY - 1, 98, 20, GY - 1, 102, B.BLACKSTONE);
+  g.fill(17, GY - 1, 99, 19, GY - 1, 101, B.LAVA);
+  g.fill(21, GY, 99, 22, GY, 100, B.BLACKSTONE);
+  g.set(18, GY, 96, B.BARREL);
+  g.set(19, GY, 96, B.BARREL);
+  g.fill(15, GY, 105, 15, GY + 1, 105, B.COBBLE);
+  g.fill(14, GY + 6, 106, 14, GY + 13, 106, B.COBBLE); // chimney
+  g.fill(14, GY, 106, 14, GY + 5, 106, B.COBBLE);
+  g.set(14, GY + 14, 106, B.FIRE);
+  g.set(20, GY + 4, 100, B.LAMP);
+  g.set(19, GY, 94, B.FIRE);
+
+  // tower
+  flatten(40, 122, 47, 129, 16);
+  g.fill(40, GY - 1, 122, 47, GY - 1, 129, B.COBBLE);
+  g.shell(40, GY, 122, 47, GY + 14, 129, B.COBBLE);
+  g.fill(41, GY, 123, 46, GY + 13, 128, B.AIR);
+  g.fill(40, GY, 125, 40, GY + 2, 126, B.AIR);
+  for (const y of [GY + 4, GY + 8, GY + 11]) {
+    g.fill(40, y, 125, 40, y + 1, 125, B.GLASS);
+    g.fill(47, y, 125, 47, y + 1, 125, B.GLASS);
+  }
+  for (let x = 39; x <= 48; x++)
+    for (let z = 121; z <= 130; z++) {
+      if (x === 39 || x === 48 || z === 121 || z === 130) g.set(x, GY + 15, z, B.STONE_BRICK);
+      if ((x + z) % 2 === 0 && (x === 39 || x === 48 || z === 121 || z === 130)) g.set(x, GY + 16, z, B.STONE_BRICK);
+    }
+  g.fill(39, GY + 14, 121, 48, GY + 14, 130, B.STONE_BRICK);
+  for (let k = 0; k < 5; k++) g.fill(40 + k, GY + 15 + k, 122 + k, 47 - k, GY + 15 + k, 129 - k, B.ROOF);
+  g.set(43, GY + 5, 125, B.LAMP);
+  g.set(43, GY + 5, 126, B.LAMP);
+  for (let z = 123; z <= 127; z++) g.set(41, GY, z, B.AIR);
+
+  // farm
+  flatten(13, 118, 27, 140, 3);
+  for (let x = 14; x <= 26; x++)
+    for (let z = 119; z <= 139; z++) {
+      const row = x % 3;
+      if (row === 0) g.set(x, GY - 1, z, B.WATER);
+      else {
+        g.set(x, GY - 1, z, B.FARMLAND);
+        if (rand() < 0.93) g.set(x, GY, z, B.CROP);
+      }
+    }
+  for (const [x, z] of [[13, 118], [27, 118], [13, 140], [27, 140]]) g.fill(x, GY, z, x, GY + 1, z, B.SPRUCE_LOG);
+  g.set(28, GY, 128, B.HAY);
+  g.set(28, GY, 129, B.HAY);
+  g.set(28, GY + 1, 128, B.HAY);
+
+  // windmill
+  flatten(41, 152, 46, 160, 18);
+  g.fill(41, GY - 1, 153, 46, GY - 1, 158, B.COBBLE);
+  for (let y = 0; y < 5; y++) g.shell(41, GY + y, 153, 46, GY + y, 158, B.COBBLE);
+  for (let y = 5; y < 10; y++) g.shell(42, GY + y, 154, 45, GY + y, 157, B.PLANKS);
+  for (let k = 0; k < 4; k++) g.fill(41 + k, GY + 10 + k, 153 + k, 46 - k, GY + 10 + k, 158 - k, B.ROOF);
+  g.fill(41, GY, 155, 41, GY + 1, 155, B.AIR);
+  g.fill(41, GY, 156, 41, GY + 1, 156, B.AIR);
+  g.fill(42, GY, 155, 45, GY + 3, 156, B.AIR);
+
+  // sheep pen
+  flatten(15, 160, 27, 172, 2);
+  for (let x = 15; x <= 27; x++) for (const z of [160, 172]) g.set(x, GY, z, B.SPRUCE_PLANKS);
+  for (let z = 160; z <= 172; z++) for (const x of [15, 27]) g.set(x, GY, z, B.SPRUCE_PLANKS);
+  g.set(27, GY, 166, B.AIR);
+  g.set(27, GY - 1, 166, B.PATH);
+  g.set(18, GY, 163, B.HAY);
+  g.set(24, GY, 169, B.HAY);
+
+  // plaza and campfire at the end of the road
+  for (let z = 183; z <= 205; z++)
+    for (let x = 22; x <= 42; x++) {
+      if (Math.hypot(x - 32, (z - 196) * 0.9) < 10.5) {
+        g.set(x, GY - 1, z, B.PATH);
+        for (let y = GY; y < GY + 8; y++) g.set(x, y, z, B.AIR);
+      }
+    }
+  reserve(22, 183, 42, 207, 0);
+  for (const [x, z] of [[31, 197], [33, 197], [32, 196], [32, 198]]) g.set(x, GY, z, B.LOG);
+  g.set(32, GY, 197, B.COBBLE);
+  g.set(32, GY + 1, 197, B.FIRE);
+  for (const [x, z] of [[28, 193], [36, 193], [28, 201], [36, 201]]) lampPost(x, z, 3);
+  for (const [x, z] of [[27, 197], [37, 197]]) g.fill(x, GY, z - 1, x, GY, z + 1, B.PLANKS);
+  // portal home
+  g.shell(30, GY, 207, 34, GY + 4, 207, B.OBSIDIAN);
+  g.fill(31, GY + 1, 207, 33, GY + 3, 207, B.AIR);
+  reserve(28, 205, 36, 209, 0);
+
+  // trees
+  for (let i = 0; i < 520; i++) {
+    const x = 3 + Math.floor(rand() * (SIZE.w - 6));
+    const z = 3 + Math.floor(rand() * (SIZE.l - 8));
+    if (Math.abs(x - CENTER_X) < 7 || isTaken(x, z)) continue;
+    let y = SIZE.h - 1;
+    while (y > 0 && g.get(x, y, z) === B.AIR) y--;
+    if (g.get(x, y, z) !== B.GRASS) continue;
+    const th = 4 + Math.floor(rand() * 3);
+    g.fill(x, y + 1, z, x, y + th, z, B.LOG);
+    for (let dy = -2; dy <= 1; dy++) {
+      const r = dy <= 0 ? 2 : 1;
+      for (let dx = -r; dx <= r; dx++)
+        for (let dz = -r; dz <= r; dz++) {
+          if (Math.abs(dx) === r && Math.abs(dz) === r && rand() < 0.5) continue;
+          if (g.get(x + dx, y + th + dy, z + dz) === B.AIR) g.set(x + dx, y + th + dy, z + dz, B.LEAVES);
+        }
+    }
+    reserve(x - 2, z - 2, x + 2, z + 2, 0);
+  }
+
+  const stops = stopsFor('overworld', GY);
+  carveCorridor(g, stops, GY, 5);
+  return { grid: g, stops, surface: GY, portal: { x: 32, y: GY + 1, z: 207, w: 3, h: 3 } };
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Nether: a fortress above a lava sea                                                         */
+/* ------------------------------------------------------------------------------------------ */
+
+function buildFortress() {
+  const g = new Grid(SIZE.w, SIZE.h, SIZE.l);
+  const rand = rng(1337);
+  const n1 = vnoise(5);
+  const n2 = vnoise(9);
+  const LAVA_TOP = 9;
+
+  for (let z = 0; z < SIZE.l; z++) {
+    for (let x = 0; x < SIZE.w; x++) {
+      const dist = Math.abs(x - CENTER_X);
+      const wall = edgeWall(x, z);
+      let floorH = 5;
+      const isl = n1(x / 12, z / 12) * 0.75 + n2(x / 4, z / 4) * 0.25;
+      if (dist > 9 && isl > 0.62) floorH = 6 + Math.floor((isl - 0.62) * 34);
+      floorH = Math.max(floorH, 5 + Math.round(wall * 30));
+      for (let y = 0; y < floorH; y++) g.set(x, y, z, y > 1 && n2(x / 3, y / 3 + z / 5) > 0.82 ? B.BLACKSTONE : B.NETHERRACK);
+      if (floorH > 10 && floorH < 14) g.set(x, floorH - 1, z, rand() < 0.5 ? B.SOUL_SAND : B.NETHERRACK);
+      for (let y = floorH; y <= LAVA_TOP; y++) g.set(x, y, z, B.LAVA);
+      // cavern ceiling with stalactites
+      const drop = Math.round(n2(x / 5, z / 5) * 7 + wall * 6);
+      for (let y = 40 - drop; y < SIZE.h; y++) g.set(x, y, z, B.NETHERRACK);
+      if (dist > 9 && rand() < 0.012) {
+        const cy = 39 - drop;
+        for (const [dx, dy, dz] of [[0, 0, 0], [1, 0, 0], [0, 0, 1], [0, -1, 0], [-1, 0, 0]]) if (g.get(x + dx, cy + dy, z + dz) === B.AIR) g.set(x + dx, cy + dy, z + dz, B.GLOWSTONE);
+      }
+    }
+  }
+  // basalt columns standing in the lava
+  for (let i = 0; i < 90; i++) {
+    const x = 3 + Math.floor(rand() * (SIZE.w - 6));
+    const z = 3 + Math.floor(rand() * (SIZE.l - 6));
+    if (Math.abs(x - CENTER_X) < 11) continue;
+    let y = 0;
+    while (y < SIZE.h && g.get(x, y, z) !== B.AIR) y++;
+    const h = 2 + Math.floor(rand() * 7);
+    for (let k = 0; k < h; k++) g.set(x, y + k, z, B.BASALT);
+  }
+  // lava falls from the ceiling cracks
+  for (let i = 0; i < 26; i++) {
+    const x = 4 + Math.floor(rand() * (SIZE.w - 8));
+    const z = 4 + Math.floor(rand() * (SIZE.l - 8));
+    if (Math.abs(x - CENTER_X) < 10) continue;
+    let y = SIZE.h - 1;
+    while (y > 12 && g.get(x, y, z) !== B.AIR) y--;
+    const top = y;
+    g.set(x, top + 1, z, B.LAVA);
+    for (; y > LAVA_TOP && g.get(x, y, z) === B.AIR; y--) g.set(x, y, z, B.LAVA);
+  }
+
+  const D = BY - 1; // deck block level
+  // main bridge
+  for (let z = 0; z <= 206; z++) {
+    g.fill(28, D - 1, z, 36, D, z, B.NETHER_BRICK);
+    for (const x of [28, 36]) {
+      g.set(x, D + 1, z, B.NETHER_FENCE);
+      if (z % 12 === 6) {
+        g.fill(x, D + 1, z, x, D + 2, z, B.NETHER_BRICK);
+        g.set(x, D + 3, z, B.GLOWSTONE);
+      }
+    }
+    if (z % 14 === 0) {
+      for (const x of [28, 35]) {
+        g.fill(x - 1, LAVA_TOP - 2, z - 1, x + 2, D - 2, z + 1, B.NETHER_BRICK);
+        g.fill(x - 1, D - 3, z - 1, x + 2, D - 3, z + 1, B.NETHER_BRICK);
+      }
+      g.fill(29, D - 3, z, 35, D - 2, z, B.NETHER_BRICK);
+      g.fill(30, D - 3, z, 34, D - 3, z, B.AIR);
+      for (let x = 30; x <= 34; x++) if (x === 30 || x === 34) g.set(x, D - 2, z, B.NETHER_BRICK);
+      g.fill(31, D - 2, z, 33, D - 2, z, B.AIR);
+    }
+  }
+
+  const sideBridge = (x0, x1, z) => {
+    g.fill(x0, D - 1, z - 1, x1, D, z + 1, B.NETHER_BRICK);
+    g.fill(x0, D + 1, z - 1, x1, D + 1, z - 1, B.NETHER_FENCE);
+    g.fill(x0, D + 1, z + 1, x1, D + 1, z + 1, B.NETHER_FENCE);
+  };
+
+  // gate
+  for (const x of [25, 37]) {
+    g.fill(x, D - 6, 15, x + 2, D + 8, 17, B.NETHER_BRICK);
+    g.fill(x + 1, D + 1, 16, x + 1, D + 2, 16, B.AIR);
+  }
+  g.fill(25, D + 7, 15, 39, D + 8, 17, B.NETHER_BRICK);
+  for (let x = 28; x <= 36; x += 2) g.set(x, D + 6, 16, B.GLOWSTONE);
+  g.fill(28, D + 1, 15, 36, D + 1, 17, B.AIR);
+  g.fill(28, D + 1, 15, 28, D + 1, 17, B.NETHER_FENCE);
+  g.fill(36, D + 1, 15, 36, D + 1, 17, B.NETHER_FENCE);
+
+  // watch tower (left)
+  g.fill(12, 4, 34, 21, D - 2, 46, B.NETHER_BRICK);
+  g.shell(12, D - 1, 34, 21, D + 16, 46, B.NETHER_BRICK);
+  g.fill(13, D, 35, 20, D + 15, 45, B.AIR);
+  g.fill(21, D, 38, 21, D + 3, 42, B.AIR);
+  for (const y of [D + 6, D + 10]) for (const z of [37, 41, 43]) g.fill(21, y, z, 21, y + 1, z, B.AIR);
+  g.fill(12, D + 17, 34, 21, D + 17, 46, B.NETHER_BRICK);
+  for (let x = 12; x <= 21; x++) for (let z = 34; z <= 46; z++) if ((x + z) % 2 === 0 && (x === 12 || x === 21 || z === 34 || z === 46)) g.set(x, D + 18, z, B.NETHER_BRICK);
+  g.set(16, D + 14, 40, B.GLOWSTONE);
+  g.set(17, D + 4, 40, B.GLOWSTONE);
+  sideBridge(22, 27, 40);
+  g.fill(22, D + 1, 39, 27, D + 3, 41, B.AIR);
+  g.fill(22, D + 1, 39, 27, D + 1, 39, B.NETHER_FENCE);
+  g.fill(22, D + 1, 41, 27, D + 1, 41, B.NETHER_FENCE);
+
+  // wart garden (right) near the profile stop
+  g.fill(37, D - 3, 60, 54, D, 80, B.NETHER_BRICK);
+  g.fill(36, D + 1, 62, 36, D + 1, 78, B.AIR);
+  for (let x = 40; x <= 52; x += 2)
+    for (let z = 63; z <= 77; z++) {
+      g.set(x, D, z, B.SOUL_SAND);
+      g.set(x + 1, D, z, B.SOUL_SAND);
+      if (rand() < 0.85) g.set(x, D + 1, z, rand() < 0.5 ? B.WART : B.WARPED_WART);
+    }
+  for (let x = 37; x <= 54; x++) for (const z of [60, 80]) g.set(x, D + 1, z, B.NETHER_FENCE);
+  for (let z = 60; z <= 80; z++) g.set(54, D + 1, z, B.NETHER_FENCE);
+  g.set(39, D + 1, 62, B.GLOWSTONE);
+  g.set(39, D + 1, 78, B.GLOWSTONE);
+
+  // forge hall (roofed bridge section)
+  g.fill(22, D + 9, 88, 42, D + 10, 112, B.NETHER_BRICK);
+  for (const [x, z] of [[22, 88], [42, 88], [22, 112], [42, 112], [22, 100], [42, 100]]) g.fill(x, D - 2, z, x + 1, D + 8, z + 1, B.NETHER_BRICK);
+  g.fill(22, D, 88, 27, D, 112, B.NETHER_BRICK);
+  g.fill(37, D, 88, 42, D, 112, B.NETHER_BRICK);
+  for (let z = 90; z <= 110; z += 4) for (let x = 25; x <= 39; x += 4) g.set(x, D + 8, z, B.GLOWSTONE);
+  g.fill(23, D, 96, 27, D, 104, B.BASALT);
+  g.fill(24, D, 97, 26, D, 103, B.LAVA);
+  g.set(25, D + 1, 100, B.FIRE);
+  g.fill(37, D + 1, 92, 41, D + 1, 92, B.BLACKSTONE);
+  g.fill(38, D + 1, 108, 40, D + 1, 108, B.BLACKSTONE);
+  g.fill(23, D + 1, 90, 23, D + 1, 94, B.NETHER_FENCE);
+  g.fill(28, D + 1, 88, 28, D + 1, 112, B.AIR);
+  g.fill(36, D + 1, 88, 36, D + 1, 112, B.AIR);
+
+  // keep (right)
+  g.fill(41, 4, 121, 52, D - 2, 138, B.NETHER_BRICK);
+  g.shell(41, D - 1, 121, 52, D + 18, 138, B.NETHER_BRICK);
+  g.fill(42, D, 122, 51, D + 17, 137, B.AIR);
+  g.fill(41, D, 128, 41, D + 3, 131, B.AIR);
+  for (const z of [124, 135]) for (const y of [D + 5, D + 10, D + 14]) g.fill(41, y, z, 41, y + 2, z, B.AIR);
+  for (let x = 41; x <= 52; x++) for (let z = 121; z <= 138; z++) if ((x + z) % 2 === 0 && (x === 41 || x === 52 || z === 121 || z === 138)) g.set(x, D + 19, z, B.NETHER_BRICK);
+  g.fill(44, D + 18, 124, 49, D + 18, 135, B.NETHER_BRICK);
+  g.set(46, D + 5, 130, B.GLOWSTONE);
+  g.set(47, D + 12, 130, B.SHROOMLIGHT);
+  sideBridge(37, 40, 130);
+  g.fill(37, D + 1, 129, 40, D + 3, 131, B.AIR);
+  g.fill(37, D + 1, 129, 40, D + 1, 129, B.NETHER_FENCE);
+  g.fill(37, D + 1, 131, 40, D + 1, 131, B.NETHER_FENCE);
+
+  // crossroads platform with fungus trees
+  g.fill(18, D - 3, 148, 46, D, 172, B.NETHER_BRICK);
+  g.fill(28, D + 1, 148, 28, D + 1, 172, B.AIR);
+  g.fill(36, D + 1, 148, 36, D + 1, 172, B.AIR);
+  for (let x = 18; x <= 46; x++) for (const z of [148, 172]) if (x < 28 || x > 36) g.set(x, D + 1, z, B.NETHER_FENCE);
+  for (let z = 148; z <= 172; z++) for (const x of [18, 46]) g.set(x, D + 1, z, B.NETHER_FENCE);
+  const fungus = (x, z, stem, cap, h) => {
+    g.fill(x, D + 1, z, x, D + h, z, stem);
+    for (let dy = 0; dy < 3; dy++) {
+      const r = dy === 2 ? 1 : 3 - dy;
+      for (let dx = -r - 1; dx <= r + 1; dx++)
+        for (let dz = -r - 1; dz <= r + 1; dz++) {
+          if (Math.hypot(dx, dz) > r + 0.6) continue;
+          if (g.get(x + dx, D + h - 1 + dy, z + dz) === B.AIR) g.set(x + dx, D + h - 1 + dy, z + dz, rand() < 0.1 ? B.SHROOMLIGHT : cap);
+        }
+    }
+  };
+  g.fill(23, D, 153, 25, D, 155, B.SOUL_SAND);
+  fungus(24, 154, B.CRIMSON_STEM, B.WART, 7);
+  g.fill(39, D, 164, 41, D, 166, B.SOUL_SAND);
+  fungus(40, 165, B.WARPED_STEM, B.WARPED_WART, 8);
+  for (const [x, z] of [[27, 156], [37, 156], [27, 168], [37, 168]]) g.fill(x, D + 1, z, x, D + 3, z, B.NETHER_BRICK), g.set(x, D + 4, z, B.GLOWSTONE);
+
+  // end platform and the portal home
+  g.fill(21, D - 3, 182, 43, D, 208, B.NETHER_BRICK);
+  g.fill(28, D + 1, 182, 36, D + 1, 182, B.AIR);
+  for (let x = 21; x <= 43; x++) g.set(x, D + 1, 208, B.NETHER_FENCE);
+  for (let z = 182; z <= 208; z++) for (const x of [21, 43]) g.set(x, D + 1, z, B.NETHER_FENCE);
+  g.fill(30, D + 1, 205, 34, D + 5, 205, B.OBSIDIAN);
+  g.fill(31, D + 2, 205, 33, D + 4, 205, B.AIR);
+  for (const [x, z] of [[24, 186], [40, 186], [24, 204], [40, 204], [27, 196], [37, 196]]) {
+    g.set(x, D, z, B.SOUL_SAND);
+    g.set(x, D + 1, z, B.FIRE);
+  }
+  g.fill(31, D, 196, 33, D, 198, B.BASALT);
+  g.fill(32, D + 1, 197, 32, D + 1, 197, B.FIRE);
+
+  const stops = stopsFor('nether', BY);
+  carveCorridor(g, stops, BY, 5);
+  return { grid: g, stops, surface: BY, portal: { x: 32, y: BY + 2, z: 205, w: 3, h: 3 } };
+}
+
+const cache = {};
+/** Builds (once) the block grid for 'overworld' or 'nether'. */
+export function buildWorld(name) {
+  cache[name] ??= name === 'overworld' ? buildVillage() : buildFortress();
+  return cache[name];
+}
+export { STOP_Z };
