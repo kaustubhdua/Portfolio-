@@ -1,8 +1,11 @@
 """Builds public/Kaustubh-Dua-Resume.pdf.
 
-Every line comes from public sources: the kaustubhdua GitHub profile, its repositories and READMEs,
-and the details the owner gave directly (programme, institution, graduation year 2029). Nothing is
-invented: phone number, grades, awards and employers are left out because none were published.
+Follows common technical-resume guidance: one page, one column, no tables or images (so applicant
+tracking systems read it cleanly), a standard sans font, the order Education > Skills > Projects, and
+bullets that start with a past-tense verb. Every statement comes from the public repositories and
+READMEs or from what the owner told us directly (programme, institution, graduation year 2029).
+Nothing is invented: no phone number, grades, awards, employers or performance figures. Forks and
+team projects are labelled as such.
 """
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -10,104 +13,104 @@ from reportlab.lib.colors import HexColor
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, KeepTogether, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, KeepTogether
 import sys
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'public/Kaustubh-Dua-Resume.pdf'
-fd = '/usr/share/fonts/truetype/dejavu/'
-pdfmetrics.registerFont(TTFont('Body', fd + 'DejaVuSans.ttf'))
-pdfmetrics.registerFont(TTFont('Bold', fd + 'DejaVuSans-Bold.ttf'))
-pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold')
+fd = '/usr/share/fonts/truetype/liberation/'
+pdfmetrics.registerFont(TTFont('Body', fd + 'LiberationSans-Regular.ttf'))
+pdfmetrics.registerFont(TTFont('Bold', fd + 'LiberationSans-Bold.ttf'))
+pdfmetrics.registerFont(TTFont('Italic', fd + 'LiberationSans-Italic.ttf'))
+pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic')
 
-ink, accent, muted, line = HexColor('#17131c'), HexColor('#a8232f'), HexColor('#5b525c'), HexColor('#d9cfd6')
-def S(**k):
-    d = dict(fontName='Body', textColor=ink)
-    d.update(k)
-    return ParagraphStyle('s', **d)
+ink, accent, muted = HexColor('#111111'), HexColor('#8c1d28'), HexColor('#4a4a4a')
+S = lambda **k: ParagraphStyle('s', **{'fontName': 'Body', 'textColor': ink, **k})
 
-name = S(fontName='Bold', fontSize=22, leading=26)
-sub = S(fontSize=10.2, leading=14, textColor=accent)
-meta = S(fontSize=8.1, leading=12, textColor=muted)
-head = S(fontName='Bold', fontSize=8.8, leading=11, textColor=accent, spaceBefore=9, spaceAfter=2)
-body = S(fontSize=8.5, leading=12.2)
-item = S(fontName='Bold', fontSize=8.9, leading=12)
-small = S(fontSize=8, leading=11.4, textColor=muted)
-bullet = S(fontSize=8.4, leading=11.8, leftIndent=9, bulletIndent=0)
+name = S(fontName='Bold', fontSize=20, leading=23)
+sub = S(fontSize=10, leading=13, textColor=accent)
+contact = S(fontSize=9, leading=12.5, textColor=muted)
+head = S(fontName='Bold', fontSize=9.6, leading=12, textColor=accent, spaceBefore=5, spaceAfter=1)
+body = S(fontSize=9, leading=12.4)
+item = S(fontName='Bold', fontSize=9.4, leading=12.6, spaceBefore=3)
+detail = S(fontSize=8.4, leading=11.4, textColor=muted)
+bullet = S(fontSize=8.9, leading=12, leftIndent=10, bulletIndent=1)
 
-link = lambda u, t=None: f'<a href="{u}" color="#a8232f">{t or u.replace("https://", "").rstrip("/")}</a>'
-rule = lambda: HRFlowable(width='100%', thickness=0.6, color=line, spaceAfter=3)
+link = lambda u, t: f'<a href="{u}" color="#8c1d28">{t}</a>'
+rule = lambda: HRFlowable(width='100%', thickness=0.7, color=HexColor('#bdbdbd'), spaceAfter=2)
 bl = lambda t: Paragraph(t, bullet, bulletText='•')
+GH = 'https://github.com/kaustubhdua/'
 
-def project(title, stack, points, repo, live=None):
-    links = link('https://github.com/kaustubhdua/' + repo, 'GitHub')
+
+def project(title, stack, points, repo, live=None, note=None):
+    links = link(GH + repo, 'GitHub: kaustubhdua/' + repo)
     if live:
-        links += '  ·  ' + link(live, 'Live')
+        links += '   Live demo: ' + link(live, live.replace('https://', '').rstrip('/'))
+    head_line = f'{title}' + (f' <font name="Body" size="8.4" color="#4a4a4a">({note})</font>' if note else '')
     return KeepTogether([
-        Paragraph(f'{title} <font name="Body" color="#5b525c" size="7.8">|  {stack}</font>', item),
+        Paragraph(head_line, item),
+        Paragraph(stack, detail),
         *[bl(p) for p in points],
-        Paragraph(links, small),
-        Spacer(1, 3.5),
+        Paragraph(links, detail),
     ])
 
-doc = SimpleDocTemplate(out, pagesize=A4, leftMargin=17*mm, rightMargin=17*mm, topMargin=14*mm, bottomMargin=12*mm,
-                        title='Kaustubh Dua - Resume', author='Kaustubh Dua', subject='Software developer, ECM, JIIT Noida (Class of 2029)')
+
+doc = SimpleDocTemplate(out, pagesize=A4, leftMargin=16*mm, rightMargin=16*mm, topMargin=11*mm, bottomMargin=9*mm,
+                        title='Kaustubh Dua - Resume', author='Kaustubh Dua',
+                        subject='Software developer, Electronics and Computer Engineering, JIIT Noida (Class of 2029)')
 
 f = [
-    Paragraph('KAUSTUBH DUA', name),
-    Paragraph('Software Developer  |  Electronics &amp; Computer Engineering, JIIT Noida  |  Class of 2029', sub),
-    Spacer(1, 3),
+    Paragraph('Kaustubh Dua', name),
+    Paragraph('Software developer · Electronics &amp; Computer Engineering student · Class of 2029', sub),
+    Spacer(1, 2),
     Paragraph(
-        link('mailto:kaustubhdua1991@gmail.com', 'kaustubhdua1991@gmail.com') + '   •   ' +
-        link('https://github.com/kaustubhdua', 'github.com/kaustubhdua') + '   •   ' +
-        link('https://www.linkedin.com/in/kaustubh-dua-2b5a76416', 'linkedin.com/in/kaustubh-dua-2b5a76416'), meta),
+        link('mailto:kaustubhdua1991@gmail.com', 'kaustubhdua1991@gmail.com') + '  ·  ' +
+        link('https://github.com/kaustubhdua', 'github.com/kaustubhdua') + '  ·  ' +
+        link('https://www.linkedin.com/in/kaustubh-dua-2b5a76416', 'linkedin.com/in/kaustubh-dua-2b5a76416'), contact),
 
     Paragraph('SUMMARY', head), rule(),
-    Paragraph('Student developer at the intersection of <b>AI, data, systems and product engineering</b>. I turn messy, '
-              'real workflows (crop residue, waste routing, multilingual help, security triage) into tested tools with clear system '
-              'boundaries, honest status labels and verifiable claims. Working style: <b>build thoughtfully, verify everything</b>.', body),
+    Paragraph('Engineering student who builds full-stack and data tools end to end in Python and TypeScript: a React or Next.js front end, '
+              'a FastAPI or Supabase back end, automated tests and CI. Projects state their limits plainly and make no unmeasured claims.', body),
 
     Paragraph('EDUCATION', head), rule(),
-    Table([[Paragraph('<b>B.Tech., Electronics &amp; Computer Engineering (ECM)</b><br/>Jaypee Institute of Information Technology (JIIT), Noida', body),
-            Paragraph('Expected graduation<br/><b>2029</b>', S(fontSize=8.5, leading=12, alignment=2))]],
-          colWidths=[None, 38*mm], style=TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0), ('TOPPADDING', (0, 0), (-1, -1), 0), ('BOTTOMPADDING', (0, 0), (-1, -1), 0)])),
+    Paragraph('<b>Jaypee Institute of Information Technology (JIIT), Noida</b>', body),
+    Paragraph('B.Tech., Electronics &amp; Computer Engineering (ECM). Expected graduation: 2029.', body),
 
     Paragraph('TECHNICAL SKILLS', head), rule(),
     Paragraph('<b>Languages:</b> Python, TypeScript, JavaScript, C++17, SQL', body),
-    Paragraph('<b>Application:</b> React, Next.js, Vite, FastAPI, Streamlit, Tailwind CSS', body),
-    Paragraph('<b>Data, AI &amp; optimisation:</b> PostgreSQL / PostGIS, Supabase, pandas, scikit-learn, Google OR-Tools, Ollama (local inference), embeddings, Three.js / WebGL', body),
-    Paragraph('<b>Quality &amp; delivery:</b> Git, GitHub Actions, pytest, Playwright, CodeQL, Docker, CTest', body),
+    Paragraph('<b>Frameworks:</b> React, Next.js, Vite, FastAPI, Streamlit, Tailwind CSS', body),
+    Paragraph('<b>Data and AI:</b> PostgreSQL, PostGIS, Supabase, pandas, scikit-learn, Google OR-Tools, Ollama, Three.js and WebGL', body),
+    Paragraph('<b>Tools and testing:</b> Git, GitHub Actions, pytest, Playwright, CodeQL, Docker, CTest', body),
 
-    Paragraph('SELECTED PROJECTS', head), rule(),
-    project('NIRDHOOM', 'React 19, Supabase, PostGIS, OR-Tools, Leaflet',
-            ['Crop-residue coordination system linking field requests, service workflows, operational evidence and buyer pathways.',
-             'Service keys stay on the server, never in the browser; row-level security guards the data.'],
+    Paragraph('PROJECTS', head), rule(),
+    project('NIRDHOOM: crop-residue coordination system', 'React 19, Vite, Supabase, PostgreSQL, PostGIS, OR-Tools, Leaflet',
+            ['Built a field-to-buyer workflow covering booking, operator jobs, dispatch, residue pooling and verification, as an installable PWA.',
+             'Designed server-side API routes and Row Level Security so service keys never reach the browser; added SHA-256 evidence hashing and an offline upload queue.',
+             'Integrated an OR-Tools dispatch service with a local fallback, and kept seeded demo data separate from live records. Status: prototype.'],
             'nihdhoom', 'https://nihdhoom-9qiu.vercel.app/'),
-    project('Saathi', 'Next.js, FastAPI, speech APIs',
-            ['Voice-first, multilingual assistant built around source-aware answers, consent-based workflows and human escalation.',
-             'Ships a 120-case synthetic benchmark for its Hindi/Hinglish intent router; labels demo and live results.'],
+    project('Saathi: voice-first multilingual assistant', 'Next.js, React, FastAPI, Python, speech APIs, GitHub Actions',
+            ['Implemented deterministic Hindi and Hinglish intent routing and checked it against a 120-case synthetic benchmark.',
+             'Attached a source and retrieval time to every factual answer, and added consent prompts and human escalation.',
+             'Set up CI for backend tests, front-end checks and dependency audits. Status: MVP.'],
             'Saathi', 'https://saathi-two-pi.vercel.app'),
-    project('SATARK', 'Python, Streamlit, LLM / vision workflows',
-            ['AI-assisted security-awareness workspace for triaging suspicious messages, links, images, QR codes, PDFs and supported videos.'],
-            'Satark', 'https://satark-32uppvjxwmderrchbhj7gj.streamlit.app/'),
-    project('PatchPilot', 'Python, FastAPI, pytest, Docker',
-            ['Explainable pull-request risk triage that never clones or executes the code it analyses.'],
+    project('PatchPilot: pull-request risk triage', 'Python, FastAPI, pytest, Ruff, Docker, GitHub Actions',
+            ['Wrote a diff analyser that returns evidence-backed risk signals and a coarse 0-100 score without ever running the analysed code.',
+             'Bounded untrusted input with size limits, strict schemas and rate limiting (HTTP 429 with Retry-After); shipped a non-root Docker image. Status: early stage.'],
             'PatchPilot'),
-    project('Smart Waste Collection', 'Python, Random Forest, OR-Tools, Streamlit',
-            ['Predict-prioritise-route pipeline for waste collection. States plainly that its IoT-style data is synthetic.'],
+    project('Smart Waste Collection', 'Python, scikit-learn, OR-Tools, Streamlit, Folium',
+            ['Built a pipeline that predicts bin fill levels with a Random Forest, scores collection priority from 0 to 100 and plans truck routes with OR-Tools.',
+             'Documented that the IoT-style data is synthetic and the routing is simulated. Status: prototype.'],
             'smart_waste_project', 'https://smartwasteproject-glmvz89ttkxfktcssfdfuc.streamlit.app/'),
-    project('GitGlobe', 'React Three Fiber, WebGL, FastAPI, embeddings',
-            ['Interactive 3D map for exploring open-source repositories by capability.'],
-            'GitGlobe', 'https://gitglobe-yd-mj.vercel.app'),
+    project('JIIT Youth Club website', 'React 19, Vite, React Router, Supabase, Playwright, GitHub Actions',
+            ['Built the public site for the club (events, clubs, gallery, archive, recruitment) with Supabase-backed content.',
+             'Added quality gates: static checks for security, SEO and accessibility, Playwright browser tests and CodeQL scanning.'],
+            'JYC-Website', 'https://jyc-website-eight.vercel.app'),
 
-    Paragraph('COMMUNITY &amp; TEAM WORK', head), rule(),
-    bl('<b>JIIT Youth Club website</b> (React 19, Vite, Supabase): public site for the club behind major events at the Sector 128 campus, '
-       'guarded by GitHub Actions, CodeQL and Playwright browser checks. ' + link('https://jyc-website-eight.vercel.app', 'Live')),
-    bl('<b>Adapt AI</b>: contributor on a team-built local AI assistant that checks hardware and recommends a suitable on-device model (FastAPI, Ollama).'),
-    bl('<b>This portfolio</b>: a 3D village and Nether-fortress world built with a hand-written WebGL 2 engine (no 3D library), tested with Playwright.'),
-
-    Paragraph('ALSO BUILT', head), rule(),
-    Paragraph('AkashChalak (air-quality hotspot decision support)  •  Smart Bike Taxi Platform (C++17 graph algorithms, CTest)  •  '
-              'JIIT Toppers (Next.js, Prisma)  •  Weather Core Matrix and Nord Studio Task Manager (vanilla JS)', body),
+    Paragraph('TEAM WORK AND OTHER PROJECTS', head), rule(),
+    bl('<b>Adapt AI</b> (team project, contributor): local AI assistant that recommends an Ollama model for the machine\'s RAM and VRAM (FastAPI, Ollama). '
+       'Upstream repository belongs to a teammate. ' + link(GH + 'adapt-ai', 'My fork')),
+    bl('<b>This portfolio</b>: a scroll-driven 3D world with a hand-written WebGL 2 engine and no 3D library, covered by Playwright tests. ' + link(GH + 'Portfolio-', 'Source')),
+    bl('<b>Explored (forks, not original work):</b> SATARK, a security-awareness triage workspace; GitGlobe, a 3D map of repositories. '
+       '<b>Also built:</b> AkashChalak, Smart Bike Taxi (C++17), JIIT Toppers.'),
 ]
 doc.build(f)
 print('wrote', out)
