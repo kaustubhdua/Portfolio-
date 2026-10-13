@@ -38,20 +38,26 @@ export function sampleCamera(stops, s, out = {}) {
   return out;
 }
 
-/** Maps the page scroll position to a position along the path using the real section centres. */
+/**
+ * Maps the page scroll position to a position along the path. A section's own top edge is its
+ * anchor: when you have scrolled so that section i starts at the top of the screen, the camera
+ * stands at stop i. The last anchors are pulled back so a short final page can still reach them.
+ */
 export function scrollToProgress(ids, scrollY, viewH) {
-  const probe = scrollY + viewH * 0.5;
-  const centres = [];
+  const tops = [];
   for (const id of ids) {
     const el = document.getElementById(id);
     if (!el) continue;
-    const r = el.getBoundingClientRect();
-    centres.push(r.top + window.scrollY + r.height / 2);
+    tops.push(el.getBoundingClientRect().top + window.scrollY);
   }
-  if (centres.length < 2) return 0;
-  if (probe <= centres[0]) return 0;
-  for (let i = 1; i < centres.length; i++) {
-    if (probe <= centres[i]) return i - 1 + (probe - centres[i - 1]) / (centres[i] - centres[i - 1]);
+  if (tops.length < 2) return 0;
+  const maxScroll = Math.max(1, document.documentElement.scrollHeight - viewH);
+  const last = tops.length - 1;
+  const anchors = tops.map((t, i) => Math.min(t, maxScroll - (last - i)));
+  anchors[0] = Math.min(anchors[0], 0);
+  if (scrollY <= anchors[0]) return 0;
+  for (let i = 1; i <= last; i++) {
+    if (scrollY <= anchors[i]) return i - 1 + (scrollY - anchors[i - 1]) / Math.max(1, anchors[i] - anchors[i - 1]);
   }
-  return centres.length - 1;
+  return last;
 }

@@ -13,6 +13,12 @@ export default function WorldBackdrop({ world, sections, reduced }) {
   worldRef.current = world;
 
   useEffect(() => {
+    // Visitors (and the generic tests) can opt out with localStorage 'portfolio-3d' = 'off'.
+    try {
+      if (localStorage.getItem('portfolio-3d') === 'off') return undefined;
+    } catch {
+      /* storage blocked: carry on with 3D */
+    }
     let cancelled = false;
     let renderer = null;
     const root = document.documentElement;

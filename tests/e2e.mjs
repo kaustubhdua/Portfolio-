@@ -10,16 +10,31 @@
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
+// Software WebGL (SwiftShader) lets the 3D world run on machines without a GPU, such as CI.
+const glBrowser = await chromium.launch({
+  ...(process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {}),
+  args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+});
+// The rest of the suite runs on a normal browser: forcing software rendering slows the CSS scenes down.
 const browser = await chromium.launch(process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {});
+// Chrome's own notes about software rendering are not site problems.
+const GL_NOISE = /GL Driver Message|GroupMarkerNotSet|software WebGL|GPU stall/;
 const results = [];
 const errors = [];
 const ok = (name, pass, detail = '') => results.push({ pass: Boolean(pass), name, detail });
 
-async function open(opts = {}) {
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
+async function plainContext(opts) {
+  const ctx = await browser.newContext(opts);
+  await ctx.addInitScript(() => localStorage.setItem('portfolio-3d', 'off'));
+  return ctx;
+}
+
+async function open({ threed = false, ...opts } = {}) {
+  // Software WebGL is slow and would starve the timing-based tests below, so only the 3D tests turn it on.
+  const ctx = threed ? await glBrowser.newContext({ viewport: { width: 1440, height: 900 }, ...opts }) : await plainContext({ viewport: { width: 1440, height: 900 }, ...opts });
   const page = await ctx.newPage();
   page.on('console', (m) => {
-    if (['error', 'warning'].includes(m.type())) errors.push(m.text());
+    if (['error', 'warning'].includes(m.type()) && !GL_NOISE.test(m.text())) errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
   await page.goto(BASE);
@@ -138,7 +153,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
 
 // Day / night worlds: toggle, portal trip, persistence, phone reachability, reduced motion.
 {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const ctx = await plainContext({ viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
   await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
@@ -158,7 +173,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('chosen world is remembered', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
   await ctx.close();
 
-  const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  const phone = await plainContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
   const pp = await phone.newPage();
   await pp.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
   await pp.goto(BASE);
@@ -171,7 +186,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('phone: sound button stays on screen after scrolling', sbox && sbox.y >= 0 && sbox.y < 100, JSON.stringify(sbox));
   await phone.close();
 
-  const calm = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  const calm = await plainContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   const cp = await calm.newPage();
   await cp.goto(BASE);
   await cp.waitForTimeout(800);
@@ -183,7 +198,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
 
 // Per-project share pages and deep links.
 {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const ctx = await plainContext({ viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
   await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
@@ -201,7 +216,46 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
+// The 3D world: it must start, follow the scroll, and follow the day/night switch.
+{
+  const [ctx, page] = await open({ threed: true, viewport: { width: 1280, height: 720 } });
+  await page.evaluate(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await page.reload();
+  await page.waitForFunction(() => document.documentElement.dataset.threed === 'on', null, { timeout: 60000 });
+  const canvas = page.locator('canvas.world-canvas');
+  ok('3D world starts and is hidden from assistive tech', (await canvas.getAttribute('aria-hidden')) === 'true' && (await canvas.getAttribute('data-state')) === 'ready');
+  ok('3D world starts in the Nether fortress', (await canvas.getAttribute('data-world')) === 'nether');
+  await page.waitForTimeout(1500);
+  ok('3D world draws frames', Number(await canvas.getAttribute('data-frames')) > 3);
+  const stops = [['profile', 1], ['forge', 3], ['world', 5], ['contact', 6]];
+  for (const [id, n] of stops) {
+    await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id);
+    await page.waitForFunction((n) => Math.abs(Number(document.querySelector('canvas.world-canvas').dataset.progress) - n) < 0.15, n, { timeout: 15000 }).catch(() => {});
+    const p = Number(await canvas.getAttribute('data-progress'));
+    ok(`camera reaches stop ${n} at the ${id} section`, Math.abs(p - n) < 0.25, `progress ${p}`);
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
+  await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
+  ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld');
+  await ctx.close();
+}
+
+// Reduced motion still gets the 3D world, but it only redraws when the scroll position changes.
+{
+  const [ctx, page] = await open({ threed: true, viewport: { width: 1280, height: 720 }, reducedMotion: 'reduce' });
+  await page.waitForFunction(() => document.documentElement.dataset.threed === 'on', null, { timeout: 60000 });
+  await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.built === 'yes', null, { timeout: 60000 });
+  await page.waitForTimeout(600);
+  const before = Number(await page.locator('canvas.world-canvas').getAttribute('data-frames'));
+  await page.waitForTimeout(1500);
+  const after = Number(await page.locator('canvas.world-canvas').getAttribute('data-frames'));
+  ok('reduced motion: 3D world is static while idle', after - before <= 2, `${after - before} frames`);
+  await ctx.close();
+}
+
 await browser.close();
+await glBrowser.close();
 ok('no console errors or warnings', errors.length === 0, errors.slice(0, 3).join(' | '));
 let failed = 0;
 for (const r of results) {

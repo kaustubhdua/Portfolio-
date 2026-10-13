@@ -203,6 +203,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const step = w.gen.next();
       if (step.done) {
         w.done = true;
+        if (w.name === current) canvas.dataset.built = 'yes';
         break;
       }
       if (step.value) uploadSlab(w, step.value);
@@ -212,7 +213,10 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       canvas.dataset.state = 'ready';
       readyResolve();
     }
-    dirty = true;
+    if (w.name === current) {
+      dirty = true;
+      schedule();
+    }
     building = setTimeout(pump, w.name === current ? 0 : 20);
   }
   const kick = () => {
@@ -236,6 +240,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   let width = 0;
   let height = 0;
   let timeSlow = 0;
+  let slowWindows = 0;
   const frameTimes = [];
   let frames = 0;
 
@@ -252,7 +257,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   };
 
   const readScroll = () => {
-    target = scrollToProgress(sections, window.scrollY, window.innerHeight);
+    const next = scrollToProgress(sections, window.scrollY, window.innerHeight);
+    if (Math.abs(next - target) < 1e-4 && frames > 0) return;
+    target = next;
     dirty = true;
     schedule();
   };
@@ -464,6 +471,12 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
           }
         } else timeSlow = 0;
         canvas.dataset.scale = scale.toFixed(2);
+        // A device that cannot draw even the smallest picture in good time gets the 2D scenes.
+        if (avg > 140 && scale <= 0.56 && ++slowWindows >= 3) {
+          onContextLost?.();
+          return;
+        }
+        if (avg <= 140) slowWindows = 0;
       }
     }
     canvas.dataset.progress = progress.toFixed(3);
