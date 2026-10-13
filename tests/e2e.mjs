@@ -235,6 +235,10 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
     ok(`camera reaches stop ${n} at the ${id} section`, Math.abs(p - n) < 0.25, `progress ${p}`);
   }
   await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(1500);
+  await page.mouse.click(24, 640);
+  await page.waitForTimeout(400);
+  ok('clicking bare ground digs a block out', Number((await canvas.getAttribute('data-dug')) ?? 0) >= 1);
   await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
   ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld');

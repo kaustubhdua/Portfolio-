@@ -59,7 +59,7 @@ const CORNERS = [[0, 0], [1, 0], [1, 1], [0, 1]];
  * `yield null` is a good moment to hand control back to the browser, and each yielded object
  * is a finished slab: { slab, solid, glass }.
  */
-export function* meshWorld(grid, light) {
+export function* meshWorld(grid, light, only = null) {
   const { sky, blk } = light;
   const { w, h, l, data } = grid;
   const slabs = Math.ceil(l / SLAB);
@@ -69,7 +69,7 @@ export function* meshWorld(grid, light) {
 
   const at = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= w || y >= h || z >= l ? -1 : (y * l + z) * w + x);
 
-  for (let slab = 0; slab < slabs; slab++) {
+  for (let slab = only ?? 0; slab < (only === null ? slabs : only + 1); slab++) {
     const solid = new VertexBuffer();
     const glass = new VertexBuffer();
     for (let z = slab * SLAB; z < Math.min(l, (slab + 1) * SLAB); z++) {

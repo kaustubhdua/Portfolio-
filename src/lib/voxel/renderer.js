@@ -2,6 +2,7 @@ import { buildTiles, TILE, TILE_COUNT } from './atlas.js';
 import { InstanceWriter, createActors } from './actors.js';
 import { sampleCamera, scrollToProgress } from './journey.js';
 import { computeLight } from './light.js';
+import { DEF, SOLID } from './blocks.js';
 import { SLAB, meshWorld } from './mesh.js';
 import { ENTITY_FS, ENTITY_VS, PART_FS, PART_VS, SKY_FS, SKY_VS, TERRAIN_FS, TERRAIN_VS } from './shaders.js';
 import { SIZE, buildWorld } from './worlds.js';
@@ -167,7 +168,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       meta,
       slabs: [],
       done: false,
+      light,
       gen: meshWorld(meta.grid, light),
+      broken: [],
       actors: createActors(name),
     };
     worlds[name] = w;
@@ -184,7 +187,82 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       gl.bufferData(gl.ARRAY_BUFFER, m.data, gl.STATIC_DRAW);
       entry[kind] = { buffer, vao: makeMeshVao(buffer), count: Math.min(m.quads, MAX_QUADS) * 6 };
     }
+    const old = w.slabs[r.slab];
+    for (const kind of ['solid', 'glass']) {
+      if (old?.[kind]) {
+        gl.deleteBuffer(old[kind].buffer);
+        gl.deleteVertexArray(old[kind].vao);
+      }
+    }
     w.slabs[r.slab] = entry;
+  }
+
+  // ---- breaking blocks: a click on bare terrain digs it out, and it grows back a few seconds later
+  const debris = [];
+  const tileColour = {};
+  const colourOf = (id) => {
+    if (tileColour[id]) return tileColour[id];
+    const tile = DEF[id]?.side ?? 0;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let n = 0;
+    const base = tile * TILE * TILE * 4;
+    for (let i = 0; i < TILE * TILE; i++) {
+      if (tiles[base + i * 4 + 3] < 128) continue;
+      r += tiles[base + i * 4];
+      g += tiles[base + i * 4 + 1];
+      b += tiles[base + i * 4 + 2];
+      n++;
+    }
+    return (tileColour[id] = n ? [r / n / 255, g / n / 255, b / n / 255] : [0.5, 0.5, 0.5]);
+  };
+  const remesh = (w, z) => {
+    const slabs = new Set([Math.floor(z / SLAB)]);
+    if (z % SLAB === 0) slabs.add(Math.floor(z / SLAB) - 1);
+    if (z % SLAB === SLAB - 1) slabs.add(Math.floor(z / SLAB) + 1);
+    for (const slab of slabs) {
+      if (slab < 0 || slab * SLAB >= SIZE.l) continue;
+      for (const r of meshWorld(w.meta.grid, w.light, slab)) if (r) uploadSlab(w, r);
+    }
+  };
+  const relight = (w) => {
+    clearTimeout(w.relightTimer);
+    w.relightTimer = setTimeout(() => {
+      const fresh = computeLight(w.meta.grid, w.name === 'overworld');
+      w.light.sky.set(fresh.sky);
+      w.light.blk.set(fresh.blk);
+      for (const zs of w.dirtySlabs ?? []) remesh(w, zs * SLAB);
+      w.dirtySlabs = new Set();
+      dirty = true;
+      schedule();
+    }, 160);
+  };
+  const touch = (w, x, y, z, id) => {
+    w.meta.grid.set(x, y, z, id);
+    remesh(w, z);
+    (w.dirtySlabs ??= new Set()).add(Math.floor(z / SLAB));
+    relight(w);
+    dirty = true;
+    schedule();
+  };
+  function breakBlock(w, x, y, z) {
+    const id = w.meta.grid.get(x, y, z);
+    if (!id || y < 2 || x < 1 || x >= SIZE.w - 1 || z < 1 || z >= SIZE.l - 1) return null;
+    touch(w, x, y, z, 0);
+    canvas.dataset.dug = String(Number(canvas.dataset.dug ?? 0) + 1);
+    const col = colourOf(id);
+    for (let i = 0; i < 14; i++) {
+      debris.push({
+        p: [x + 0.2 + Math.random() * 0.6, y + 0.2 + Math.random() * 0.6, z + 0.2 + Math.random() * 0.6],
+        v: [(Math.random() - 0.5) * 3, 1.5 + Math.random() * 2.5, (Math.random() - 0.5) * 3],
+        life: 0.9 + Math.random() * 0.5,
+        c: col.map((v) => v * (0.75 + Math.random() * 0.4)),
+        s: 0.07 + Math.random() * 0.08,
+      });
+    }
+    w.broken.push({ x, y, z, id, at: simTime + 7 + Math.random() * 3 });
+    return id;
   }
 
   let readyResolve;
@@ -413,6 +491,34 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       // characters
       writer.reset();
       for (const actor of w.actors) actor.draw(simTime, writer);
+      for (let i = w.broken.length - 1; i >= 0; i--) {
+        const b = w.broken[i];
+        if (simTime >= b.at) {
+          w.broken.splice(i, 1);
+          if (!w.meta.grid.get(b.x, b.y, b.z)) touch(w, b.x, b.y, b.z, b.id);
+        }
+      }
+      for (let i = debris.length - 1; i >= 0; i--) {
+        const d = debris[i];
+        d.life -= dt;
+        if (d.life <= 0) {
+          debris.splice(i, 1);
+          continue;
+        }
+        d.v[1] -= 14 * dt;
+        for (let k = 0; k < 3; k++) d.p[k] += d.v[k] * dt;
+        if (SOLID[w.meta.grid.get(Math.floor(d.p[0]), Math.floor(d.p[1]), Math.floor(d.p[2]))]) {
+          d.p[1] = Math.floor(d.p[1]) + 1.01;
+          d.v[0] *= 0.4;
+          d.v[1] = 0;
+          d.v[2] *= 0.4;
+        }
+        const m = writer.next();
+        m.fill(0);
+        m[0] = d.s; m[5] = d.s; m[10] = d.s; m[12] = d.p[0]; m[13] = d.p[1]; m[14] = d.p[2]; m[15] = 1;
+        const c = writer.color();
+        c[0] = d.c[0]; c[1] = d.c[1]; c[2] = d.c[2]; c[3] = 0;
+      }
       gl.useProgram(entity.p);
       gl.disable(gl.CULL_FACE);
       gl.uniformMatrix4fv(entity.u.uVP, false, vp);
@@ -570,6 +676,23 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const sx = ((clip[0] / clip[3]) * 0.5 + 0.5) * window.innerWidth;
       const sy = (0.5 - (clip[1] / clip[3]) * 0.5) * window.innerHeight;
       return { name: best.name, line: best.line, kind: best.kind, x: sx, y: sy };
+    },
+    /** Digs out the block under a screen point (within reach). Returns its name or null. */
+    mine(clientX, clientY) {
+      const w = worlds[current];
+      if (!w || !pickCam) return null;
+      const nx = (clientX / window.innerWidth) * 2 - 1;
+      const ny = 1 - (clientY / window.innerHeight) * 2;
+      const { pos, r, u, f, tx, ty } = pickCam;
+      const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
+      // march along the ray in small steps; the first solid block is the one hit
+      for (let t = 0.3; t < 14; t += 0.05) {
+        const x = Math.floor(pos[0] + d[0] * t);
+        const y = Math.floor(pos[1] + d[1] * t);
+        const z = Math.floor(pos[2] + d[2] * t);
+        if (SOLID[w.meta.grid.get(x, y, z)]) return breakBlock(w, x, y, z) ? 'block' : null;
+      }
+      return null;
     },
     get progress() {
       return progress;

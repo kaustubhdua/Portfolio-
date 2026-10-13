@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { mobSound } from '../lib/audio.js';
+import { blockSound, mobSound } from '../lib/audio.js';
 import { onDive, setLoad, setMode } from '../lib/voxel/travel.js';
 
 // Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
@@ -68,7 +68,10 @@ export default function WorldBackdrop({ world, sections, reduced }) {
         const onClick = (e) => {
           if (!free(e) || window.getSelection()?.toString()) return;
           const hit = renderer.pick(e.clientX, e.clientY, true);
-          if (!hit) return;
+          if (!hit) {
+            if (renderer.mine(e.clientX, e.clientY)) blockSound();
+            return;
+          }
           mobSound(hit.name, hit.kind);
           clearTimeout(bubbleTimer);
           setBubble({ ...hit, id: Date.now() });

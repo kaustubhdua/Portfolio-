@@ -104,3 +104,22 @@ export function portalSound() {
   osc.start(t);
   osc.stop(t + 2.7);
 }
+
+/** A dull crunch for a block being dug out. Silent unless sound is on. */
+export function blockSound() {
+  if (!ctx || !master || master.gain.value < 0.01) return;
+  const t = ctx.currentTime;
+  const len = Math.floor(ctx.sampleRate * 0.18);
+  const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 2;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 900;
+  const g = ctx.createGain();
+  g.gain.value = 0.35;
+  src.connect(filter).connect(g).connect(ctx.destination);
+  src.start(t);
+}
