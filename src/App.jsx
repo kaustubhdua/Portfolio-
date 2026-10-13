@@ -4,6 +4,7 @@ import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
 import WorldBackdrop from './components/WorldBackdrop.jsx';
+import FallbackBackdrop from './components/FallbackBackdrop.jsx';
 import Stats from './components/Stats.jsx';
 import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
@@ -139,6 +140,7 @@ export default function App() {
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
       <WorldBackdrop world={theme} sections={ids} reduced={reduced} />
+      <FallbackBackdrop world={theme} sections={ids} active={active} />
       <main>
         <Hero ready={!intro} onNavigate={navigate} theme={theme} />
         <Stats />

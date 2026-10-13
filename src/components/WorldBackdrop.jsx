@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mobSound } from '../lib/audio.js';
-import { onDive, setLoad } from '../lib/voxel/travel.js';
+import { onDive, setLoad, setMode } from '../lib/voxel/travel.js';
 
 // Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
 const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel,.card,.stat,.chat,.hud,.biome-picker,[role="dialog"]';
@@ -21,6 +21,7 @@ export default function WorldBackdrop({ world, sections, reduced }) {
     try {
       if (localStorage.getItem('portfolio-3d') === 'off') {
         setLoad(1);
+        setMode('off');
         return undefined;
       }
     } catch {
@@ -37,11 +38,12 @@ export default function WorldBackdrop({ world, sections, reduced }) {
         renderer = createWorldRenderer(canvasRef.current, {
           sections,
           reduced,
-          onContextLost: () => delete root.dataset.threed,
+          onContextLost: () => setMode('off'),
           onProgress: setLoad,
         });
         if (!renderer) {
           setLoad(1);
+          setMode('off');
           return;
         }
         rendererRef.current = renderer;
@@ -49,7 +51,7 @@ export default function WorldBackdrop({ world, sections, reduced }) {
         renderer.start();
         const stopDive = onDive((v) => renderer.setDive(v));
         renderer.ready.then(() => {
-          if (!cancelled) root.dataset.threed = 'on';
+          if (!cancelled) setMode('on');
         });
         setTimeout(() => !cancelled && renderer.prepare(worldRef.current === 'nether' ? 'overworld' : 'nether'), 2500);
 
@@ -84,11 +86,11 @@ export default function WorldBackdrop({ world, sections, reduced }) {
       })
       .catch((err) => {
         setLoad(1);
+        setMode('off');
         console.error('3D world unavailable', err);
       });
     return () => {
       cancelled = true;
-      delete root.dataset.threed;
       cleanup();
       renderer?.dispose();
       rendererRef.current = null;
