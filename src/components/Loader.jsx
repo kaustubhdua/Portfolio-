@@ -26,7 +26,7 @@ const savedWorld = () => {
  * never flashes, gives up waiting after a few seconds, and is skippable by button, click or key.
  * Never shown to reduced-motion users or on repeat visits in the same session.
  */
-export default function Loader({ onDone }) {
+export default function Loader({ onDone, soundOn = false, onSound }) {
   const buttonRef = useRef(null);
   const [progress, setProgress] = useState(getLoad());
   const [world] = useState(savedWorld);
@@ -90,9 +90,22 @@ export default function Loader({ onDone }) {
         <span className="is-live" style={{ transform: `scaleX(${shown})` }} />
       </div>
       <p className="loader-tip"><strong>Did you know?</strong> {tip}</p>
-      <button ref={buttonRef} type="button" className="loader-skip pixel" onClick={onDone}>
-        Skip
-      </button>
+      <div className="loader-actions">
+        <button
+          type="button"
+          className="loader-skip pixel"
+          aria-pressed={soundOn}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSound?.();
+          }}
+        >
+          Sound: {soundOn ? 'On' : 'Off'}
+        </button>
+        <button ref={buttonRef} type="button" className="loader-skip pixel" onClick={onDone}>
+          Skip
+        </button>
+      </div>
     </div>
   );
 }

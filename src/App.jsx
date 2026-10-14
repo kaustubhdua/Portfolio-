@@ -21,7 +21,7 @@ import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
 import { WorldContext, useTheme } from './hooks/useTheme.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
-import { setAmbient } from './lib/audio.js';
+import { setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
 
 // Rarely needed on first paint, so they ship as separate chunks.
 const Chat = lazy(() => import('./components/Chat.jsx'));
@@ -118,6 +118,32 @@ export default function App() {
   }, [soundOn]);
 
   useEffect(() => () => void setAmbient(false), []);
+  useEffect(() => setSoundWorld(theme), [theme]);
+
+  // Button presses click like the game's menus; a remembered "sound on" starts at the first gesture.
+  useEffect(() => {
+    const onClick = (e) => {
+      if (e.target.closest?.('button,a[href],summary,[role="button"]')) uiClick();
+    };
+    document.addEventListener('click', onClick);
+    let resume = null;
+    if (soundWanted()) {
+      resume = async () => {
+        setSoundOn(await setAmbient(true));
+        window.removeEventListener('pointerdown', resume);
+        window.removeEventListener('keydown', resume);
+      };
+      window.addEventListener('pointerdown', resume, { once: true });
+      window.addEventListener('keydown', resume, { once: true });
+    }
+    return () => {
+      document.removeEventListener('click', onClick);
+      if (resume) {
+        window.removeEventListener('pointerdown', resume);
+        window.removeEventListener('keydown', resume);
+      }
+    };
+  }, []);
 
   // The static boot screen in index.html has done its job once the app is running.
   useEffect(() => {
@@ -168,7 +194,7 @@ export default function App() {
   return (
     <WorldContext.Provider value={theme}>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
-      {intro && <Loader onDone={finishIntro} />}
+      {intro && <Loader onDone={finishIntro} soundOn={soundOn} onSound={toggleSound} />}
       <Suspense fallback={null}>
         <Chat />
       </Suspense>

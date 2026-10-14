@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { blockSound, mobSound } from '../lib/audio.js';
+import { blockSound, mobSound, stepSound } from '../lib/audio.js';
 import { onDive, setLoad, setMode } from '../lib/voxel/travel.js';
 
 // Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
@@ -40,6 +40,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           reduced,
           onContextLost: () => setMode('off'),
           onProgress: setLoad,
+          onStep: stepSound,
         });
         if (!renderer) {
           setLoad(1);
@@ -69,7 +70,8 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           if (!free(e) || window.getSelection()?.toString()) return;
           const hit = renderer.pick(e.clientX, e.clientY, true);
           if (!hit) {
-            if (renderer.mine(e.clientX, e.clientY)) blockSound();
+            const ground = renderer.mine(e.clientX, e.clientY);
+            if (ground) blockSound(ground);
             return;
           }
           mobSound(hit.name, hit.kind);
