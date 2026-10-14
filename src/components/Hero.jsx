@@ -41,7 +41,7 @@ const NAME_WORDS = profile.name.split(' ').map((word) => ({
   letters: [...word].map((ch) => ({ ch, index: letterIndex++ })),
 }));
 
-export default function Hero({ ready, onNavigate, theme = 'nether', quick = false, onQuick }) {
+export default function Hero({ ready, onNavigate, theme = 'nether', quick = false, onQuick, canExplore = false, onExplore }) {
   const heroRef = useRef(null);
   const reduced = useReducedMotion();
   const [splash] = useState(() => splashes[Math.floor(Math.random() * splashes.length)]);
@@ -188,6 +188,11 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
           <a className="btn btn-secondary pixel" href="#forge" onClick={(e) => onNavigate(e, 'forge')}>
             View Projects
           </a>
+          {canExplore && (
+            <button type="button" className="btn btn-secondary pixel explore-btn" onClick={onExplore}>
+              Explore freely
+            </button>
+          )}
           <button type="button" className="btn btn-quiet pixel quick-btn" aria-pressed={quick} onClick={onQuick}>
             {quick ? '3D view' : 'Quick view'}
           </button>

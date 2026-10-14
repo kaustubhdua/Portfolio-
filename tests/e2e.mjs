@@ -247,6 +247,20 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
   await page.evaluate(() => window.scrollTo(0, 0));
+  await page.locator('.explore-btn').click();
+  await page.waitForTimeout(600);
+  ok('Explore freely hides the page and shows the game HUD', await page.evaluate(() => document.documentElement.dataset.explore === 'on' && !!document.querySelector('.explore-hud .hotbar') && getComputedStyle(document.querySelector('main')).visibility === 'hidden'));
+  const p0 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
+  await page.keyboard.down('KeyW');
+  // software rendering runs at a few frames a second, so wait for real movement rather than a fixed time
+  const z0 = Number(p0.split(',')[2]);
+  await page.waitForFunction((z) => Number((document.querySelector('canvas.world-canvas').dataset.pos ?? '0,0,0').split(',')[2]) > z + 1, z0, { timeout: 20000 }).catch(() => {});
+  await page.keyboard.up('KeyW');
+  const p1 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
+  ok('W walks the player forward through the world', Number(p1.split(',')[2]) > z0 + 1, `${p0} -> ${p1}`);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
   await page.locator('.quick-btn').click();
   await page.waitForTimeout(500);
   ok('Quick view hides the 3D scenery and remembers the choice', await page.evaluate(() => document.documentElement.dataset.quick === 'on' && getComputedStyle(document.querySelector('canvas.world-canvas')).display === 'none' && localStorage.getItem('portfolio-quick') === 'on'));

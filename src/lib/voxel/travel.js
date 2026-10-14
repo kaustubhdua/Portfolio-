@@ -38,3 +38,16 @@ export const subscribeMode = (fn) => {
   modeListeners.add(fn);
   return () => modeListeners.delete(fn);
 };
+
+/** Controls for free-roam mode, filled in by the 3D backdrop once the renderer is running. */
+let exploreApi = null;
+const exploreListeners = new Set();
+export const setExploreApi = (api) => {
+  exploreApi = api;
+  for (const fn of exploreListeners) fn();
+};
+export const getExploreApi = () => exploreApi;
+export const subscribeExplore = (fn) => {
+  exploreListeners.add(fn);
+  return () => exploreListeners.delete(fn);
+};

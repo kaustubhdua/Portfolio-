@@ -1,6 +1,7 @@
 import { buildTiles, TILE, TILE_COUNT } from './atlas.js';
-import { InstanceWriter, createActors } from './actors.js';
+import { InstanceWriter, createActors, setLookTarget } from './actors.js';
 import { sampleCamera, scrollToProgress } from './journey.js';
+import { EYE_HEIGHT, createPlayer, stepPlayer } from './explore.js';
 import { computeLight } from './light.js';
 import { B, DEF, SOLID } from './blocks.js';
 import { SLAB, meshWorld } from './mesh.js';
@@ -63,7 +64,7 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
 /** Creates the world renderer. Returns null when WebGL 2 is not available. */
-export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep } = {}) {
+export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent } = {}) {
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance', depth: true });
   if (!gl) return null;
 
@@ -395,6 +396,45 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
   };
 
+  // ---- free roam: walk anywhere in the world with the keyboard, mouse or touch controls
+  let exploring = false;
+  let player = null;
+  let blend = 1;
+  let blendFrom = null;
+  const exIn = { fx: 0, fz: 0, jump: false, sprint: false };
+  const keys = new Set();
+  const syncKeys = () => {
+    exIn.fx = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0) + touchMove.fx;
+    exIn.fz = (keys.has('KeyW') || keys.has('ArrowUp') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') ? 1 : 0) + touchMove.fz;
+    exIn.sprint = keys.has('ShiftLeft') || keys.has('ShiftRight');
+    exIn.jump = keys.has('Space') || touchMove.jump;
+  };
+  const touchMove = { fx: 0, fz: 0, jump: false };
+  const onKeyDown = (e) => {
+    if (!exploring) return;
+    if (e.code === 'Escape') return;
+    if (/^(Key[WASD]|Arrow.*|Space|Shift.*)$/.test(e.code)) {
+      e.preventDefault();
+      keys.add(e.code);
+      syncKeys();
+      schedule();
+    }
+    if (/^Digit[1-4]$/.test(e.code)) hotbar = Number(e.code.slice(5)) - 1;
+  };
+  const onKeyUp = (e) => {
+    if (keys.delete(e.code)) syncKeys();
+  };
+  const onMouseMove = (e) => {
+    if (!exploring || document.pointerLockElement !== canvas) return;
+    player.yaw += e.movementX * 0.0022;
+    player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - e.movementY * 0.0022));
+  };
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
+  const HOTBAR = [B.PLANKS, B.COBBLE, B.GLASS, B.LAMP];
+  let hotbar = 0;
+
   let pickCam = null;
   let simTime = 0;
   let last = performance.now();
@@ -433,9 +473,34 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const fwdX = Math.sin(cam.yaw);
       const fwdZ = Math.cos(cam.yaw);
       const lurch = dive * 4;
-      const pos = [cam.x + fwdX * lurch, cam.y + bob + idle, cam.z + fwdZ * lurch];
-      const yaw = cam.yaw + px * 0.05 + sway;
-      const pitch = cam.pitch - py * 0.025 + Math.sin(walk) * 0.004 * bobAmp;
+      let pos = [cam.x + fwdX * lurch, cam.y + bob + idle, cam.z + fwdZ * lurch];
+      let yaw = cam.yaw + px * 0.05 + sway;
+      let pitch = cam.pitch - py * 0.025 + Math.sin(walk) * 0.004 * bobAmp;
+      if (exploring && player) {
+        const evt = stepPlayer(player, w.meta.grid, exIn, dt);
+        if (evt) onEvent?.(evt);
+        canvas.dataset.pos = `${player.x.toFixed(1)},${player.y.toFixed(1)},${player.z.toFixed(1)}`;
+        const sp = Math.hypot(player.vx, player.vz);
+        if (player.onGround) walk += sp * dt * 1.6;
+        bobAmp += ((player.onGround ? Math.min(1, sp / 4) : 0) - bobAmp) * Math.min(1, dt * 8);
+        const stepNo = Math.floor(walk / Math.PI);
+        if (stepNo !== lastStep) {
+          lastStep = stepNo;
+          if (bobAmp > 0.3) onStep?.(groundOf(w.meta.grid.get(Math.floor(player.x), Math.floor(player.y) - 1, Math.floor(player.z))));
+        }
+        pos = [player.x, player.y + EYE_HEIGHT + Math.sin(walk) * 0.06 * bobAmp, player.z];
+        yaw = player.yaw;
+        pitch = player.pitch;
+        blend = 0;
+        blendFrom = { pos: pos.slice(), yaw, pitch };
+      } else if (blend < 1 && blendFrom) {
+        // easing back onto the scroll path after exploring
+        blend = Math.min(1, blend + dt / 0.9);
+        const k = blend * blend * (3 - 2 * blend);
+        pos = pos.map((v, i) => blendFrom.pos[i] + (v - blendFrom.pos[i]) * k);
+        yaw = blendFrom.yaw + (yaw - blendFrom.yaw) * k;
+        pitch = blendFrom.pitch + (pitch - blendFrom.pitch) * k;
+      }
       const aspect = width / height;
       const fovy = ((aspect < 1 ? 80 : 64) + dive * 30) * (Math.PI / 180);
       const f = [Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)];
@@ -499,12 +564,20 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
 
       // characters
       writer.reset();
+      setLookTarget(pos[0], pos[1], pos[2]);
       for (const actor of w.actors) actor.draw(simTime, writer);
       for (let i = w.broken.length - 1; i >= 0; i--) {
         const b = w.broken[i];
         if (simTime >= b.at) {
+          const inBody = exploring && player && b.id && Math.abs(b.x + 0.5 - player.x) < 1 && Math.abs(b.z + 0.5 - player.z) < 1 && b.y >= Math.floor(player.y) - 1 && b.y <= Math.floor(player.y) + 2;
+          if (inBody) {
+            b.at = simTime + 2;
+            continue;
+          }
           w.broken.splice(i, 1);
-          if (!w.meta.grid.get(b.x, b.y, b.z)) touch(w, b.x, b.y, b.z, b.id);
+          if (!b.id) {
+            if (w.meta.grid.get(b.x, b.y, b.z)) touch(w, b.x, b.y, b.z, 0);
+          } else if (!w.meta.grid.get(b.x, b.y, b.z)) touch(w, b.x, b.y, b.z, b.id);
         }
       }
       for (let i = debris.length - 1; i >= 0; i--) {
@@ -686,6 +759,72 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const sy = (0.5 - (clip[1] / clip[3]) * 0.5) * window.innerHeight;
       return { name: best.name, line: best.line, kind: best.kind, x: sx, y: sy };
     },
+    /** Free roam: leave the scroll path and walk the world. */
+    setExplore(on) {
+      const w = worlds[current];
+      if (on === exploring || !w) return;
+      exploring = on;
+      keys.clear();
+      touchMove.fx = touchMove.fz = 0;
+      touchMove.jump = false;
+      syncKeys();
+      if (on) {
+        sampleCamera(w.meta.stops, progress, cam);
+        player = createPlayer(cam.x, cam.y - EYE_HEIGHT + 0.05, cam.z, cam.yaw, cam.pitch);
+        canvas.dataset.explore = 'on';
+      } else {
+        delete canvas.dataset.explore;
+        if (document.pointerLockElement === canvas) document.exitPointerLock();
+      }
+      dirty = true;
+      schedule();
+    },
+    get exploring() {
+      return exploring;
+    },
+    lockPointer() {
+      canvas.requestPointerLock?.();
+    },
+    moveInput(fx, fz) {
+      touchMove.fx = fx;
+      touchMove.fz = fz;
+      syncKeys();
+    },
+    jumpInput(on) {
+      touchMove.jump = on;
+      syncKeys();
+    },
+    lookBy(dx, dy) {
+      if (!player) return;
+      player.yaw += dx;
+      player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy));
+    },
+    /** Puts the selected block against the face under the crosshair. */
+    place(clientX = window.innerWidth / 2, clientY = window.innerHeight / 2) {
+      const w = worlds[current];
+      if (!w || !pickCam) return false;
+      const nx = (clientX / window.innerWidth) * 2 - 1;
+      const ny = 1 - (clientY / window.innerHeight) * 2;
+      const { pos, r, u, f, tx, ty } = pickCam;
+      const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
+      let prev = null;
+      for (let t = 0.3; t < 8; t += 0.04) {
+        const c = [Math.floor(pos[0] + d[0] * t), Math.floor(pos[1] + d[1] * t), Math.floor(pos[2] + d[2] * t)];
+        if (SOLID[w.meta.grid.get(...c)]) {
+          if (!prev) return false;
+          const inBody = player && Math.abs(prev[0] + 0.5 - player.x) < 0.8 && Math.abs(prev[2] + 0.5 - player.z) < 0.8 && prev[1] >= Math.floor(player.y) - 1 && prev[1] <= Math.floor(player.y) + 1;
+          if (inBody) return false;
+          touch(w, prev[0], prev[1], prev[2], HOTBAR[hotbar]);
+          w.broken.push({ x: prev[0], y: prev[1], z: prev[2], id: 0, at: simTime + 45 });
+          return true;
+        }
+        if (!prev || prev[0] !== c[0] || prev[1] !== c[1] || prev[2] !== c[2]) prev = c;
+      }
+      return false;
+    },
+    get hotbar() {
+      return hotbar;
+    },
     /** Digs out the block under a screen point (within reach). Returns its name or null. */
     mine(clientX, clientY) {
       const w = worlds[current];
@@ -721,6 +860,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       cancelAnimationFrame(raf);
       clearTimeout(building);
       window.removeEventListener('scroll', readScroll);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
       ro?.disconnect();

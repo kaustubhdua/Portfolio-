@@ -38,4 +38,25 @@ for (const name of ['overworld', 'nether']) {
   ok(`${name}: block light spreads from lamps and lava`, lit > 5000);
   if (name === 'overworld') ok('overworld: sunlight reaches the road', light.sky[w.grid.idx(32, 14, 70)] === 15);
 }
+
+// free-roam physics
+import { createPlayer, stepPlayer } from '../src/lib/voxel/explore.js';
+for (const name of ['overworld', 'nether']) {
+  const w = buildWorld(name);
+  const s0 = w.stops[0];
+  const p = createPlayer(s0.x, s0.y - 1.62 + 0.5, s0.z, 0);
+  for (let i = 0; i < 120; i++) stepPlayer(p, w.grid, { fx: 0, fz: 0 }, 1 / 60);
+  ok(`${name}: a player dropped near the start lands on the ground`, p.onGround && Math.abs(p.y - (s0.y - 1.62)) < 0.05, `y=${p.y}`);
+  const startZ = p.z;
+  for (let i = 0; i < 300; i++) stepPlayer(p, w.grid, { fx: 0, fz: 1 }, 1 / 60);
+  ok(`${name}: walking forward moves along the road`, p.z > startZ + 10, `z=${p.z}`);
+  // run sideways for a long time: the player must stay inside the world and never inside a block
+  p.yaw = Math.PI / 2;
+  let inside = 0;
+  for (let i = 0; i < 1500; i++) {
+    stepPlayer(p, w.grid, { fx: 0, fz: 1, sprint: true, jump: i % 90 === 0 }, 1 / 60);
+    if (SOLID[w.grid.get(Math.floor(p.x), Math.floor(p.y + 0.5), Math.floor(p.z))]) inside++;
+  }
+  ok(`${name}: running into walls never puts the player inside a block`, inside === 0 && p.x > 0 && p.x < w.grid.w, `inside=${inside} x=${p.x}`);
+}
 process.exit(failed ? 1 : 0);

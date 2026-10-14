@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import Loader from './components/Loader.jsx';
 import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
@@ -6,6 +6,7 @@ import Hero from './components/Hero.jsx';
 import WorldBackdrop from './components/WorldBackdrop.jsx';
 import FallbackBackdrop from './components/FallbackBackdrop.jsx';
 import CommandPalette from './components/CommandPalette.jsx';
+import ExploreHud from './components/ExploreHud.jsx';
 import Stats from './components/Stats.jsx';
 import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
@@ -21,6 +22,7 @@ import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
 import { WorldContext, useTheme } from './hooks/useTheme.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
+import { getExploreApi, getMode, subscribeMode } from './lib/voxel/travel.js';
 import { setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
 
 // Rarely needed on first paint, so they ship as separate chunks.
@@ -50,6 +52,24 @@ export default function App() {
   const [theme, setTheme] = useTheme();
   const [trip, setTrip] = useState(null); // the world being travelled to, while the portal animation runs
   const [announce, setAnnounce] = useState('');
+  // Free roam: the text disappears and the visitor walks the 3D world.
+  const worldMode = useSyncExternalStore(subscribeMode, getMode);
+  const [exploring, setExploring] = useState(false);
+  const enterExplore = useCallback(() => {
+    const api = getExploreApi();
+    if (!api) return;
+    api.enter();
+    document.documentElement.dataset.explore = 'on';
+    setExploring(true);
+    setAnnounce('Exploring the world freely. Press Escape to return to the page.');
+  }, []);
+  const leaveExplore = useCallback(() => {
+    getExploreApi()?.leave();
+    delete document.documentElement.dataset.explore;
+    setExploring(false);
+    setAnnounce('Back on the page.');
+  }, []);
+  const canExplore = worldMode === 'on' && !trip && !intro;
   // "Quick view" turns the 3D scenery off for visitors who just want the content.
   const [quick, setQuick] = useState(() => {
     try {
@@ -198,13 +218,14 @@ export default function App() {
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
-      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} />
+      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} onExplore={canExplore ? enterExplore : null} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
+      {exploring && <ExploreHud onExit={leaveExplore} />}
       <WorldBackdrop world={theme} sections={ids} reduced={reduced} disabled={quick} />
       <FallbackBackdrop world={theme} sections={ids} active={active} />
       <main>
-        <Hero ready={!intro} onNavigate={navigate} theme={theme} quick={quick} onQuick={toggleQuick} />
+        <Hero ready={!intro} onNavigate={navigate} theme={theme} quick={quick} onQuick={toggleQuick} canExplore={canExplore} onExplore={enterExplore} />
         <Stats />
         <PortalRule />
         <Profile />

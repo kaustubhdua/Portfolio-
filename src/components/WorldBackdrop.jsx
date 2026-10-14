@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { blockSound, mobSound, stepSound } from '../lib/audio.js';
-import { onDive, setLoad, setMode } from '../lib/voxel/travel.js';
+import { blockSound, mobSound, placeSound, stepSound } from '../lib/audio.js';
+import { onDive, setExploreApi, setLoad, setMode } from '../lib/voxel/travel.js';
 
 // Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
 const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel,.card,.stat,.chat,.hud,.biome-picker,[role="dialog"]';
@@ -10,7 +10,7 @@ const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel
  * (day) or across the fortress bridge (night). Click any creature in empty space to poke it.
  * The engine loads lazily; without WebGL 2 the page keeps its 2D scenes.
  */
-export default function WorldBackdrop({ world, sections, reduced, disabled = false }) {
+export default function WorldBackdrop({ world, sections, reduced, disabled = false, explore = false }) {
   const canvasRef = useRef(null);
   const rendererRef = useRef(null);
   const worldRef = useRef(world);
@@ -50,6 +50,22 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         rendererRef.current = renderer;
         renderer.setWorld(worldRef.current);
         renderer.start();
+        setExploreApi({
+          enter: () => {
+            renderer.setExplore(true);
+            if (!window.matchMedia('(pointer: coarse)').matches) renderer.lockPointer();
+          },
+          leave: () => renderer.setExplore(false),
+          moveInput: renderer.moveInput,
+          jumpInput: renderer.jumpInput,
+          lookBy: renderer.lookBy,
+          select: () => {},
+          placeBlock: () => renderer.place(),
+          tap: (x, y) => {
+            const hit = renderer.pick(x, y, true);
+            if (!hit && renderer.mine(x, y)) blockSound('stone');
+          },
+        });
         const stopDive = onDive((v) => renderer.setDive(v));
         renderer.ready.then(() => {
           if (!cancelled) setMode('on');
@@ -66,7 +82,30 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
             root.classList.toggle('mob-hover', hovering);
           }
         };
+        const onContext = (e) => {
+          if (!renderer.exploring) return;
+          e.preventDefault();
+          if (renderer.place()) placeSound();
+        };
         const onClick = (e) => {
+          if (renderer.exploring) {
+            // while exploring the crosshair is the centre of the screen; touch uses its own tap handler
+            if (e.target.closest?.('.explore-hud button')) return;
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+            if (!document.pointerLockElement) {
+              renderer.lockPointer();
+              return;
+            }
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            const hit = renderer.pick(cx, cy, true);
+            if (hit) mobSound(hit.name, hit.kind);
+            else {
+              const ground = renderer.mine(cx, cy);
+              if (ground) blockSound(ground);
+            }
+            return;
+          }
           if (!free(e) || window.getSelection()?.toString()) return;
           const hit = renderer.pick(e.clientX, e.clientY, true);
           if (!hit) {
@@ -81,10 +120,12 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         };
         window.addEventListener('pointermove', onMove, { passive: true });
         window.addEventListener('click', onClick);
+        window.addEventListener('contextmenu', onContext);
         cleanup = () => {
           stopDive();
           window.removeEventListener('pointermove', onMove);
           window.removeEventListener('click', onClick);
+          window.removeEventListener('contextmenu', onContext);
           root.classList.remove('mob-hover');
           clearTimeout(bubbleTimer);
         };

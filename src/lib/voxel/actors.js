@@ -12,6 +12,15 @@ const hex = (h) => [((h >> 16) & 255) / 255, ((h >> 8) & 255) / 255, (h & 255) /
 const lerp = (a, b, t) => a + (b - a) * t;
 
 let cur = null; // the actor being drawn, so helpers can apply its click reaction
+let stillNow = false; // set by pingPong while a walker is standing at the end of its beat
+const look = { x: 0, y: 0, z: 0 };
+/** Where the visitor's eyes are, so people nearby turn their heads to watch. */
+export const setLookTarget = (x, y, z) => {
+  look.x = x;
+  look.y = y;
+  look.z = z;
+};
+const headPart = {};
 
 // model = BaseYaw * T(pivot) * Ry * Rz * Rx * T(centre) * Scale
 const R = new Float64Array(9);
@@ -89,7 +98,36 @@ function baseOf(x, y, z, yaw) {
 }
 
 function drawParts(push, parts, base, phase, amp, hammer = 0, extra) {
+  if (stillNow) amp *= 0;
+  // heads turn toward the visitor when close, and glance about when nobody is near
+  let turn = 0;
+  if (cur && parts.some((q) => q.head)) {
+    const yaw = Math.atan2(base.s, base.c);
+    const dx = look.x - base.x;
+    const dz = look.z - base.z;
+    const dist = Math.hypot(dx, dz);
+    let rel = Math.atan2(dx, dz) - yaw;
+    rel = Math.atan2(Math.sin(rel), Math.cos(rel));
+    let want = Math.sin(cur.t * 0.7 + base.x * 3.1) * 0.35 * (stillNow ? 1.6 : 0.4);
+    if (dist < 11 && Math.abs(rel) < 2.1) want = Math.max(-0.95, Math.min(0.95, rel)) * Math.min(1, (11 - dist) / 4);
+    cur.headYaw = lerp(cur.headYaw ?? 0, want, 0.1);
+    turn = cur.headYaw;
+  }
+  stillNow = false;
   for (const part of parts) {
+    if (turn && part.head) {
+      const ca = Math.cos(turn);
+      const sa = Math.sin(turn);
+      const rx = part.p[0];
+      const rz = part.p[2];
+      headPart.s = part.s;
+      headPart.c = part.c;
+      headPart.col = part.col;
+      headPart.glow = part.glow;
+      headPart.p = [rx * ca + rz * sa, part.p[1], -rx * sa + rz * ca];
+      pushPart(push, base, headPart, 0, turn, 0);
+      continue;
+    }
     let a = 0;
     if (part.role === 'leg') a = part.swing * Math.sin(phase) * amp;
     else if (part.role === 'arm') a = part.swing * Math.sin(phase) * amp * 0.8 - hammer * (part.swing > 0 ? 1.6 : 0);
@@ -127,6 +165,7 @@ function humanoidParts({ skin, top, legs, hair, hat, apron, glowEyes, eye = [0.0
   if (scarf) parts.push(box([9, 2.4, 5], [0, 24.4, 0], scarf));
   if (pack) parts.push(box([6, 8, 3], [0, 18, -3.4], pack));
   if (beard) parts.push(box([6, 5, 1.2], [0, 24.8, 4.3], beard));
+  for (const q of parts) if (!q.role && q.p[1] >= 24.6 * U && q.s[1] < 12 * U) q.head = true;
   return parts;
 }
 
@@ -258,9 +297,21 @@ const skimmerParts = () => [
 
 /* ------------------------------------------------------------------ registry */
 
+// Walk to one end of the beat, stand and look around for a couple of seconds, then walk back.
+const PAUSE_S = 2.4;
 const pingPong = (t, speed, len, offset) => {
-  const u = (((t * speed + offset) % (2 * len)) + 2 * len) % (2 * len);
-  return u < len ? { d: u, dir: 1 } : { d: 2 * len - u, dir: -1 };
+  const pause = PAUSE_S * speed;
+  const cycle = 2 * (len + pause);
+  const u = (((t * speed + offset) % cycle) + cycle) % cycle;
+  stillNow = false;
+  if (u < len) return { d: u, dir: 1 };
+  if (u < len + pause) {
+    stillNow = true;
+    return { d: len, dir: 1 };
+  }
+  if (u < 2 * len + pause) return { d: 2 * len + pause - u, dir: -1 };
+  stillNow = true;
+  return { d: 0, dir: -1 };
 };
 const smooth = (x) => x * x * (3 - 2 * x);
 
