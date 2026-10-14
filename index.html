@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Kaustubh Dua · ECM student & software developer</title>
+    <meta
+      name="description"
+      content="Portfolio of Kaustubh Dua, an Electronics & Computer Engineering (ECM) student at JIIT Noida building AI, data and systems products. Explore the Nether."
+    />
+    <meta name="theme-color" content="#0b0610" />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      /* Apply the saved world before first paint so day mode never flashes dark. */
+      try {
+        if (localStorage.getItem("portfolio-world") === "overworld") document.documentElement.dataset.theme = "overworld";
+      } catch (e) {}
+      /* Preload the sky of whichever world will show first. */
+      var sky = document.createElement("link");
+      sky.rel = "preload";
+      sky.as = "image";
+      sky.href = "./img/hero/" + (document.documentElement.dataset.theme === "overworld" ? "meadow" : "crimson") + "/sky.png";
+      document.head.appendChild(sky);
+    </script>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="%SITE_URL%/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kaustubh Dua · ECM student & software developer" />
+    <meta property="og:description" content="AI, data and systems products from a Minecraft Nether-themed portfolio." />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kaustubh Dua · ECM student & software developer" />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+    <link rel="preload" href="./fonts/nether-pixel.woff" as="font" type="font/woff" crossorigin />
+    <!--@STYLES-->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Kaustubh Dua",
+        "jobTitle": "Software developer and Electronics & Computer Engineering student",
+        "url": "%SITE_URL%/",
+        "email": "mailto:kaustubhdua1991@gmail.com",
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Jaypee Institute of Information Technology, Noida" },
+        "affiliation": { "@type": "CollegeOrUniversity", "name": "Jaypee Institute of Information Technology, Noida" },
+        "knowsAbout": ["Python", "TypeScript", "React", "FastAPI", "PostgreSQL", "OR-Tools", "local AI inference"],
+        "sameAs": ["https://github.com/kaustubhdua", "https://www.linkedin.com/in/kaustubh-dua-2b5a76416"]
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Instant loading screen: painted with the stylesheet, before any JavaScript runs.
+         The app removes it as soon as it mounts, so it never delays the real content. -->
+    <div id="boot" class="loader loader-world loader-nether boot" role="status">
+      <div class="loader-cube" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="loader-title pixel">Loading world</p>
+      <p class="loader-status pixel">Loading...</p>
+      <div class="loader-bar" aria-hidden="true"><span></span></div>
+    </div>
+    <script>
+      setTimeout(function () {
+        var s = document.querySelector('#boot .loader-status');
+        if (s) s.textContent = 'Still loading... check your connection';
+      }, 8000);
+    </script>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding:2rem;color:#f1e7ea;background:#0b0610;font-family:sans-serif">
+        Kaustubh Dua, ECM student at JIIT Noida. This portfolio needs JavaScript. GitHub:
+        <a href="https://github.com/kaustubhdua" style="color:#ffb347">github.com/kaustubhdua</a>
+      </p>
+    </noscript>
+    <!--@SCRIPTS-->
+  </body>
+</html>

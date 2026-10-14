@@ -1,0 +1,240 @@
+/* The 3D world sits behind everything; these rules only apply once it is running. */
+.world-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: #0b0610;
+  image-rendering: pixelated;
+}
+
+html[data-threed='on'] .world-canvas { display: block; }
+html:is([data-threed='on'], [data-threed='off']) body,
+html:is([data-threed='on'], [data-threed='off']) .hero { background: transparent; }
+html:is([data-threed='on'], [data-threed='off']) .hero .stage,
+html:is([data-threed='on'], [data-threed='off']) .hero .biome-picker { display: none; }
+html:is([data-threed='on'], [data-threed='off']) .section { background: none; }
+
+html:is([data-threed='on'], [data-threed='off']) .hero-scrim {
+  background: radial-gradient(ellipse 70% 60% at 50% 46%, rgba(8, 4, 12, 0.62), rgba(8, 4, 12, 0.18) 70%, transparent);
+}
+html:is([data-threed='on'], [data-threed='off'])[data-theme='overworld'] .hero-scrim {
+  background: radial-gradient(ellipse 70% 60% at 50% 46%, rgba(10, 24, 44, 0.5), rgba(10, 24, 44, 0.12) 70%, transparent);
+}
+
+html:is([data-threed='on'], [data-threed='off']) .section-head,
+html:is([data-threed='on'], [data-threed='off']) .glance .stats {
+  background: color-mix(in srgb, var(--obsidian) 74%, transparent);
+  border: 3px solid var(--edge);
+  box-shadow: 0 0 0 2px #000;
+  padding: 1.1rem clamp(1rem, 3vw, 1.75rem);
+}
+html:is([data-threed='on'], [data-threed='off']) .glance .stats { padding: 0.75rem; }
+html:is([data-threed='on'], [data-threed='off']) .sub-title {
+  display: table;
+  margin-inline: auto;
+  padding: 0.5rem 1rem;
+  background: color-mix(in srgb, var(--obsidian) 74%, transparent);
+  border: 3px solid var(--edge);
+}
+html:is([data-threed='on'], [data-threed='off']) .portal-rule { opacity: 0.85; }
+html:is([data-threed='on'], [data-threed='off']) .footer { background: color-mix(in srgb, var(--obsidian) 88%, transparent); }
+
+/* Poking creatures */
+html.mob-hover body { cursor: pointer; }
+.mob-bubble {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  gap: 0.25rem;
+  width: max-content;
+  max-width: min(18rem, calc(100vw - 2rem));
+  padding: 0.55rem 0.8rem;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  color: #fff;
+  background: rgba(16, 10, 22, 0.92);
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #7a7284, 0 6px 0 rgba(0, 0, 0, 0.35);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  animation: bubble-pop 3.2s ease both;
+}
+.mob-bubble b { color: #ffd45a; font-size: 0.6rem; line-height: 1.5; }
+.mob-bubble.hostile b { color: #ff8a4a; }
+@keyframes bubble-pop {
+  0% { opacity: 0; transform: translate(-50%, -80%) scale(0.85); }
+  8% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -112%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mob-bubble { animation: none; }
+}
+
+.fallback-backdrop { position: fixed; inset: 0; z-index: -1; background: #0b0610; overflow: hidden; }
+.fallback-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  animation: poster-in 0.9s ease both, poster-drift 24s ease-in-out infinite alternate;
+}
+@keyframes poster-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes poster-drift { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.09) translate(-1.2%, -0.8%); } }
+@media (prefers-reduced-motion: reduce) { .fallback-layer { animation: poster-in 0.2s ease both; } }
+
+/* Command palette (Ctrl/Cmd + K) */
+.palette { width: min(34rem, calc(100vw - 2rem)); padding: 0; margin: 12vh auto auto; color: var(--text); background: transparent; border: 0; }
+.palette::backdrop { background: rgba(5, 2, 10, 0.7); }
+.palette-box { background: var(--obsidian); border: 3px solid var(--edge); box-shadow: 0 0 0 2px #000, 0 18px 50px rgba(0, 0, 0, 0.6); }
+.palette-input { width: 100%; padding: 0.9rem 1rem; font: inherit; color: var(--text); background: #000; border: 0; border-bottom: 3px solid var(--edge); outline: none; }
+.palette-input:focus-visible { box-shadow: inset 0 0 0 2px var(--amber); }
+.palette-list { max-height: min(22rem, 52vh); margin: 0; padding: 0.35rem; overflow-y: auto; list-style: none; }
+.palette-list li { display: flex; gap: 0.75rem; align-items: baseline; padding: 0.55rem 0.65rem; cursor: pointer; font-size: 0.92rem; }
+.palette-list li.is-on { background: color-mix(in srgb, var(--amber) 22%, transparent); outline: 2px solid var(--amber); outline-offset: -2px; }
+.palette-group { flex: none; min-width: 5.2rem; font-size: 0.55rem; color: var(--amber); }
+.palette-empty { color: var(--muted); cursor: default !important; }
+.palette-foot { margin: 0; padding: 0.5rem 0.9rem; font-size: 0.78rem; color: var(--muted); border-top: 2px solid var(--edge); }
+.chest-note { min-height: 1.4em; margin-top: 0.6rem; font-size: 0.85rem; color: var(--muted); text-align: center; }
+
+/* Printing the page gives a clean text version, without the game scenery */
+@media print {
+  .world-canvas, .fallback-backdrop, .nav, .hud, .chat, .loader, .travel, .warp, .skip-link, .world-canvas + *, .mob-bubble { display: none !important; }
+  html, body, .section, .hero { background: #fff !important; color: #000 !important; }
+  .hero { min-height: 0 !important; padding: 0 !important; }
+  .stage, .hero-scrim, .biome-picker, .portal-rule { display: none !important; }
+  .panel, .card { box-shadow: none !important; background: #fff !important; border: 1px solid #999 !important; color: #000 !important; }
+  a { color: #000 !important; }
+}
+
+/* Quick view: no scenery at all, just the content on a plain background. */
+html[data-quick='on'] .fallback-backdrop,
+html[data-quick='on'] .world-canvas { display: none; }
+.btn-quiet {
+  background: transparent;
+  border: 3px solid var(--edge);
+  color: var(--muted);
+}
+.btn-quiet:hover,
+.btn-quiet:focus-visible,
+.btn-quiet[aria-pressed='true'] { color: var(--text); border-color: var(--gold); }
+
+/* ---------------------------------------------------------------- free roam */
+html[data-explore='on'] { overflow: hidden; }
+html[data-explore='on'] #root > *:not(.world-canvas):not(.explore-hud):not(.fallback-backdrop) {
+  visibility: hidden;
+  pointer-events: none;
+}
+.explore-hud {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  font-family: var(--pixel, inherit);
+}
+.explore-hud > * { pointer-events: auto; }
+.explore-exit {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.7rem;
+  color: var(--text, #fff);
+  background: rgba(10, 6, 14, 0.72);
+  border: 3px solid var(--edge, #555);
+  cursor: pointer;
+}
+.explore-exit span { margin-left: 0.5rem; opacity: 0.6; }
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  translate: -50% -50%;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+.crosshair::before, .crosshair::after { content: ''; position: absolute; background: #fff; }
+.crosshair::before { left: 10px; top: 0; width: 2px; height: 22px; }
+.crosshair::after { top: 10px; left: 0; width: 22px; height: 2px; }
+.explore-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 5.4rem;
+  translate: -50% 0;
+  max-width: 92vw;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.62rem;
+  line-height: 1.6;
+  text-align: center;
+  color: #fff;
+  background: rgba(10, 6, 14, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  animation: explore-fade 9s forwards;
+}
+@keyframes explore-fade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
+.hotbar {
+  position: absolute;
+  left: 50%;
+  bottom: max(0.8rem, env(safe-area-inset-bottom));
+  translate: -50% 0;
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 3px;
+  list-style: none;
+  background: rgba(30, 30, 30, 0.8);
+  border: 3px solid #1a1a1a;
+}
+.hotbar-slot {
+  position: relative;
+  width: 3.1rem;
+  height: 3.1rem;
+  margin: 0;
+  padding: 0;
+  border: 3px solid #555;
+  background: #8b8b8b;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+.hotbar-slot span { position: absolute; left: 3px; top: 1px; font-size: 0.6rem; color: #fff; text-shadow: 1px 1px 0 #000; }
+.hotbar-slot.is-on { border-color: #fff; outline: 3px solid #1a1a1a; z-index: 1; }
+.slot-planks { background: repeating-linear-gradient(0deg, #b8945a 0 7px, #9c7a45 7px 9px); }
+.slot-cobble { background: radial-gradient(circle at 30% 30%, #9a9a9a 0 22%, transparent 24%), radial-gradient(circle at 70% 65%, #777 0 26%, transparent 28%), #858585; }
+.slot-glass { background: linear-gradient(135deg, rgba(190, 225, 245, 0.85), rgba(140, 190, 220, 0.55)); }
+.slot-lamp { background: radial-gradient(circle, #fff3b0 0 30%, #e8b84a 70%); box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6); }
+.look-area { position: absolute; inset: 0 0 0 38%; touch-action: none; pointer-events: auto; }
+.stick {
+  position: absolute;
+  left: max(1.4rem, env(safe-area-inset-left));
+  bottom: 6rem;
+  width: 8.4rem;
+  height: 8.4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  touch-action: none;
+  display: grid;
+  place-items: center;
+}
+.stick-knob { width: 3.4rem; height: 3.4rem; border-radius: 50%; background: rgba(255, 255, 255, 0.45); border: 3px solid rgba(255, 255, 255, 0.7); }
+.ex-btn {
+  position: absolute;
+  right: 1.2rem;
+  width: 5rem;
+  height: 3.2rem;
+  font-size: 0.62rem;
+  color: #fff;
+  background: rgba(10, 6, 14, 0.7);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  touch-action: none;
+}
+.ex-jump { bottom: 9.5rem; }
+.ex-place { bottom: 5.6rem; }
+@media (prefers-reduced-motion: reduce) { .explore-hint { animation: none; } }

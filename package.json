@@ -1,0 +1,34 @@
+{
+  "name": "nether-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Minecraft Nether themed developer portfolio for Kaustubh Dua",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/preview.mjs",
+    "lint": "eslint .",
+    "check": "node scripts/check.mjs",
+    "assets": "node scripts/generate-assets.mjs && node scripts/generate-textures.mjs",
+    "verify": "npm run lint && npm run build && npm run check",
+    "test:e2e": "node tests/e2e.mjs",
+    "test:world": "node tests/world.mjs",
+    "audit": "node scripts/audit.mjs",
+    "check:links": "node scripts/links.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "eslint": "^10.1.0",
+    "playwright": "^1.50.0",
+    "wait-on": "^8.0.0"
+  }
+}

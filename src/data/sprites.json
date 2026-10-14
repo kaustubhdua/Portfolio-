@@ -1,0 +1,260 @@
+{
+ "palette": {
+  "k": "#0b0610",
+  "K": "#1b1520",
+  "g": "#6b6270",
+  "G": "#a698a0",
+  "w": "#f1e7ea",
+  "r": "#c22f43",
+  "R": "#7a1220",
+  "o": "#ff6a1a",
+  "a": "#ffb347",
+  "y": "#ffd27a",
+  "p": "#a45cff",
+  "P": "#5a1fb0",
+  "b": "#3d3441",
+  "n": "#a06a3a",
+  "N": "#5a381c",
+  "l": "#5fd35f",
+  "L": "#2f8f3f",
+  "e": "#0f3a3a",
+  "t": "#1f6f66",
+  "h": "#3a1f12",
+  "s": "#c98a62",
+  "c": "#4ad3d0",
+  "m": "#7fd24a",
+  "M": "#3f8f2c",
+  "W": "#dff4ff",
+  "A": "#ffcf5a"
+ },
+ "sprites": {
+  "torch": [
+   "...aa...",
+   "..ayya..",
+   "..ayya..",
+   "...oo...",
+   "...nn...",
+   "...nn...",
+   "...nn...",
+   "...NN..."
+  ],
+  "head": [
+   "..PPPP..",
+   ".PppppP.",
+   "PppppppP",
+   "PpkkkkpP",
+   "PkakkakP",
+   "PpkkkkpP",
+   ".PpkkpP.",
+   "..PPPP.."
+  ],
+  "chest": [
+   ".NNNNNN.",
+   "NnnnnnnN",
+   "NnnnnnnN",
+   "NNNaaNNN",
+   "NnnaannN",
+   "NnnnnnnN",
+   "NnnnnnnN",
+   ".NNNNNN."
+  ],
+  "anvil": [
+   "gggggggg",
+   "GGGGGGgg",
+   ".GGGGGg.",
+   "..gggg..",
+   "..gggg..",
+   ".gggggg.",
+   "gggggggg",
+   "kkkkkkkk"
+  ],
+  "star": [
+   "...yy...",
+   "...yy...",
+   "yyyyyyyy",
+   ".yyyyyy.",
+   "..yyyy..",
+   ".yyyyyy.",
+   ".yy..yy.",
+   "yy....yy"
+  ],
+  "map": [
+   "NNNNNNNN",
+   "NyyyyyyN",
+   "NyRRyyyN",
+   "NyyyyoyN",
+   "NyGyyyyN",
+   "NyGGyyyN",
+   "NyyyyyyN",
+   "NNNNNNNN"
+  ],
+  "ender": [
+   ".kkkkkk.",
+   "keeeeeek",
+   "kettttek",
+   "keeppeek",
+   "keeppeek",
+   "kettttek",
+   "keeeeeek",
+   ".kkkkkk."
+  ],
+  "sprout": [
+   ".l....l.",
+   "lLl..lLl",
+   ".lLllLl.",
+   "..lLLl..",
+   "...LL...",
+   "...LL...",
+   "nnnLLnnn",
+   "nNnnnnNn"
+  ],
+  "speech": [
+   ".wwwwww.",
+   "wwwwwwww",
+   "wkwkwkww",
+   "wwwwwwww",
+   "wkkkwwww",
+   ".wwwwww.",
+   "..ww....",
+   ".w......"
+  ],
+  "banner": [
+   "nrrrrrr.",
+   "nrrrrrrr",
+   "nrraarrr",
+   "nrraarrr",
+   "nrrrrrrr",
+   "nrr.rr..",
+   "n.......",
+   "n......."
+  ],
+  "bin": [
+   "..gggg..",
+   "gggggggg",
+   ".gGgGgG.",
+   ".gGgGgG.",
+   ".gGgGgG.",
+   ".gGgGgG.",
+   ".gGgGgG.",
+   "..gggg.."
+  ],
+  "chip": [
+   ".g.g.g..",
+   "kkkkkkkk",
+   "kppppppk",
+   "gpkkkkpg",
+   "kpkaakpk",
+   "gpkkkkpg",
+   "kppppppk",
+   "kkkkkkkk"
+  ],
+  "cap": [
+   "...kk...",
+   "..kkkk..",
+   ".kkkkkk.",
+   "kkkkkkkk",
+   ".kkkkkk.",
+   "..k..a..",
+   "..k..a..",
+   "..k..aa."
+  ],
+  "shield": [
+   "bbbbbbbb",
+   "bggggggb",
+   "bggaaggb",
+   "bggaaggb",
+   ".bggggb.",
+   ".bggggb.",
+   "..bggb..",
+   "...bb..."
+  ],
+  "gear": [
+   "...gg...",
+   ".g.gg.g.",
+   "..gggg..",
+   "ggg..ggg",
+   "ggg..ggg",
+   "..gggg..",
+   ".g.gg.g.",
+   "...gg..."
+  ],
+  "rocket": [
+   "...ww...",
+   "..wrrw..",
+   "..wwww..",
+   "..wbbw..",
+   "..wwww..",
+   ".rwwwwr.",
+   ".r.oo.r.",
+   "...aa..."
+  ],
+  "wisp": [
+   "..PPPP..",
+   ".PppppP.",
+   "PppaappP",
+   "PppaappP",
+   ".PppppP.",
+   ".p.pp.p.",
+   ".p.pp.p.",
+   "..p..p.."
+  ],
+  "crawler": [
+   "..oooo..",
+   ".oaooao.",
+   "oooooooo",
+   "oRRooRRo",
+   ".oooooo.",
+   ".k.kk.k.",
+   "k..kk..k",
+   "........"
+  ],
+  "traveller": [
+   "...tt...",
+   "..tttt..",
+   ".tttttt.",
+   ".tssssst",
+   ".tskksst",
+   "..rrrr..",
+   ".tttttt.",
+   "tttttttt",
+   "tt.NN.tt",
+   ".t.tt.t.",
+   ".hh..hh.",
+   ".hh..hh."
+  ],
+  "traveller2": [
+   "...tt...",
+   "..tttt..",
+   ".tttttt.",
+   ".tssssst",
+   ".tskksst",
+   "..rrrr..",
+   ".tttttt.",
+   "tttttttt",
+   "tt.NN.tt",
+   ".t.tt.t.",
+   "..hh.hh.",
+   "hh....hh"
+  ],
+  "mossling": [
+   "...mM...",
+   "..m.m...",
+   ".MMMMMM.",
+   "MMmMMmMM",
+   "MkMMMMkM",
+   "MMMMMMMM",
+   ".MMMMMM.",
+   ".M.MM.M."
+  ],
+  "glowfly": [
+   "........",
+   ".W....W.",
+   "WW.AA.WW",
+   ".W.AA.W.",
+   "..A..A..",
+   "........",
+   "........",
+   "........"
+  ]
+ }
+}
