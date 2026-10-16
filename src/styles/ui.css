@@ -214,89 +214,6 @@
   box-shadow: 0 0 14px rgba(164, 92, 255, 0.6);
 }
 
-/* ------------------------------------------------- world-entry loader */
-
-.loader {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 1rem;
-  background: radial-gradient(circle at 50% 42%, #1c0a2e, var(--obsidian) 70%);
-  cursor: pointer;
-}
-
-.loader-portal {
-  width: 80px;
-  height: 100px;
-  background: url('img/tex/portal-tile.png') 0 0 / 128px 128px;
-  image-rendering: pixelated;
-  border: 8px solid #1b1128;
-  box-shadow: 0 0 60px rgba(164, 92, 255, 0.55), inset 0 0 20px rgba(0, 0, 0, 0.5);
-  animation: loader-swirl 3s linear infinite;
-}
-
-.loader-title {
-  font-size: clamp(0.8rem, 3vw, 1rem);
-  color: var(--text);
-}
-
-.loader-bar {
-  width: min(18rem, 70vw);
-  height: 14px;
-  padding: 2px;
-  background: #000;
-  border: 2px solid var(--edge);
-}
-
-.loader-bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(var(--gold), var(--lava));
-  transform-origin: left;
-  animation: load-fill linear forwards;
-}
-
-.loader-skip {
-  min-height: 44px;
-  padding: 0.5rem 1.25rem;
-  font-size: 0.65rem;
-  color: var(--muted);
-  background: transparent;
-  border: 2px solid var(--edge);
-}
-
-.loader-skip:hover {
-  color: var(--text);
-  border-color: var(--amber);
-}
-
-/* Pre-JS variant: an indeterminate bar, since the load time is unknown. */
-.boot {
-  cursor: progress;
-}
-
-.boot .loader-bar span {
-  width: 35%;
-  animation: boot-slide 1.1s ease-in-out infinite alternate;
-}
-
-@keyframes boot-slide {
-  from { transform: translateX(0); }
-  to { transform: translateX(185%); }
-}
-
-@keyframes loader-swirl {
-  to { background-position: 128px 128px; }
-}
-
-@keyframes load-fill {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
 }
 
 /* Soft purple vignette that pulses once when the player jumps between sections. */
@@ -550,29 +467,6 @@
   }
 }
 
-.loader-status {
-  min-height: 1.2em;
-  font-size: 0.65rem;
-  color: var(--amber);
-}
-
-.loader-tip {
-  max-width: 28rem;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--muted);
-}
-
-.loader-tip strong {
-  color: #ffff55;
-}
-
-/* Real-progress variant: the width follows the loaded hero layers instead of a timer. */
-.loader-bar span.is-live {
-  animation: none;
-  transition: transform 0.25s ease-out;
-}
 
 /* Keep the last line of the footer clear of the fixed XP bar and hotbar. */
 .footer {
@@ -611,48 +505,6 @@
   color: var(--muted);
 }
 
-/* Game-style world loading screen: tiled block texture, spinning block, real percentage. */
-.loader-world {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-    url('img/tex/dirt.png') 0 0 / 80px 80px;
-  image-rendering: pixelated;
-}
-.loader-world.loader-nether {
-  background:
-    linear-gradient(rgba(20, 0, 0, 0.5), rgba(20, 0, 0, 0.6)),
-    url('img/tex/netherrack.png') 0 0 / 80px 80px;
-}
-.loader-world .loader-title { font-size: clamp(0.8rem, 3vw, 1.05rem); color: #fff; text-shadow: 2px 2px 0 #3a3a3a; }
-.loader-world .loader-bar { width: min(20rem, 72vw); height: 10px; padding: 0; background: #000; border: 2px solid #5a5a5a; box-shadow: 0 0 0 2px #000; }
-.loader-world .loader-bar span.is-live { background: linear-gradient(#8aff6a, #3fae2a); }
-.loader-cube {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  transform-style: preserve-3d;
-  animation: cube-spin 6s linear infinite;
-  margin-bottom: 1.5rem;
-}
-.loader-cube i {
-  position: absolute;
-  inset: 0;
-  background: url('img/tex/dirt.png') center / 100% 100%;
-  image-rendering: pixelated;
-  border: 2px solid rgba(0, 0, 0, 0.35);
-}
-.loader-nether .loader-cube i { background-image: url('img/tex/netherrack.png'); }
-.loader-cube i:nth-child(1) { transform: translateZ(32px); }
-.loader-cube i:nth-child(2) { transform: rotateY(90deg) translateZ(32px); filter: brightness(0.8); }
-.loader-cube i:nth-child(3) { transform: rotateY(180deg) translateZ(32px); }
-.loader-cube i:nth-child(4) { transform: rotateY(-90deg) translateZ(32px); filter: brightness(0.8); }
-.loader-cube i:nth-child(5) { transform: rotateX(90deg) translateZ(32px); filter: brightness(1.2); }
-.loader-cube i:nth-child(6) { transform: rotateX(-90deg) translateZ(32px); filter: brightness(0.6); }
-@keyframes cube-spin {
-  from { transform: rotateX(-24deg) rotateY(0deg); }
-  to { transform: rotateX(-24deg) rotateY(360deg); }
-}
-@media (prefers-reduced-motion: reduce) { .loader-cube { animation: none; transform: rotateX(-24deg) rotateY(35deg); } }
 
 .travel-swirl {
   position: absolute;
