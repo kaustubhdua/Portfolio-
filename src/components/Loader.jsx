@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { tips } from '../data/biomes.js';
 import { getLoad, onLoad } from '../lib/voxel/travel.js';
 
 const MIN_MS = 1400;
 const MAX_MS = 9000;
+const FADE_MS = 300;
+const SEGMENTS = 20;
 const PHASES = [
   [0, 'Loading world'],
   [0.12, 'Generating terrain'],
@@ -30,7 +32,20 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
   const buttonRef = useRef(null);
   const [progress, setProgress] = useState(getLoad());
   const [world] = useState(savedWorld);
-  const [tip] = useState(() => tips[Math.floor(Math.random() * tips.length)]);
+  // Reuse the tip already painted by the static boot screen so the hand-off does not change text.
+  const [tip] = useState(
+    () => document.querySelector('#boot .loader-tip span')?.textContent || tips[Math.floor(Math.random() * tips.length)],
+  );
+  const [leaving, setLeaving] = useState(false);
+  const leftRef = useRef(false);
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+  const leave = useCallback(() => {
+    if (leftRef.current) return;
+    leftRef.current = true;
+    setLeaving(true);
+    setTimeout(() => doneRef.current(), FADE_MS);
+  }, []);
 
   useEffect(() => {
     buttonRef.current?.focus({ preventScroll: true });
@@ -40,7 +55,7 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
     const finish = () => {
       if (finished) return;
       finished = true;
-      onDone();
+      leave();
     };
     const timers = [setTimeout(finish, MAX_MS)];
     const check = (v) => {
@@ -60,7 +75,7 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
       timers.forEach(clearTimeout);
       window.removeEventListener('keydown', onKey);
     };
-  }, [onDone]);
+  }, [leave]);
 
   // Ease the shown number so it never jumps backwards or stalls visibly.
   const [shown, setShown] = useState(0);
@@ -80,16 +95,22 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
   const percent = Math.min(100, Math.floor(shown * 100));
   const phase = [...PHASES].reverse().find(([at]) => shown >= at)[1];
 
+  const filled = Math.floor(shown * SEGMENTS) / SEGMENTS;
+
   return (
-    <div className={`loader loader-world loader-${world}`} role="status" aria-live="polite" onClick={onDone}>
-      <div className="loader-cube" aria-hidden="true">
-        <i /><i /><i /><i /><i /><i />
-      </div>
-      <p className="loader-title pixel">{phase}{percent > 0 && percent < 100 ? `: ${percent}%` : ''}</p>
+    <div
+      className={`loader loader-${world}${leaving ? ' is-leaving' : ''}`}
+      role="status"
+      aria-live="polite"
+      onClick={leave}
+    >
+      <div className="loader-block" aria-hidden="true" />
+      <span className="sr-only">{phase}</span>
+      <p className="loader-title pixel" aria-hidden="true">{phase}{percent > 0 && percent < 100 ? `: ${percent}%` : ''}</p>
       <div className="loader-bar" aria-hidden="true">
-        <span className="is-live" style={{ transform: `scaleX(${shown})` }} />
+        <span className="is-live" style={{ width: `${filled * 100}%` }} />
       </div>
-      <p className="loader-tip"><strong>Did you know?</strong> {tip}</p>
+      <p className="loader-tip" aria-hidden="true"><strong>Did you know?</strong> <span>{tip}</span></p>
       <div className="loader-actions">
         <button
           type="button"
@@ -102,7 +123,7 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
         >
           Sound: {soundOn ? 'On' : 'Off'}
         </button>
-        <button ref={buttonRef} type="button" className="loader-skip pixel" onClick={onDone}>
+        <button ref={buttonRef} type="button" className="loader-skip pixel" onClick={leave}>
           Skip
         </button>
       </div>

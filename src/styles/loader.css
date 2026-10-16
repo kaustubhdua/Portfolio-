@@ -1,0 +1,144 @@
+/* World-loading and start-up screens. The static #boot in index.html and the React <Loader>
+   share this file and the same layout, so the hand-off is seamless. */
+.loader {
+  --tile: url('img/tex/dirt.png');
+  --shade: rgba(0, 0, 0, 0.64);
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  box-sizing: border-box;
+  height: 100vh;
+  height: 100dvh;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: linear-gradient(var(--shade), var(--shade)), var(--tile) 0 0 / 64px 64px;
+  image-rendering: pixelated;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+.loader-nether {
+  --tile: url('img/tex/netherrack.png');
+  --shade: rgba(28, 0, 0, 0.6);
+}
+.loader.is-leaving,
+.boot.boot-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.boot { cursor: progress; }
+
+/* Small bobbing block: a tiled face with simple light and shade, original art. */
+.loader-block {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+  background: var(--tile) 0 0 / 40px 40px;
+  image-rendering: pixelated;
+  box-shadow: inset 4px 4px 0 rgba(255, 255, 255, 0.18), inset -4px -4px 0 rgba(0, 0, 0, 0.4), 0 0 0 4px #000;
+  animation: loader-bob 1.2s steps(4, jump-none) infinite alternate;
+}
+@keyframes loader-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-12px); }
+}
+
+.loader-title {
+  min-height: 1.5em;
+  margin: 0;
+  max-width: 100%;
+  font-size: clamp(0.8rem, 4.2vw, 1.05rem);
+  line-height: 1.5;
+  text-align: center;
+  text-transform: none;
+  color: #fff;
+  text-shadow: 2px 2px 0 #3a3a3a;
+}
+
+/* Segmented bar: dark track, light inner bevel, green fill that advances in whole blocks. */
+.loader-bar {
+  --seg: 20;
+  box-sizing: border-box;
+  position: relative;
+  width: min(20rem, 100%);
+  height: 18px;
+  padding: 3px;
+  background: #0c0c0c;
+  border: 2px solid #000;
+  box-shadow: inset 2px 2px 0 #3d3d3d, inset -2px -2px 0 #1a1a1a, 0 0 0 2px #8b8b8b;
+}
+.loader-bar span {
+  display: block;
+  position: relative;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(#9dff7a 0 30%, #4fc233 30% 75%, #2f8a20 75%);
+}
+.loader-bar::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--seg) - 2px), rgba(0, 0, 0, 0.55) calc(100% / var(--seg) - 2px) calc(100% / var(--seg)));
+}
+.loader-bar span.is-live { transition: width 0.18s steps(2, end); }
+.loader-bar span.is-idle {
+  width: 10%;
+  animation: boot-slide 1.6s steps(10, jump-none) infinite alternate;
+}
+@keyframes boot-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(900%); }
+}
+
+.loader-tip {
+  min-height: 4.5em;
+  max-width: 28rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+  color: #e4e4e4;
+  text-shadow: 1px 1px 0 #000;
+}
+.loader-tip strong { color: #ffff55; }
+
+.loader-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+.loader-skip {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.65rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #8b8b8b;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.15), inset -2px -2px 0 rgba(0, 0, 0, 0.5);
+}
+.loader-skip:hover,
+.loader-skip:focus-visible { border-color: #ffff55; }
+
+@media (max-width: 360px) {
+  .loader { gap: 0.75rem; }
+  .loader-tip { font-size: 0.82rem; min-height: 6em; }
+  .loader-skip { padding-inline: 0.8rem; }
+}
+@media (min-width: 1200px) {
+  .loader { gap: 1.25rem; }
+  .loader-bar { width: 26rem; height: 22px; }
+  .loader-title { font-size: 1.25rem; }
+  .loader-tip { font-size: 1rem; max-width: 34rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loader, .loader-bar span.is-live { transition: none; }
+  .loader-block, .loader-bar span.is-idle { animation: none; }
+}
