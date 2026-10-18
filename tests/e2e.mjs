@@ -45,8 +45,10 @@ async function open({ threed = false, ...opts } = {}) {
 {
   const [ctx, page] = await open();
   await page.waitForSelector('#root > *', { timeout: 10000 });
+  // the static boot screen fades out for a few hundred ms after the app mounts, then leaves the DOM
+  await page.waitForSelector('#boot', { state: 'detached', timeout: 3000 }).catch(() => {});
   ok('static boot screen is removed once the app mounts', (await page.locator('#boot').count()) === 0);
-  ok('entry loader shows on first visit', (await page.locator('.loader').count()) === 1);
+  ok('entry loader shows on first visit', (await page.locator('.loader:not(.boot)').count()) === 1);
   await page.keyboard.press('Escape');
   await page.waitForSelector('.loader', { state: 'detached', timeout: 3000 });
   ok('entry loader skips with Escape', true);
@@ -120,7 +122,7 @@ async function open({ threed = false, ...opts } = {}) {
 {
   const [ctx, page] = await open({ reducedMotion: 'reduce' });
   await page.waitForSelector('#root > *');
-  ok('no entry loader with reduced motion', (await page.locator('.loader').count()) === 0);
+  ok('no entry loader with reduced motion', (await page.locator('.loader:not(.boot)').count()) === 0);
   ok('hero name visible immediately', await page.evaluate(() => getComputedStyle(document.querySelector('.letter')).opacity === '1'));
   await page.keyboard.press('Tab');
   ok('first Tab focuses the skip link', await page.evaluate(() => document.activeElement.classList.contains('skip-link')));
@@ -253,11 +255,16 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const p0 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
   await page.keyboard.down('KeyW');
   // software rendering runs at a few frames a second, so wait for real movement rather than a fixed time
-  const z0 = Number(p0.split(',')[2]);
-  await page.waitForFunction((z) => Number((document.querySelector('canvas.world-canvas').dataset.pos ?? '0,0,0').split(',')[2]) > z + 1, z0, { timeout: 20000 }).catch(() => {});
+  // the camera can face any way after a portal trip, so measure distance walked, not one axis
+  const [x0, , z0] = p0.split(',').map(Number);
+  await page.waitForFunction(([x, z]) => {
+    const [px, , pz] = (document.querySelector('canvas.world-canvas').dataset.pos ?? '0,0,0').split(',').map(Number);
+    return Math.hypot(px - x, pz - z) > 1;
+  }, [x0, z0], { timeout: 20000 }).catch(() => {});
   await page.keyboard.up('KeyW');
   const p1 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
-  ok('W walks the player forward through the world', Number(p1.split(',')[2]) > z0 + 1, `${p0} -> ${p1}`);
+  const [x1, , z1] = p1.split(',').map(Number);
+  ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
@@ -267,7 +274,9 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('Quick view leaves every section readable', (await page.locator('main section.section').count()) >= 5);
   await page.locator('.quick-btn').click();
   ok('3D view comes back', await page.evaluate(() => document.documentElement.dataset.quick === 'off'));
-  ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld');
+  // the canvas is rebuilt when 3D comes back, which software rendering does slowly
+  await page.waitForFunction(() => document.querySelector('canvas.world-canvas')?.dataset.world === 'overworld', null, { timeout: 20000 }).catch(() => {});
+  ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld', String(await canvas.getAttribute('data-world')));
   await ctx.close();
 }
 
