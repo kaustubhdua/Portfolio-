@@ -20,13 +20,12 @@ jobs:
       - name: Lint, build, static checks, and voxel-world tests
         run: npm run verify
       - run: npx playwright install --with-deps chromium
-      - name: Browser tests against the production build
+      - name: Browser tests and performance audit against the production build
         run: |
           npm run preview &
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
-      - name: Performance and accessibility audit
-        run: npm run audit
+          npm run audit
 
   links:
     runs-on: ubuntu-latest
