@@ -53,7 +53,7 @@ const commands = {
     ['/skills  the inventory'],
     ['/skill <name>  where I used it, e.g. /skill docker'],
     ['/advancements  certificates, hackathons and milestones'],
-    ['/roles  clubs and teams'],
+    ['/roles  clubs, teams and volunteering'],
     ['/blog  writing'],
     ['/contact  email, WhatsApp and links'],
     ['/clear  empty the chat'],
@@ -61,10 +61,11 @@ const commands = {
   about: () => [
     [`${profile.name}: ${profile.program} student at ${profile.institution}.`],
     [profile.about[1]],
-    ...profile.roles.map((r) => [`${r.org}: ${r.role}.`]),
+    ...[...profile.roles, ...profile.volunteering].map((r) => [`${r.org}: ${r.role}.`]),
+    [`Looking for: ${profile.openTo}`],
     [`Motto: ${profile.motto}`],
   ],
-  roles: () => profile.roles.map((r) => [`${r.org} (${r.full}): ${r.role}. ${r.note}`]),
+  roles: () => [...profile.roles, ...profile.volunteering].map((r) => [`${r.org} (${r.full}): ${r.role}. ${r.note}`]),
   blog: () => [['Notes on what I build and learn: ', link('blog/', 'open the blog')]],
   projects: () => [
     ...projects.map((p) => [`${p.name}: ${p.tagline}`]),
@@ -113,7 +114,7 @@ export function reply(input) {
   if (skill) return { lines: skillLines(skill) };
   if (/(contact|email|mail|reach|hire|linkedin|github|whatsapp|phone|number)/.test(words)) return { lines: commands.contact() };
   if (/(blog|write|writing|article|post)/.test(words)) return { lines: commands.blog() };
-  if (/(club|team|role|member|jyc|aiml|tronics)/.test(words)) return { lines: commands.roles() };
+  if (/(club|team|role|member|jyc|aiml|tronics|nss|volunteer)/.test(words)) return { lines: commands.roles() };
   if (/(project|built|build|work|portfolio)/.test(words)) return { lines: commands.projects() };
   if (/(skill|stack|tech|tool|language)/.test(words)) return { lines: commands.skills() };
   if (/(about|who|study|student|college|education|ecm|jiit)/.test(words)) return { lines: commands.about() };

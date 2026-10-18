@@ -6,7 +6,8 @@ const meta = sections.find((s) => s.id === 'profile');
 const facts = [
   ['Program', profile.program],
   ['Institution', profile.institution],
-  ['Graduating', `Class of ${profile.graduation}`],
+  ['Year', `${profile.year}, Class of ${profile.graduation}`],
+  ['Looking for', profile.openTo],
   ['Focus', 'AI, data, systems and product engineering'],
   ['Working with', profile.stack.join(', ')],
 ];
@@ -55,6 +56,16 @@ export default function Profile() {
               {profile.roles.map((r) => (
                 <li key={r.org}>
                   <p className="role-org pixel">{r.org}</p>
+                  <p className="role-title">{r.role}</p>
+                  <p className="role-note">{r.note}</p>
+                </li>
+              ))}
+            </ul>
+            <h3 className="pixel roles-sub">Volunteering</h3>
+            <ul>
+              {profile.volunteering.map((r) => (
+                <li key={r.org}>
+                  <p className="role-org pixel">{r.org} · {r.full}</p>
                   <p className="role-title">{r.role}</p>
                   <p className="role-note">{r.note}</p>
                 </li>

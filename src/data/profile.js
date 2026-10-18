@@ -14,12 +14,24 @@ export const profile = {
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
   graduation: '2029',
+  year: '2nd year of a 4-year course',
+  /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
+  openTo: 'Software engineering internships in backend, full-stack and applied AI or data work.',
   about: [
     'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, interested in software engineering and problem-solving.',
     'I like turning complex workflows into useful tools, with clear system boundaries, careful validation and thoughtful UX.',
     'My projects span OR-Tools route optimisation, voice-first multilingual assistance, crop-residue coordination, local AI and a public website for the JIIT Youth Club.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
+  /** Volunteering. Roles are stated as the owner gave them; nothing is added about what the work involved. */
+  volunteering: [
+    {
+      org: 'NSS',
+      full: 'National Service Scheme',
+      role: 'Volunteer, Cinematography and Management',
+      note: 'Volunteers on the cinematography and management teams.',
+    },
+  ],
   /** Teams and clubs. Roles are stated exactly as the owner gave them. */
   roles: [
     {

@@ -18,10 +18,10 @@ export default function Contact() {
     setTimeout(() => setCopied(''), 3000);
   };
   return (
-    <Section id="contact" {...meta} title="Ender Chest" lead="Open to conversations about projects and collaboration.">
+    <Section id="contact" {...meta} title="Ender Chest" lead="Open to internships and to conversations about projects and collaboration.">
       <Reveal className="panel chest">
         <Sprite name="ender" size={72} />
-        <p>Email or WhatsApp is the quickest way to reach me. LinkedIn works too, and my code lives on GitHub.</p>
+        <p>I am looking for {profile.openTo.charAt(0).toLowerCase() + profile.openTo.slice(1)} Email or WhatsApp is the quickest way to reach me. LinkedIn works too, and my code lives on GitHub.</p>
         <div className="chest-actions">
           <a className="btn btn-primary pixel" href={`mailto:${profile.links.email}`}>
             <FaEnvelope aria-hidden="true" /> Email
