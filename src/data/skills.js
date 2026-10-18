@@ -8,7 +8,7 @@ export const skillGroups = [
     title: 'Languages',
     items: [
       { id: 'python', name: 'Python', icon: 'SiPython', used: 'Smart Waste pipeline, the Saathi FastAPI back end and the NIRDHOOM OR-Tools dispatch service.' },
-      { id: 'typescript', name: 'TypeScript', icon: 'SiTypescript', used: 'Listed as a primary language on my GitHub profile.' },
+      { id: 'typescript', name: 'TypeScript', icon: 'SiTypescript', used: 'Listed on the GitHub profile stack, but this portfolio has not yet linked a concrete TypeScript implementation to a featured project. Treat it as profile-listed until a source file or contribution is documented.' },
       { id: 'javascript', name: 'JavaScript', icon: 'SiJavascript', used: 'The React front ends of NIRDHOOM and the JYC Website, and part of the Adapt AI stack.' },
       { id: 'cpp', name: 'C++', icon: 'SiCplusplus', used: 'The language of the Smart Bike Taxi Platform repository on my GitHub.' },
       { id: 'sql', name: 'SQL', glyph: 'SQL', used: 'Versioned SQL migrations behind NIRDHOOM, on Supabase and PostgreSQL.' },
