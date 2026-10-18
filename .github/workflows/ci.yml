@@ -8,22 +8,6 @@ permissions:
   contents: read
 
 jobs:
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Generate lockfile with npm's resolver
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Publish generated lockfile for review and commit
-        uses: actions/upload-artifact@v4
-        with:
-          name: portfolio-package-lock
-          path: package-lock.json
-          if-no-files-found: error
-          retention-days: 7
-
   verify:
     runs-on: ubuntu-latest
     steps:
@@ -31,8 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # npm ci needs a real committed lockfile. Keep install until one exists.
-      - name: Install dependencies (retain verbose npm diagnostics)
+      # Use npm install until a real npm-generated lockfile is committed.
+      - name: Install dependencies (verbose diagnostics)
         run: npm install --no-audit --no-fund --loglevel verbose
       - name: Lint
         run: npm run lint
@@ -42,18 +26,19 @@ jobs:
         run: npm run check
       - name: Offline voxel-world tests
         run: npm run test:world
-      - run: npx playwright install --with-deps chromium
-      - name: Browser tests and performance audit against the production build
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests and performance/accessibility audit
         run: |
           npm run preview &
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
           npm run audit
-      - name: Upload npm and test diagnostics on failure
+      - name: Upload diagnostics if verification fails
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: portfolio-ci-diagnostics-${{ github.run_id }}
+          name: portfolio-verify-diagnostics-${{ github.run_id }}
           if-no-files-found: warn
           path: |
             ~/.npm/_logs/**
@@ -68,12 +53,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Keep npm install until package-lock.json is committed.
       - name: Install dependencies for link checker
         run: npm install --no-audit --no-fund --loglevel verbose
       - name: Check external project and evidence links
         run: npm run check:links
-      - name: Upload npm diagnostics on failure
+      - name: Upload link-check diagnostics if it fails
         if: failure()
         uses: actions/upload-artifact@v4
         with:
