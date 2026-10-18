@@ -27,7 +27,7 @@ npm run test:e2e   # browser tests against a running production preview
 npm run audit      # performance and accessibility audit against a running preview
 npm run check:links # check project and profile links (requires network access)
 npm run preview    # serves dist/ at http://localhost:4173
-``
+```
 
 For browser tests and the audit, build first and keep the preview server running:
 
@@ -37,13 +37,13 @@ npm run preview
 # In another terminal:
 npm run test:e2e
 npm run audit
-``
+```
 
 Set `SITE_URL` at build time so canonical and social-card URLs are absolute:
 
 ```bash
 SITE_URL=https://example.com npm run build
-``
+```
 
 All asset URLs are relative, so `dist/` can be hosted at a domain root or under a sub-path (GitHub Pages, Netlify, Vercel, any static host).
 
