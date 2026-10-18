@@ -115,14 +115,17 @@ html.mob-hover body { cursor: pointer; }
 /* Quick view: no scenery at all, just the content on a plain background. */
 html[data-quick='on'] .fallback-backdrop,
 html[data-quick='on'] .world-canvas { display: none; }
+/* Sits over the bright 3D scene, so it carries its own dark plate and light text in both worlds
+   (the day theme's --text is dark, which made this button vanish against the village). */
 .btn-quiet {
-  background: transparent;
-  border: 3px solid var(--edge);
-  color: var(--muted);
+  background: rgba(11, 6, 16, 0.78);
+  border: 3px solid #5b4f5a;
+  color: #f1e7ea;
+  text-shadow: 1px 1px 0 #000;
 }
 .btn-quiet:hover,
 .btn-quiet:focus-visible,
-.btn-quiet[aria-pressed='true'] { color: var(--text); border-color: var(--gold); }
+.btn-quiet[aria-pressed='true'] { color: #fff; border-color: var(--gold); background: rgba(11, 6, 16, 0.9); }
 
 /* ---------------------------------------------------------------- free roam */
 html[data-explore='on'] { overflow: hidden; }

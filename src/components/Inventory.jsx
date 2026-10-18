@@ -10,15 +10,21 @@ const all = skillGroups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.titl
 export default function Inventory() {
   const [selectedId, setSelectedId] = useState(all[0].id);
   const selected = all.find((i) => i.id === selectedId);
+  // On phones the description is shortened to two lines so the sticky panel never hides the grid;
+  // "More" shows all of it. (The full text stays in the page for screen readers either way.)
+  const [more, setMore] = useState(false);
 
   return (
     <Section id="inventory" {...meta} title="Inventory" lead="Tools I have actually used. Select a slot to see where.">
       <div className="inventory">
-        <Reveal className="panel info" aria-live="polite">
+        <Reveal className={`panel info${more ? ' is-more' : ''}`} aria-live="polite">
           <div className="info-icon"><TechIcon item={selected} size={44} /></div>
           <p className="info-group pixel">{selected.group}</p>
           <h3 className="info-name pixel">{selected.name}</h3>
           <p className="info-used">{selected.used}</p>
+          <button type="button" className="info-more pixel" aria-expanded={more} onClick={() => setMore((m) => !m)}>
+            {more ? 'Less' : 'More'}
+          </button>
         </Reveal>
 
         <div className="slots-wrap">
@@ -32,7 +38,10 @@ export default function Inventory() {
                       type="button"
                       className={`slot${item.id === selectedId ? ' is-selected' : ''}`}
                       aria-pressed={item.id === selectedId}
-                      onClick={() => setSelectedId(item.id)}
+                      onClick={() => {
+                        setSelectedId(item.id);
+                        setMore(false);
+                      }}
                     >
                       <TechIcon item={item} size={26} />
                       <span className="slot-name">{item.name}</span>

@@ -200,6 +200,21 @@
   .theme-toggle {
     right: 3.9rem;
   }
+
+  /* The chat, world and sound buttons float over the page on phones. A soft dark band behind them
+     keeps them readable and stops body text running underneath and clashing with them. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 99;
+    height: calc(max(0.75rem, env(safe-area-inset-top)) + 44px + 0.7rem);
+    background: linear-gradient(rgba(11, 6, 16, 0.94) 70%, rgba(11, 6, 16, 0));
+    pointer-events: none;
+  }
+  html[data-explore='on'] body::before {
+    display: none;
+  }
 }
 
 /* ------------------------------------------------- HUD: experience bar

@@ -198,6 +198,9 @@
   color: var(--text) !important;
 }
 
+/* the More/Less toggle only exists on phones (see the 640px rules) */
+.info-more { display: none; }
+
 .info-used {
   grid-column: 1 / -1;
   margin-top: 1rem;
@@ -613,7 +616,8 @@
   .regions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .principles { grid-template-columns: minmax(0, 1fr); }
   .info {
-    top: 0.5rem;
+    /* clear of the floating buttons / top bar so it never slides under them */
+    top: 4.4rem;
     padding: 0.8rem 1rem;
   }
   .info-icon { width: 3.5rem; height: 3.5rem; font-size: 1.7rem; grid-row: span 2; }
@@ -625,6 +629,27 @@
 }
 
 @media (max-width: 640px) {
+  /* a tall description would cover the tiles it describes; two lines are enough while scrolling,
+     and the More button opens the rest */
+  .info:not(.is-more) .info-used {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .info-more {
+    display: block;
+    grid-column: 1 / -1;
+    justify-self: end;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    margin-top: 0.3rem;
+    font-size: 0.6rem;
+    color: var(--gold);
+    background: transparent;
+    border: 2px solid var(--edge);
+  }
   .card { flex-basis: 100%; }
   .adv-grid,
   .regions { grid-template-columns: minmax(0, 1fr); }

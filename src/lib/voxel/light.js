@@ -1,4 +1,4 @@
-import { EMIT, OPAQUE } from './blocks.js';
+import { EMIT, OPAQUE, SHAPED } from './blocks.js';
 
 /**
  * Light is two separate 0-15 channels: sky light (the Overworld only) and block light from
@@ -61,6 +61,29 @@ export function computeLight(grid, withSky) {
         }
       }
     spread(sky, skySeeds);
+  }
+  // A stair or slab blocks light but is not a whole cube, so its faces (and the faces of cubes beside it) should be
+  // lit like the open air next to it: give each such cell the brightest light around it.
+  for (let i = 0; i < total; i++) {
+    const id = data[i];
+    if (!SHAPED[id] || !OPAQUE[id]) continue;
+    const x = i % w;
+    const z = ((i / w) | 0) % l;
+    const y = (i / stepY) | 0;
+    let s = 0;
+    let b = 0;
+    const look = (j) => {
+      if (sky[j] > s) s = sky[j];
+      if (blk[j] > b) b = blk[j];
+    };
+    if (x > 0) look(i - stepX);
+    if (x < w - 1) look(i + stepX);
+    if (z > 0) look(i - stepZ);
+    if (z < l - 1) look(i + stepZ);
+    if (y > 0) look(i - stepY);
+    if (y < h - 1) look(i + stepY);
+    sky[i] = s;
+    blk[i] = b;
   }
   return { sky, blk };
 }
