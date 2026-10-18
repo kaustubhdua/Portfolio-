@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # `npm ci` remains blocked until a real package-lock.json is generated and committed.
+      # No lockfile is committed yet. Once `npm install` has produced one, switch to `npm ci`.
       - run: npm install
       - run: npm run verify
       - run: npx playwright install --with-deps chromium
