@@ -4,6 +4,7 @@ import Sprite from './Sprite.jsx';
 import { advancements } from '../data/advancements.js';
 import { sections } from '../data/profile.js';
 import { useInView } from '../hooks/useInView.js';
+import { advancementSound } from '../lib/audio.js';
 
 const meta = sections.find((s) => s.id === 'advancements');
 
@@ -15,6 +16,7 @@ export default function Advancements() {
   useEffect(() => {
     if (!seen) return undefined;
     setToast(true);
+    advancementSound();
     const t = setTimeout(() => setToast(false), 4200);
     return () => clearTimeout(t);
   }, [seen]);

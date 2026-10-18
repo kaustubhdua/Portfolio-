@@ -436,6 +436,30 @@ SYN.portal_arrive = () => {
   tone({ f0: 80, f1: 50, dur: 1.2, gain: 0.12, attack: 0.05 });
 };
 
+// Sounds made by things in the 3D world (see worldSound): the smithy and the hall bell.
+SYN.anvil_hit = () => {
+  tone({ type: 'triangle', f0: 1650, f1: 1560, dur: 0.38, gain: 0.07, attack: 0.002, rv: true });
+  tone({ f0: 2490, f1: 2420, dur: 0.24, gain: 0.04, attack: 0.002 });
+  tone({ f0: 4180, dur: 0.1, gain: 0.022, attack: 0.001 });
+  burst({ dur: 0.04, gain: 0.16, freq: 3600, type: 'highpass', q: 0.8 });
+  tone({ f0: 160, f1: 90, dur: 0.07, gain: 0.08, attack: 0.002 });
+};
+SYN.village_bell = () => {
+  const f = 233; // a low, slow bell: hum, fundamental, minor third, and two bright inharmonic partials
+  tone({ f0: f * 0.5, dur: 3.4, gain: 0.05, attack: 0.01, rv: true });
+  tone({ f0: f, dur: 3.2, gain: 0.08, attack: 0.004, rv: true });
+  tone({ f0: f * 1.2, dur: 2.4, gain: 0.04, attack: 0.004, rv: true });
+  tone({ f0: f * 2.76, dur: 1.4, gain: 0.03, attack: 0.003, rv: true });
+  tone({ f0: f * 5.4, dur: 0.5, gain: 0.014, attack: 0.002 });
+  burst({ dur: 0.05, gain: 0.08, freq: 2400, type: 'bandpass', q: 1.2 });
+};
+
+/** A sound made by something in the world: the farther away the visitor, the quieter it is. */
+export function worldSound(name, dist = 0) {
+  const g = Math.max(0, 1 - dist / 42) ** 2;
+  return g > 0.02 ? playSound(name, { gain: g }) : false;
+}
+
 /** Every logical sound name, for docs and tooling. */
 export const soundNames = () => Object.keys(SYN);
 
@@ -503,7 +527,7 @@ function playSample(s, o) {
   src.start(ctx.currentTime + (o.delay || 0));
 }
 
-const GAP = { ui_hover: 0.06, xp_orb: 0.04 };
+const GAP = { ui_hover: 0.06, xp_orb: 0.04, level_up: 1.4, advancement: 3 };
 const NONE = {};
 
 /**

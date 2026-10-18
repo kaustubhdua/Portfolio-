@@ -1,5 +1,5 @@
 import { buildTiles, TILE, TILE_COUNT } from './atlas.js';
-import { InstanceWriter, createActors, setLookTarget } from './actors.js';
+import { InstanceWriter, createActors, setActorSound, setLookTarget } from './actors.js';
 import { sampleCamera, scrollToProgress } from './journey.js';
 import { EYE_HEIGHT, createPlayer, stepPlayer } from './explore.js';
 import { computeLight } from './light.js';
@@ -7,6 +7,7 @@ import { B, DEF, SOLID } from './blocks.js';
 import { SLAB, meshWorld } from './mesh.js';
 import { ENTITY_FS, ENTITY_VS, PART_FS, PART_VS, SKY_FS, SKY_VS, TERRAIN_FS, TERRAIN_VS } from './shaders.js';
 import { SIZE, buildWorld } from './worlds.js';
+import { createQuality, startScale, stepQuality } from './quality.js';
 
 const MAX_QUADS = 70000;
 
@@ -64,7 +65,8 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
 /** Creates the world renderer. Returns null when WebGL 2 is not available. */
-export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent } = {}) {
+export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent, onWorldSound } = {}) {
+  setActorSound(onWorldSound ?? null);
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance', depth: true });
   if (!gl) return null;
 
@@ -247,8 +249,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     dirty = true;
     schedule();
   };
-  const STONEISH = new Set([B.STONE, B.COBBLE, B.STONE_BRICK, B.NETHERRACK, B.NETHER_BRICK, B.NETHER_FENCE, B.OBSIDIAN, B.BASALT, B.BLACKSTONE, B.GLOWSTONE, B.LAMP, B.GLASS, B.ROOF]);
-  const WOODISH = new Set([B.LOG, B.PLANKS, B.SPRUCE_PLANKS, B.SPRUCE_LOG, B.BARREL, B.DOOR, B.CRIMSON_STEM, B.WARPED_STEM, B.HAY]);
+  const fourWays = (base) => [0, 1, 2, 3].map((f) => base + f);
+  const STONEISH = new Set([
+    B.STONE, B.COBBLE, B.STONE_BRICK, B.NETHERRACK, B.NETHER_BRICK, B.NETHER_FENCE, B.OBSIDIAN, B.BASALT, B.BLACKSTONE, B.GLOWSTONE,
+    B.LAMP, B.GLASS, B.ROOF, B.PANE, B.LANTERN, B.SLAB_COBBLE, B.SLAB_NETHER, B.MOSSY_COBBLE, B.FURNACE, B.ANVIL, B.SPAWNER,
+    ...fourWays(B.STAIR_COBBLE), ...fourWays(B.STAIR_NETHER), ...fourWays(B.STAIR_BRICK),
+  ]);
+  const WOODISH = new Set([
+    B.LOG, B.PLANKS, B.SPRUCE_PLANKS, B.SPRUCE_LOG, B.BARREL, B.DOOR, B.CRIMSON_STEM, B.WARPED_STEM, B.HAY, B.FENCE, B.TORCH,
+    B.SLAB_PLANKS, B.SLAB_SPRUCE, B.BOOKSHELF, B.CRAFTING, ...fourWays(B.STAIR_PLANKS), ...fourWays(B.STAIR_SPRUCE),
+    ...fourWays(B.DOOR_LOW), ...fourWays(B.DOOR_UP),
+  ]);
   const groundOf = (id) => (STONEISH.has(id) ? 'stone' : WOODISH.has(id) ? 'wood' : 'grass');
   function breakBlock(w, x, y, z) {
     const id = w.meta.grid.get(x, y, z);
@@ -319,11 +330,20 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   let bobAmp = 0;
   const cam = {};
   let dirty = true;
-  let scale = Math.min(window.devicePixelRatio || 1, 1.5);
-  const maxScale = scale;
+  // Draw at up to 1.5x the page's pixels. Phones and weak machines start smaller and rise to that
+  // once they show they can keep up (see quality.js).
+  const maxScale = Math.min(window.devicePixelRatio || 1, 1.5);
+  const quality = createQuality(
+    maxScale,
+    startScale(maxScale, {
+      coarse: window.matchMedia?.('(pointer: coarse)').matches,
+      cores: navigator.hardwareConcurrency,
+      memory: navigator.deviceMemory,
+    }),
+  );
+  let scale = quality.scale;
   let width = 0;
   let height = 0;
-  let timeSlow = 0;
   let slowWindows = 0;
   const frameTimes = [];
   let frames = 0;
@@ -565,7 +585,13 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       // characters
       writer.reset();
       setLookTarget(pos[0], pos[1], pos[2]);
-      for (const actor of w.actors) actor.draw(simTime, writer);
+      // People and animals far beyond the fog are not drawn; they are still stepped now and then so
+      // their position stays roughly right for when the camera comes near.
+      for (let i = 0; i < w.actors.length; i++) {
+        const actor = w.actors[i];
+        if (Math.abs(actor.pos[2] - pos[2]) > look.far + 30 && (frames + i) % 20) continue;
+        actor.draw(simTime, writer);
+      }
       for (let i = w.broken.length - 1; i >= 0; i--) {
         const b = w.broken[i];
         if (simTime >= b.at) {
@@ -650,17 +676,10 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       if (frameTimes.length >= 40) {
         const avg = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
         frameTimes.length = 0;
-        if (avg > 26 && scale > 0.55) {
-          scale = Math.max(0.55, scale - 0.15);
+        if (stepQuality(quality, avg)) {
+          scale = quality.scale;
           resize();
-        } else if (avg < 14 && scale < maxScale) {
-          timeSlow++;
-          if (timeSlow > 2) {
-            scale = Math.min(maxScale, scale + 0.1);
-            timeSlow = 0;
-            resize();
-          }
-        } else timeSlow = 0;
+        }
         canvas.dataset.scale = scale.toFixed(2);
         // A device that cannot draw even the smallest picture in good time gets the 2D scenes.
         if (avg > 140 && scale <= 0.56 && ++slowWindows >= 3) {
@@ -735,7 +754,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       let best = null;
       let bestT = 60;
       for (const a of w.actors) {
-        if (!a.pick) continue;
+        if (!a.pick || a.hidden) continue;
         const c = [a.pos[0], a.pos[1] + a.h * 0.9, a.pos[2]];
         const oc = [c[0] - pos[0], c[1] - pos[1], c[2] - pos[2]];
         const t = dot(oc, d);
@@ -757,7 +776,29 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const clip = [0, 0, 0, 0].map((_, i) => vp[i] * c[0] + vp[4 + i] * c[1] + vp[8 + i] * c[2] + vp[12 + i]);
       const sx = ((clip[0] / clip[3]) * 0.5 + 0.5) * window.innerWidth;
       const sy = (0.5 - (clip[1] / clip[3]) * 0.5) * window.innerHeight;
-      return { name: best.name, line: best.line, kind: best.kind, x: sx, y: sy };
+      return { name: best.name, line: best.line, kind: best.kind, role: best.role, x: sx, y: sy };
+    },
+    /**
+     * The page did something (a button was pressed, the section changed): the nearest people in front
+     * of the camera wave back, and creatures without arms hop. 'section' wakes up a few more of them.
+     */
+    react(kind = 'click') {
+      const w = worlds[current];
+      if (!w || !pickCam || exploring) return;
+      const { pos, f } = pickCam;
+      const near = [];
+      for (const a of w.actors) {
+        if (!a.pick || a.hidden) continue;
+        const dx = a.pos[0] - pos[0];
+        const dz = a.pos[2] - pos[2];
+        const d = Math.hypot(dx, dz);
+        if (d < 1.5 || d > 28 || dx * f[0] + dz * f[2] <= 0) continue;
+        near.push([d, a]);
+      }
+      near.sort((p, q) => p[0] - q[0]);
+      near.slice(0, kind === 'section' ? 4 : 2).forEach(([, a], i) => a.wave(simTime + i * 0.3 + Math.random() * 0.25));
+      dirty = true;
+      schedule();
     },
     /** Free roam: leave the scroll path and walk the world. */
     setExplore(on) {
@@ -857,6 +898,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     },
     dispose() {
       disposed = true;
+      setActorSound(null);
       cancelAnimationFrame(raf);
       clearTimeout(building);
       window.removeEventListener('scroll', readScroll);

@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import Loader from './components/Loader.jsx';
 import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
@@ -22,8 +22,8 @@ import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
 import { WorldContext, useTheme } from './hooks/useTheme.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
-import { getExploreApi, getMode, subscribeMode } from './lib/voxel/travel.js';
-import { setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
+import { getExploreApi, getMode, subscribeMode, worldReact } from './lib/voxel/travel.js';
+import { inventorySound, levelUpSound, setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
 
 // Rarely needed on first paint, so they ship as separate chunks.
 const Chat = lazy(() => import('./components/Chat.jsx'));
@@ -138,12 +138,36 @@ export default function App() {
   }, [soundOn]);
 
   useEffect(() => () => void setAmbient(false), []);
+
+  // Moving to another section: the people nearby look up and wave, and the level goes up with a chime
+  // (the number on the experience bar is the section you are in).
+  const prevActive = useRef(active);
+  useEffect(() => {
+    const before = ids.indexOf(prevActive.current);
+    const now = ids.indexOf(active);
+    prevActive.current = active;
+    if (now === before || intro) return;
+    worldReact('section');
+    if (now > before) levelUpSound();
+  }, [active, ids, intro]);
+
+  // Opening a case study opens an inventory; closing it puts it away.
+  const dialogOpen = useRef(false);
+  useEffect(() => {
+    const isOpen = Boolean(openId);
+    if (isOpen === dialogOpen.current) return;
+    dialogOpen.current = isOpen;
+    if (!intro) inventorySound(isOpen);
+  }, [openId, intro]);
   useEffect(() => setSoundWorld(theme), [theme]);
 
   // Button presses click like the game's menus; a remembered "sound on" starts at the first gesture.
   useEffect(() => {
     const onClick = (e) => {
-      if (e.target.closest?.('button,a[href],summary,[role="button"]')) uiClick();
+      if (e.target.closest?.('button,a[href],summary,[role="button"]')) {
+        uiClick();
+        worldReact('click');
+      }
     };
     document.addEventListener('click', onClick);
     let resume = null;

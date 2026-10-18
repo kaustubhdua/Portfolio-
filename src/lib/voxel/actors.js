@@ -21,6 +21,43 @@ export const setLookTarget = (x, y, z) => {
   look.z = z;
 };
 const headPart = {};
+const leanPart = { s: null, c: null, col: null, glow: 0, p: [0, 0, 0] };
+const HIP = 12 * U;
+const WAVE_S = 2; // how long a wave lasts
+const GREET_R = 9; // how close a visitor must be before friendly people wave
+
+let soundHook = null;
+/** The renderer hands in a function (name, distance) so the smithy and the bell can be heard. */
+export const setActorSound = (fn) => {
+  soundHook = fn;
+};
+/** Plays a world sound once each time `beat` changes, quieter the further the visitor is. */
+function cue(A, beat, name, x, z) {
+  if (beat === A.beat) return;
+  const first = A.beat === undefined;
+  A.beat = beat;
+  if (!first) soundHook?.(name, Math.hypot(look.x - x, look.z - z));
+}
+/** The direction (a yaw) from a spot toward the visitor's eyes. */
+const toward = (x, z) => Math.atan2(look.x - x, look.z - z);
+const turnTo = (from, to, k) => from + Math.atan2(Math.sin(to - from), Math.cos(to - from)) * k;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+// Tilts a body part forward about the hip, so a person can bend over a crop or a book.
+function leaned(part, th) {
+  const cs = Math.cos(th);
+  const sn = Math.sin(th);
+  const y = part.p[1] - HIP;
+  const z = part.p[2];
+  leanPart.s = part.s;
+  leanPart.c = part.c;
+  leanPart.col = part.col;
+  leanPart.glow = part.glow;
+  leanPart.p[0] = part.p[0];
+  leanPart.p[1] = HIP + y * cs - z * sn;
+  leanPart.p[2] = y * sn + z * cs;
+  return leanPart;
+}
 
 // model = BaseYaw * T(pivot) * Ry * Rz * Rx * T(centre) * Scale
 const R = new Float64Array(9);
@@ -89,6 +126,9 @@ function baseOf(x, y, z, yaw) {
       spin = Math.sin(u * PI * 2) * 0.7;
       cur.flash = 1 - u;
     } else cur.flash = 0;
+    // a soft acknowledgement (the page was clicked, a section changed): creatures without arms hop a little
+    const wu = (cur.t - cur.waveT) / 0.7;
+    if (!cur.armed && wu >= 0 && wu < 1) hop += Math.sin(wu * PI) * 0.16;
     cur.pos[0] = x;
     cur.pos[1] = y + hop;
     cur.pos[2] = z;
@@ -97,21 +137,35 @@ function baseOf(x, y, z, yaw) {
   return { c: Math.cos(a), s: Math.sin(a), x, y: y + hop, z };
 }
 
-function drawParts(push, parts, base, phase, amp, hammer = 0, extra) {
+function drawParts(push, parts, base, phase, amp, hammer = 0, extra, lean = 0) {
   if (stillNow) amp *= 0;
-  // heads turn toward the visitor when close, and glance about when nobody is near
+  // Heads turn toward the visitor when close and glance about when nobody is near. Friendly people
+  // wave when a visitor walks up in front of them, and anybody waves when the page asks them to.
   let turn = 0;
-  if (cur && parts.some((q) => q.head)) {
+  let raise = 0;
+  if (cur) {
+    if (cur.armed === undefined) cur.armed = parts.some((q) => q.role === 'arm');
     const yaw = Math.atan2(base.s, base.c);
     const dx = look.x - base.x;
     const dz = look.z - base.z;
     const dist = Math.hypot(dx, dz);
     let rel = Math.atan2(dx, dz) - yaw;
     rel = Math.atan2(Math.sin(rel), Math.cos(rel));
-    let want = Math.sin(cur.t * 0.7 + base.x * 3.1) * 0.35 * (stillNow ? 1.6 : 0.4);
-    if (dist < 11 && Math.abs(rel) < 2.1) want = Math.max(-0.95, Math.min(0.95, rel)) * Math.min(1, (11 - dist) / 4);
-    cur.headYaw = lerp(cur.headYaw ?? 0, want, 0.1);
-    turn = cur.headYaw;
+    if (cur.greets) {
+      const inFront = dist < (cur.greetR || GREET_R) && Math.abs(rel) < 1.3;
+      if (inFront && !cur.near && cur.t - cur.waveT > 9) cur.waveT = cur.t;
+      cur.near = inFront;
+    }
+    const k = (cur.t - cur.waveT) / WAVE_S;
+    const waving = k >= 0 && k < 1;
+    if (waving) raise = Math.min(1, k * 6, (1 - k) * 6);
+    if (parts.some((q) => q.head)) {
+      let want = Math.sin(cur.t * 0.7 + base.x * 3.1) * 0.35 * (stillNow ? 1.6 * (cur.glance ?? 1) : 0.4);
+      if (dist < 11 && Math.abs(rel) < 2.1) want = clamp(rel, -0.95, 0.95) * Math.min(1, (11 - dist) / 4);
+      else if (waving) want = clamp(rel, -0.95, 0.95);
+      cur.headYaw = lerp(cur.headYaw ?? 0, want, 0.1);
+      turn = cur.headYaw;
+    }
   }
   stillNow = false;
   for (const part of parts) {
@@ -125,18 +179,22 @@ function drawParts(push, parts, base, phase, amp, hammer = 0, extra) {
       headPart.col = part.col;
       headPart.glow = part.glow;
       headPart.p = [rx * ca + rz * sa, part.p[1], -rx * sa + rz * ca];
-      pushPart(push, base, headPart, 0, turn, 0);
+      pushPart(push, base, lean ? leaned(headPart, lean) : headPart, lean, turn, 0);
       continue;
     }
     let a = 0;
     if (part.role === 'leg') a = part.swing * Math.sin(phase) * amp;
-    else if (part.role === 'arm') a = part.swing * Math.sin(phase) * amp * 0.8 - hammer * (part.swing > 0 ? 1.6 : 0);
-    else if (part.role === 'tail') {
+    else if (part.role === 'arm') {
+      a = part.swing * Math.sin(phase) * amp * 0.8 - hammer * (part.swing > 0 ? 1.6 : 0);
+      // the right arm swings up and waves
+      if (raise > 0 && part.swing > 0) a = lerp(a, -2.6 + Math.sin(cur.t * 11) * 0.3, raise);
+    } else if (part.role === 'tail') {
       pushPart(push, base, part, 0, Math.sin(phase * 0.6 + (part.k ?? 0)) * 0.5, 0);
       continue;
     }
     if (extra) a += extra(part);
-    pushPart(push, base, part, a);
+    if (lean && part.role !== 'leg') pushPart(push, base, leaned(part, lean), a + lean);
+    else pushPart(push, base, part, a);
   }
 }
 
@@ -160,6 +218,7 @@ function humanoidParts({ skin, top, legs, hair, hat, apron, glowEyes, eye = [0.0
   if (hat === 'straw') parts.push(box([15, 1, 15], [0, 32.4, 0], hex(0xd9b44a)), box([8.6, 3, 8.6], [0, 33.4, 0], hex(0xd9b44a)));
   if (hat === 'hood') parts.push(box([9, 9, 9], [0, 28.4, -0.4], top), box([5, 2, 0.6], [0, 24.6, 4.4], skin));
   if (hat === 'helm') parts.push(box([9, 4, 9], [0, 31.4, 0], hex(0x1a1418)), box([2, 5, 2], [0, 34.4, 0], hex(0x7a1d12), { glow: 0.4 }));
+  if (hat === 'steel') parts.push(box([9, 4.4, 9], [0, 31.4, 0], hex(0x9aa3ab)), box([9.6, 1.2, 9.6], [0, 29.6, 0], hex(0x7a838b)), box([1.6, 3, 5], [0, 34, 0], hex(0xb8412f)));
   if (hat === 'cap') parts.push(box([9, 3, 9], [0, 31.8, 0], hex(0x3b6e8f)), box([9, 1, 4], [0, 30.6, 5.5], hex(0x2a5070)));
   if (apron) parts.push(box([8.4, 10, 0.8], [0, 17, 2.4], apron));
   if (scarf) parts.push(box([9, 2.4, 5], [0, 24.4, 0], scarf));
@@ -313,12 +372,103 @@ const pingPong = (t, speed, len, offset) => {
   stillNow = true;
   return { d: 0, dir: -1 };
 };
-const smooth = (x) => x * x * (3 - 2 * x);
 
-function actor(list, { name, line, kind = 'friendly', r = 0.9, h = 1, pick = true }, fn) {
-  const A = { name, line, kind, r, h, pick, hitT: -99, flash: 0, t: 0, pos: [0, 0, 0], fn };
+function actor(list, { name, line, kind = 'friendly', r = 0.9, h = 1, pick = true, role, greets = false, greetR = 0 }, fn) {
+  const A = { name, line, kind, role, greets, greetR, r, h, pick, hitT: -99, waveT: -99, flash: 0, t: 0, pos: [0, 0, 0], fn };
   list.push(A);
   return A;
+}
+
+/* ---------------------------------------------------------------- routines */
+
+// A looping day for one person: steps of `d` seconds. A step is a walk ([x0, z0, x1, z1]), a stay
+// ([x, z, yaw]) or indoors (hide). The function returns the current step and how far through it we are.
+function routine(steps) {
+  let total = 0;
+  for (const s of steps) total += s.d;
+  return (t, offset = 0) => {
+    const raw = t + offset;
+    let u = ((raw % total) + total) % total;
+    for (let i = 0; i < steps.length; i++) {
+      if (u < steps[i].d) return { s: steps[i], k: u / steps[i].d, i };
+      u -= steps[i].d;
+    }
+    return { s: steps[0], k: 0, i: 0 };
+  };
+}
+
+/**
+ * Props held in the hands. They are part of the body, so they turn and lean with it.
+ */
+const PROPS = {
+  spear: () => [box([1.2, 40, 1.2], [-7.5, 20, 2.5], hex(0x8a6a3a)), box([2.4, 5, 0.9], [-7.5, 42.5, 2.5], hex(0xc9ced4))],
+  book: () => [box([7, 1.4, 5], [0, 19.5, 5.4], hex(0x7a3b2a)), box([6.2, 1.7, 4.4], [0, 19.6, 5.4], hex(0xefe6cf))],
+  bucket: () => [box([4.4, 4.2, 4.4], [0, 14.5, 5.4], hex(0x6b5b3a)), box([3.6, 0.5, 3.6], [0, 16.7, 5.4], hex(0x3a7ab8), { glow: 0.1 })],
+  crook: () => [box([1.1, 34, 1.1], [-7.8, 18, 3], hex(0x6a4a2a)), box([4, 1.1, 1.1], [-6.2, 35.6, 3], hex(0x6a4a2a))],
+  hoe: () => [box([1, 26, 1], [7.6, 14, 3.6], hex(0x6a4a2a)), box([5, 1.2, 1.2], [7.6, 27, 3.6], hex(0x8a8f86))],
+};
+
+// What the body does during a step: lean about the hip, raise the hammer, and move the arms.
+function pose(an, t, x, z, A) {
+  const o = { hammer: 0, lean: 0, extra: null, glance: 1 };
+  if (an === 'plant') {
+    o.lean = 0.55 + 0.2 * Math.sin(t * 2.4);
+    o.extra = (p) => (p.role === 'arm' ? -o.lean + Math.sin(t * 4.8 + (p.swing > 0 ? 0 : 2)) * 0.35 : 0);
+  } else if (an === 'hammer') {
+    o.hammer = 0.5 + 0.5 * Math.sin(t * 5);
+    // the strike lands when the arm is lowest
+    cue(A, Math.floor((t * 5 + PI / 2) / (2 * PI)), 'anvil_hit', x, z);
+  } else if (an === 'read') {
+    o.lean = 0.2;
+    o.extra = (p) => (p.role === 'arm' ? -1.15 + Math.sin(t * 0.8) * 0.04 : 0);
+  } else if (an === 'carry') {
+    o.extra = (p) => (p.role === 'arm' ? -0.95 : 0);
+  } else if (an === 'hawk') {
+    o.extra = (p) => (p.role === 'arm' ? -0.75 + Math.sin(t * 3 + (p.swing > 0 ? 0 : 1.7)) * 0.3 : 0);
+  } else if (an === 'wave') {
+    o.extra = (p) => (p.role === 'arm' && p.swing > 0 ? -2.6 + Math.sin(t * 11) * 0.3 : 0);
+  } else if (an === 'scan') {
+    o.glance = 3;
+  }
+  return o;
+}
+
+/**
+ * One person following a routine. Stationary steps can name an animation (see pose) and ask to
+ * face the visitor ({ face: 'visitor' }); walking steps can carry something ({ anim: 'carry' }).
+ */
+function person(list, { name, role, line, kind = 'friendly', parts, y = GY, steps, offset = 0, greets = true, greetR = 0, r = 0.8, h = 1, speed = 5.2 }) {
+  const life = routine(steps);
+  return actor(list, { name, role, line, kind, r, h, greets, greetR }, (t) => {
+    const { s, k } = life(t, offset);
+    if (s.hide) {
+      cur.pos[1] = -100; // indoors: not drawn and cannot be poked
+      return;
+    }
+    let x;
+    let z;
+    let yaw;
+    let moving = false;
+    if (s.walk) {
+      const [x0, z0, x1, z1] = s.walk;
+      x = lerp(x0, x1, k);
+      z = lerp(z0, z1, k);
+      yaw = Math.atan2(x1 - x0, z1 - z0);
+      moving = true;
+    } else {
+      [x, z, yaw] = s.stay;
+      if (s.face === 'visitor') {
+        const to = toward(x, z);
+        const d = Math.atan2(Math.sin(to - yaw), Math.cos(to - yaw));
+        yaw += clamp(d, -1.2, 1.2);
+      }
+    }
+    cur.yawS = turnTo(cur.yawS ?? yaw, yaw, 0.12);
+    const o = pose(s.anim, t, x, z, cur);
+    cur.glance = o.glance;
+    stillNow = !moving;
+    drawParts(pushRef, parts, baseOf(x, y, z, cur.yawS), moving ? t * speed : 0, moving ? 0.7 : 0, o.hammer, o.extra, o.lean);
+  });
 }
 
 /** Creates every creature for a world. Each is { name, line, pos, r, h, draw(t, push) }. */
@@ -359,28 +509,164 @@ export function createActors(world) {
         beard: l.i === 4 ? hex(0xdddddd) : null,
       });
       const len = l.z1 - l.z0;
-      actor(list, { name: l.i === 4 ? 'Village Elder' : 'Townsfolk', line: lines[l.i % lines.length], r: 0.8, h: 1 }, (t) => {
+      actor(list, { name: l.i === 4 ? 'Village Elder' : 'Townsfolk', line: lines[l.i % lines.length], r: 0.8, h: 1, greets: true }, (t) => {
         const { d, dir } = pingPong(t, l.speed, len, l.off);
         drawParts(pushRef, parts, baseOf(l.x + Math.sin(t * 0.6 + l.i) * 0.25, GY, l.z0 + d, dir > 0 ? 0 : PI), t * l.speed * 5.2, 0.7);
       });
     }
-    const smith = humanoidParts({ skin: SKINS[2], top: hex(0x3a2a24), legs: hex(0x2a2428), hair: hex(0x1e1410), apron: hex(0x6a4a2a) });
-    actor(list, { name: 'Blacksmith', line: 'Strong projects need strong tests. Mind the lava!', r: 0.9 }, (t) =>
-      drawParts(pushRef, smith, baseOf(23.2, GY, 99.6, -PI / 2), 0, 0, 0.5 + 0.5 * Math.sin(t * 5)),
-    );
-    [[40.5, 66.8], [40.5, 74.8], [23.5, 69.5], [47.5, 82]].forEach(([x, z], i) => {
-      const p = humanoidParts({ skin: SKINS[(i + 1) % 4], top: TOPS[(i + 2) % 6], legs: hex(0x40384a), hair: hex(0x2a1c14), hat: i === 1 ? 'straw' : null, apron: hex(0xe8e0d0) });
-      actor(list, { name: 'Merchant', line: ['Fresh wheat, honest prices!', 'Everything here is verified, like this portfolio.', 'Take a look, no pressure.', 'Best barrels in the valley.'][i], r: 0.8 }, (t) =>
-        drawParts(pushRef, p, baseOf(x, GY, z, x > 32 ? -PI / 2 : PI / 2), t * 2 + i, 0.15, Math.max(0, Math.sin(t * 1.3 + i * 2)) * 0.6),
-      );
+    // ---- the village at work: each role has its own routine, so the road feels lived in
+    const skin = (i) => SKINS[((i % 4) + 4) % 4];
+    const top = (i) => TOPS[((i % 6) + 6) % 6];
+
+    // the blacksmith hammers at the anvil, then straightens up and looks toward the road
+    person(list, {
+      name: 'Blacksmith',
+      role: 'blacksmith',
+      line: 'Strong projects need strong tests. Mind the lava!',
+      r: 0.9,
+      parts: humanoidParts({ skin: SKINS[2], top: hex(0x3a2a24), legs: hex(0x2a2428), hair: hex(0x1e1410), apron: hex(0x6a4a2a) }),
+      steps: [
+        { d: 8.8, stay: [23.2, 99.6, -PI / 2], anim: 'hammer' },
+        { d: 3.4, stay: [23.2, 99.6, PI / 2 - 0.5], anim: 'scan', face: 'visitor' },
+      ],
     });
-    [[15.5, 121, 137, 0.5, 0], [21.5, 123, 135, 0.45, 9]].forEach(([x, z0, z1, sp, off], i) => {
-      const p = humanoidParts({ skin: SKINS[i], top: hex(0x4f7a3a), legs: hex(0x3a3340), hat: 'straw' });
-      actor(list, { name: 'Farmer', line: 'The crops are coming in nicely.', r: 0.8 }, (t) => {
-        const { d, dir } = pingPong(t, sp, z1 - z0, off);
-        drawParts(pushRef, p, baseOf(x, GY, z0 + d, dir > 0 ? 0 : PI), t * sp * 5.2, 0.55);
+
+    // market traders hawk their goods, and wave to anyone who walks up
+    [[40.5, 66.8], [40.5, 74.8], [23.5, 69.5], [47.5, 82]].forEach(([x, z], i) => {
+      const yaw = x > 32 ? -PI / 2 : PI / 2;
+      person(list, {
+        name: 'Merchant',
+        role: 'merchant',
+        line: ['Fresh wheat, honest prices!', 'Everything here is verified, like this portfolio.', 'Take a look, no pressure.', 'Best barrels in the valley.'][i],
+        parts: humanoidParts({ skin: skin(i + 1), top: top(i + 2), legs: hex(0x40384a), hair: hex(0x2a1c14), hat: i === 1 ? 'straw' : null, apron: hex(0xe8e0d0) }),
+        steps: [
+          { d: 5 + i, stay: [x, z, yaw], anim: 'idle' },
+          { d: 3.2, stay: [x, z, yaw], anim: 'hawk', face: 'visitor' },
+        ],
+        offset: i * 2.3,
       });
     });
+
+    // farmers work the irrigation channels, bending to plant on both sides, then walk back
+    const farmerPath = (cx, z0) => {
+      const st = [];
+      let z = z0;
+      for (let n = 0; n < 6; n++) {
+        st.push({ d: 2.8, stay: [cx, z, PI / 2], anim: 'plant' }, { d: 2.8, stay: [cx, z, -PI / 2], anim: 'plant' }, { d: 1.6, walk: [cx, z, cx, z + 3] });
+        z += 3;
+      }
+      st.push({ d: 7, walk: [cx, z, cx, z0] });
+      return st;
+    };
+    [[15.5, 120, 0], [21.5, 123, 11], [18.5, 121, 23]].forEach(([cx, z0, off], i) => {
+      person(list, {
+        name: 'Farmer',
+        role: 'farmer',
+        line: ['The crops are coming in nicely.', 'Rain is on the way, I can feel it.', 'Wheat today, bread tomorrow.'][i],
+        parts: [...humanoidParts({ skin: skin(i), top: hex(0x4f7a3a), legs: hex(0x3a3340), hat: 'straw' }), ...PROPS.hoe()],
+        steps: farmerPath(cx, z0),
+        offset: off,
+        speed: 3.4,
+      });
+    });
+
+    // gate guards stand watch with spears and raise a hand to travellers
+    [[27.6, PI / 2], [36.4, -PI / 2]].forEach(([x, yaw], i) => {
+      person(list, {
+        name: 'Village Guard',
+        role: 'guard',
+        line: ['Welcome, traveller. Mind the market.', 'All is quiet on the road today.'][i],
+        parts: [...humanoidParts({ skin: skin(i + 2), top: hex(0x56606a), legs: hex(0x3a3340), hat: 'steel' }), ...PROPS.spear()],
+        steps: [{ d: 10, stay: [x, 19.4, yaw], anim: 'scan', face: 'visitor' }],
+        greetR: 12,
+      });
+    });
+
+    // a watchman on the tower roof scans the valley
+    person(list, {
+      name: 'Watchman',
+      role: 'guard',
+      line: 'From up here I can see the whole valley. Nice repos, too.',
+      y: GY + 15,
+      parts: humanoidParts({ skin: SKINS[1], top: hex(0x3b6e8f), legs: hex(0x3a3340), hat: 'cap', scarf: hex(0xc23a2a) }),
+      steps: [
+        { d: 6, stay: [43.5, 125.5, -PI / 2], anim: 'scan', face: 'visitor' },
+        { d: 4, stay: [43.5, 125.5, PI], anim: 'scan' },
+      ],
+      greetR: 18,
+    });
+
+    // neighbours step out of their front doors to wave at the road, then go back in
+    [
+      ['Neighbour', 21.5, 25.5, 26.3, 0, 'Lovely morning, is it not?'],
+      ['Neighbour', 44.5, 30.5, 38.2, 9, 'Come by for tea sometime.'],
+      ['Baker', 21.5, 54.5, 26.3, 5, 'Fresh bread! Well, fresh pixels.'],
+      ['Neighbour', 44.5, 96.5, 38.2, 14, 'The forge is loud, but we are used to it.'],
+      ['Neighbour', 20.5, 154.5, 26.3, 3, 'The sheep are no trouble. Mostly.'],
+      ['Neighbour', 45.5, 179.5, 38.2, 17, 'Beautiful evenings near the pond.'],
+    ].forEach(([name, inX, z, outX, off, line], i) => {
+      const eastward = outX > inX;
+      person(list, {
+        name,
+        line,
+        parts: humanoidParts({ skin: skin(i), top: top(i + 1), legs: hex(0x3a3340), hair: i % 2 ? hex(0x3b2a1e) : null, apron: name === 'Baker' ? hex(0xf2ece0) : null, hat: name === 'Baker' ? 'cap' : null }),
+        steps: [
+          { d: 15 + (i % 3) * 3, hide: true },
+          { d: 2.2, walk: [inX, z, outX, z] },
+          { d: 4.2, stay: [outX, z, eastward ? PI / 2 : -PI / 2], anim: 'wave', face: 'visitor' },
+          { d: 2.2, walk: [outX, z, inX, z] },
+        ],
+        offset: off,
+        greets: false,
+      });
+    });
+
+    // the librarian reads at an outdoor lectern in front of the hall, looking up when visitors pass
+    person(list, {
+      name: 'Librarian',
+      role: 'librarian',
+      line: 'Every good repository has a README. Have you read this one?',
+      parts: [...humanoidParts({ skin: SKINS[0], top: hex(0xeae3d2), legs: hex(0x40384a), hair: hex(0x8a8a8a), robe: hex(0xeae3d2), beard: hex(0xdddddd) }), ...PROPS.book()],
+      steps: [
+        { d: 8, stay: [42.5, 110.5, -PI / 2], anim: 'read' },
+        { d: 3, stay: [42.5, 110.5, -PI / 2], anim: 'scan', face: 'visitor' },
+      ],
+    });
+
+    // a water carrier fills a bucket at the well and brings it down the road
+    person(list, {
+      name: 'Water Carrier',
+      role: 'farmer',
+      line: 'Cold and clear, straight from the well.',
+      parts: [...humanoidParts({ skin: SKINS[3], top: hex(0x5a4a8a), legs: hex(0x3a3340), hair: hex(0x2a1c14) }), ...PROPS.bucket()],
+      steps: [
+        { d: 3.4, stay: [40.2, 42.5, PI / 2], anim: 'plant' },
+        { d: 9, walk: [39.8, 42.5, 39.8, 60], anim: 'carry' },
+        { d: 3, stay: [39.8, 60, PI], anim: 'scan' },
+        { d: 9, walk: [39.8, 60, 39.8, 42.5], anim: 'carry' },
+      ],
+      speed: 4.2,
+    });
+
+    // the shepherd walks the pen with a crook, stopping to look over the flock
+    person(list, {
+      name: 'Shepherd',
+      role: 'farmer',
+      line: 'Five sheep, two cows, and not one of them listens.',
+      parts: [...humanoidParts({ skin: SKINS[2], top: hex(0x8a6a3a), legs: hex(0x3a3340), hat: 'straw' }), ...PROPS.crook()],
+      steps: [
+        { d: 4, stay: [17, 162.5, PI / 2], anim: 'scan' },
+        { d: 6, walk: [17, 162.5, 25, 162.5] },
+        { d: 4, stay: [25, 162.5, 0], anim: 'scan' },
+        { d: 6, walk: [25, 162.5, 25, 170.5] },
+        { d: 4, stay: [25, 170.5, -PI / 2], anim: 'scan' },
+        { d: 6, walk: [25, 170.5, 17, 170.5] },
+        { d: 4, stay: [17, 170.5, PI], anim: 'scan' },
+        { d: 6, walk: [17, 170.5, 17, 162.5] },
+      ],
+      speed: 3.6,
+    });
+
     // children chase each other near the well
     for (let i = 0; i < 2; i++) {
       const p = humanoidParts({ skin: SKINS[i + 2], top: TOPS[i + 3], legs: hex(0x3a3340), hair: hex(0x2a1c14) }).map((q) => ({ ...q, s: q.s.map((v) => v * 0.62), p: q.p.map((v) => v * 0.62), c: q.c.map((v) => v * 0.62) }));
@@ -479,6 +765,27 @@ export function createActors(world) {
         pushPart(pushRef, base, wingR, 0, 0, -flap);
       });
     }
+    // the hall bell rings three times every so often; you can hear it from down the road
+    const bellBody = { s: [0.36, 0.42, 0.36], p: [0, 0, 0], c: [0, -0.3, 0], col: hex(0xc9a227) };
+    const bellRim = { s: [0.46, 0.08, 0.46], p: [0, 0, 0], c: [0, -0.52, 0], col: hex(0xa8841a) };
+    const clapper = { s: [0.1, 0.16, 0.1], p: [0, 0, 0], c: [0, -0.6, 0], col: hex(0x3a2a24) };
+    actor(list, quietOpts(quiet, 'Bell'), (t) => {
+      const u = t % 26;
+      const n = Math.floor(t / 26);
+      let beat = n * 10;
+      let ang = 0;
+      [0, 1.7, 3.4].forEach((s0, k) => {
+        if (u < s0) return;
+        beat = n * 10 + k;
+        const d = u - s0;
+        ang += Math.sin(d * 6.5) * Math.exp(-d * 1.1) * 0.5;
+      });
+      cue(cur, beat, 'village_bell', 50, 110.5);
+      const base = baseOf(50, GY + 11.95, 110.5, 0);
+      pushPart(pushRef, base, bellBody, 0, 0, ang);
+      pushPart(pushRef, base, bellRim, 0, 0, ang);
+      pushPart(pushRef, base, clapper, 0, 0, ang * 1.35);
+    });
     // windmill sails
     actor(list, quietOpts(quiet, 'Windmill'), (t) => {
       const hubX = 40.2, hubY = GY + 9.5, hubZ = 156;
@@ -522,10 +829,20 @@ export function createActors(world) {
         drawParts(pushRef, parts, baseOf(l.x, BY, l.z0 + d, dir > 0 ? 0 : PI), t * l.speed * 5.5, 0.6);
       });
     });
-    const smith = humanoidParts({ skin: hex(0x3a2e2e), top: hex(0x3a1a14), legs: hex(0x1a1416), glowEyes: hex(0xffa43a), apron: hex(0x5a3a22) });
-    actor(list, { name: 'Forge Keeper', line: 'The lava never goes out. Neither do the builds.', kind: 'hostile', r: 0.9 }, (t) =>
-      drawParts(pushRef, smith, baseOf(28.2, BY, 100, PI / 2), 0, 0, 0.5 + 0.5 * Math.sin(t * 5)),
-    );
+    person(list, {
+      name: 'Forge Keeper',
+      role: 'blacksmith',
+      kind: 'hostile',
+      line: 'The lava never goes out. Neither do the builds.',
+      r: 0.9,
+      y: BY,
+      greets: false,
+      parts: humanoidParts({ skin: hex(0x3a2e2e), top: hex(0x3a1a14), legs: hex(0x1a1416), glowEyes: hex(0xffa43a), apron: hex(0x5a3a22) }),
+      steps: [
+        { d: 8.8, stay: [28.2, 100, PI / 2], anim: 'hammer' },
+        { d: 3.4, stay: [28.2, 100, PI / 2], anim: 'scan', face: 'visitor' },
+      ],
+    });
     // bone archers: pale and charred, scanning the bridge with bows raised
     const archerSpots = [
       [29.5, 30, 0, 0], [34.7, 52, 1, 1], [29.6, 84, 0, 2], [34.6, 108, 1, 3], [22, 160, 0, 4], [43, 156, 1, 5], [28, 196, 0, 6],
@@ -534,8 +851,12 @@ export function createActors(world) {
       const parts = bonesParts(charred ? hex(0x45403c) : hex(0xe8e4d6), charred ? hex(0x1f1a18) : hex(0xb8b2a0), hex(0x7a5a3a));
       actor(list, { name: charred ? 'Charred Archer' : 'Bone Archer', line: charred ? '*clatter* ...burnt, but still aiming.' : '*clatter* Do not make me draw this bow.', kind: 'hostile', r: 0.7, h: 1.1 }, (t) => {
         const sweep = Math.sin(t * 0.5 + i) * 0.9 + (x > 32 ? -PI / 2 : PI / 2) * 0.5;
-        const draw = Math.max(0, Math.sin(t * 0.9 + i * 1.7));
-        drawParts(pushRef, parts, baseOf(x, BY, z, sweep + (z > 140 ? PI : 0) * 0), 0, 0, 0, (part) => (part.role === 'arm' && part.swing > 0 ? -1.5 - draw * 0.2 : 0));
+        // when the visitor comes within range the archer turns, raises the bow with both arms and takes aim
+        const aim = Math.hypot(look.x - x, look.z - z) < 16;
+        const want = aim ? toward(x, z) : sweep;
+        cur.yawS = turnTo(cur.yawS ?? want, want, 0.08);
+        const draw = aim ? 0.6 + 0.4 * Math.sin(t * 3 + i) : Math.max(0, Math.sin(t * 0.9 + i * 1.7));
+        drawParts(pushRef, parts, baseOf(x, BY, z, cur.yawS), 0, 0, 0, (part) => (part.role === 'arm' ? (part.swing > 0 ? -1.5 - draw * 0.2 : aim ? -1.35 : 0) : 0));
       });
     });
     // gilded raiders in horned gold masks
@@ -654,6 +975,7 @@ export function createActors(world) {
     name: A.name,
     line: A.line,
     kind: A.kind,
+    role: A.role,
     r: A.r,
     h: A.h,
     pick: A.pick,
@@ -662,6 +984,13 @@ export function createActors(world) {
     },
     poke(t) {
       A.hitT = t;
+    },
+    /** A friendly wave (or, for creatures without arms, a little hop) at time t. */
+    wave(t) {
+      if (t - A.waveT > WAVE_S) A.waveT = t;
+    },
+    get hidden() {
+      return A.pos[1] < 0;
     },
     draw(t, push) {
       pushRef = push;
