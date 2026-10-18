@@ -153,6 +153,26 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
+// Contact links and the blog: WhatsApp opens a chat, the blog list and its posts render and link back.
+{
+  const [ctx, page] = await open();
+  await page.waitForSelector('#root > *', { timeout: 10000 });
+  const wa = await page.locator('a[href^="https://wa.me/917419911991"]').count();
+  ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
+  ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
+  ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
+  ok('club roles are listed', (await page.locator('.roles li').count()) === 2);
+  await page.goto(`${BASE}blog/`);
+  ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
+  await page.locator('.cards .card h2 a').first().click();
+  await page.waitForSelector('article.post');
+  ok('a post opens with one h1 and readable text', (await page.locator('h1').count()) === 1 && (await page.locator('.prose p').count()) >= 3);
+  ok('post links back to the blog and the portfolio', (await page.locator('a[href="../"]').count()) >= 1 && (await page.locator('a[href="../../"]').count()) >= 1);
+  await page.setViewportSize({ width: 320, height: 640 });
+  ok('post: no horizontal overflow at 320px', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  await ctx.close();
+}
+
 // Day / night worlds: toggle, portal trip, persistence, phone reachability, reduced motion.
 {
   const ctx = await plainContext({ viewport: { width: 1280, height: 800 } });

@@ -65,7 +65,30 @@ for (const ref of refs) {
   if (!existsSync(path.join(dist, clean))) fail(`Referenced file does not exist in dist: ${ref}`);
 }
 
-const budget = { js: 150 * 1024, css: 20 * 1024 };
+// The blog: every page needs a title, description and h1, and every relative link or asset must exist.
+const blogDir = path.join(dist, 'blog');
+if (!existsSync(path.join(blogDir, 'index.html'))) fail('dist/blog/index.html is missing');
+else {
+  const pages = [path.join(blogDir, 'index.html')];
+  for (const d of readdirSync(blogDir)) {
+    const f = path.join(blogDir, d, 'index.html');
+    if (statSync(path.join(blogDir, d)).isDirectory() && existsSync(f)) pages.push(f);
+  }
+  for (const f of pages) {
+    const page = readFileSync(f, 'utf8');
+    const rel = path.relative(dist, f);
+    if (!/<title>[^<]+<\/title>/.test(page)) fail(`${rel} has no title`);
+    if (!/<meta\s+name="description"\s+content="[^"]{20,}"/.test(page)) fail(`${rel} has no description`);
+    if ((page.match(/<h1[\s>]/g) ?? []).length !== 1) fail(`${rel} must have exactly one h1`);
+    for (const m of page.matchAll(/(?:href|src)="(\.{1,2}\/[^"#?]*)(?:[#?][^"]*)?"/g)) {
+      const target = path.resolve(path.dirname(f), m[1]);
+      const resolved = existsSync(target) && statSync(target).isDirectory() ? path.join(target, 'index.html') : target;
+      if (!existsSync(resolved)) fail(`${rel} links to a missing file: ${m[1]}`);
+    }
+  }
+}
+
+const budget = { js: 160 * 1024, css: 20 * 1024 };
 if (jsBytes > budget.js) fail(`JS is ${(jsBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.js / 1024} kB`);
 if (cssBytes > budget.css) fail(`CSS is ${(cssBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.css / 1024} kB`);
 

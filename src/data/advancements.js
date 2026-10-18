@@ -1,4 +1,8 @@
-/** Only facts that can be checked in the public repositories. No awards or certifications are listed because none are published. */
+/**
+ * Each entry says exactly what it was. Repository facts can be checked on GitHub; certificates and
+ * hackathons come from the owner's public LinkedIn posts. A participation certificate is described
+ * as participation. Scores and rankings are not listed because none were published.
+ */
 export const advancements = [
   {
     id: 'shipped',
@@ -39,6 +43,46 @@ export const advancements = [
     title: 'Campus Builder',
     text: 'Built the public website for JIIT Youth Club, the club behind major events and fests at the Sector 128 campus.',
     sprite: 'banner',
+  },
+  {
+    id: 'jpmorgan',
+    frame: 'goal',
+    category: 'Certificate · Forage',
+    title: 'Virtual Bank Intern',
+    text: 'Completed the JPMorgan Chase & Co. Software Engineering Job Simulation (April to June 2026): project setup, Kafka and H2 integration, REST API integration and a REST controller on a Java and Spring Boot backend.',
+    sprite: 'chest',
+  },
+  {
+    id: 'isro',
+    frame: 'challenge',
+    category: 'Hackathon · ISRO',
+    title: 'Look Down from Orbit',
+    text: 'Took part in the ISRO Bharatiya Antariksh Hackathon 2026 with a prototype that ingests live CPCB datasets and NASA FIRMS satellite feeds to spot NAQI air-quality trends and HCHO pollution hotspots. Certificate of participation.',
+    sprite: 'rocket',
+  },
+  {
+    id: 'osdhack',
+    frame: 'task',
+    category: 'Hackathon · OSDC',
+    title: 'Local AI, Team Build',
+    text: 'Certificate of Merit for taking part in OSDHACK’26. Built a local AI inference project in Python, FastAPI and Ollama with teammates Pulkit Sukhija, Aryan Sharma and Aishni Rathore.',
+    sprite: 'chip',
+  },
+  {
+    id: 'cs50sql',
+    frame: 'task',
+    category: 'Certificate · Harvard',
+    title: 'Query Master',
+    text: 'Completed Harvard’s CS50 Introduction to Databases with SQL: seven problem sets and a final project on schema design, indexing, joins and query optimisation.',
+    sprite: 'gear',
+  },
+  {
+    id: 'nexus',
+    frame: 'task',
+    category: 'Competition',
+    title: 'Quiz Ignite',
+    text: 'Participated in the Nexus AI Quiz Ignite 2026.',
+    sprite: 'star',
   },
   {
     id: 'education',

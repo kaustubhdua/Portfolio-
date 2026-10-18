@@ -22,7 +22,7 @@ export default function Advancements() {
   }, [seen]);
 
   return (
-    <Section id="advancements" {...meta} title="Advancements" lead="Milestones that can be checked in the public repositories. Nothing here is padded.">
+    <Section id="advancements" {...meta} title="Advancements" lead="Projects, certificates and hackathons, each described as exactly what it was. Nothing here is padded.">
       <ul ref={ref} className={`adv-grid${seen ? ' unlocked' : ''}`}>
         {advancements.map((a, i) => (
           <li key={a.id} className="adv" style={{ '--i': i }}>
