@@ -4,9 +4,7 @@
   "version": "1.0.0",
   "description": "Minecraft Nether themed developer portfolio for Kaustubh Dua",
   "type": "module",
-  "engines": {
-    "node": ">=20"
-  },
+  "engines": { "node": ">=20" },
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
@@ -14,7 +12,7 @@
     "lint": "eslint .",
     "check": "node scripts/check.mjs",
     "assets": "node scripts/generate-assets.mjs && node scripts/generate-textures.mjs",
-    "verify": "npm run lint && npm run build && npm run check",
+    "verify": "npm run lint && npm run build && npm run check && npm run test:world",
     "test:e2e": "node tests/e2e.mjs",
     "test:world": "node tests/world.mjs",
     "audit": "node scripts/audit.mjs",
