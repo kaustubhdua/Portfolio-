@@ -65,6 +65,23 @@ export default function ProjectDialog({ project, onClose }) {
           <h3 className="pixel case-h">Engineering decisions</h3>
           <ul className="bullets">{project.decisions.map((d) => <li key={d}>{d}</li>)}</ul>
 
+          <h3 className="pixel case-h">My contribution & attribution</h3>
+          <p>{project.contribution ?? 'Individual contribution has not been documented for this project yet. Review repository commits and pull requests before treating a feature as personal implementation work.'}</p>
+          {project.evidence?.length > 0 && (
+            <>
+              <h3 className="pixel case-h">Evidence & source trail</h3>
+              <ul className="bullets">
+                {project.evidence.map((item) => (
+                  <li key={item.url}>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      {item.label}<span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
           <h3 className="pixel case-h">Known limits</h3>
           <ul className="bullets">{project.limits.map((l) => <li key={l}>{l}</li>)}</ul>
 
