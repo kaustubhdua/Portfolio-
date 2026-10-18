@@ -147,12 +147,16 @@ html[data-explore='on'] #root > *:not(.world-canvas):not(.explore-hud):not(.fall
   right: 0.75rem;
   padding: 0.6rem 0.9rem;
   font-size: 0.7rem;
-  color: var(--text, #fff);
-  background: rgba(10, 6, 14, 0.72);
-  border: 3px solid var(--edge, #555);
+  /* fixed light-on-dark colours: the day theme's --text is dark and made this unreadable */
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+  background: rgba(10, 6, 14, 0.82);
+  border: 3px solid #5a5a66;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.12), inset -2px -2px 0 rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
-.explore-exit span { margin-left: 0.5rem; opacity: 0.6; }
+.explore-exit:hover { border-color: #fff; }
+.explore-exit span { margin-left: 0.5rem; opacity: 0.7; }
 .crosshair {
   position: absolute;
   left: 50%;
