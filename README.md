@@ -67,7 +67,7 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 
 ## Content policy
 
-Everything in `src/data/` comes from the public GitHub profile and project READMEs. Awards, certifications and metrics are intentionally absent because none are published. Prototype, simulated and demo status is stated on each project.
+Content is based on repository documentation. Awards, certifications and metrics are omitted unless verifiable. Each case study now distinguishes the shared project from personal authorship and links to README, evaluation, roadmap, or CI evidence where available. Check commit/PR history for exact individual attribution; no benchmark values are invented.
 
 ## Credits
 
@@ -80,7 +80,7 @@ The cursor spotlight, card tilt, count-up stats and scrolling technology strip f
 - **Browser tests:** `npm run test:e2e` covers navigation, dialogs, keyboard behaviour, reduced motion, responsive widths, images, and other core interactions.
 - **Performance and accessibility:** `npm run audit` measures page-load timings and layout shift and checks common accessibility and console/network issues on desktop, mobile, and 3D views.
 - **CI:** `.github/workflows/ci.yml` runs lint, build, static checks, offline world tests, browser tests, and the performance/accessibility audit on pushes and pull requests. A separate non-blocking job reports dead or authentication-walled project links.
-- **Dependency reproducibility:** a lockfile is not yet committed, so CI currently uses `npm install`. Commit the generated `package-lock.json` and switch CI to `npm ci` before treating dependency resolution as fully reproducible.
+- **Dependency reproducibility:** a lockfile is not yet committed, so CI currently uses `npm install`. Generate `package-lock.json` with a network-enabled npm install in the supported Node/npm environment, commit the actual resolver output, then switch both CI jobs to `npm ci`.
 - **Deploy:** `vercel.json` makes Vercel zero-config. `SITE_URL` (or Vercel's production URL) sets canonical links, the social card, `sitemap.xml` and `robots.txt`.
 
 ## Release checklist
