@@ -13,7 +13,7 @@ export const advancements = [
     frame: 'challenge',
     category: 'Engineering practice',
     title: 'Quality Gates',
-    text: 'The repositories include GitHub Actions, CodeQL and Playwright checks. Always verify the exact workflow run before presenting a check as passing; portfolio CI is currently failing on the maintenance branch.',
+    text: 'The repositories include GitHub Actions, CodeQL and Playwright checks. The latest portfolio jobs failed before any runner step was exposed, so the workflow result is not evidence that code checks ran or passed.',
     sprite: 'shield',
   },
   {
