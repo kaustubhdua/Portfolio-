@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -12,17 +15,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # No lockfile is committed yet. Once `npm install` has produced one, switch to `npm ci`.
+      # npm ci needs a real committed lockfile. Keep install until one exists.
       - run: npm install
-      - run: npm run verify
+      - name: Lint, build, static checks, and voxel-world tests
+        run: npm run verify
       - run: npx playwright install --with-deps chromium
-      - name: Browser tests against the production build
+      - name: Browser tests and performance audit against the production build
         run: |
           npm run preview &
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
+          npm run audit
 
-  # Weekly-style safety net: flags dead or login-walled project links. Reported, never blocking.
   links:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -31,4 +35,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # Keep npm install until package-lock.json is committed.
+      - run: npm install
       - run: npm run check:links
