@@ -161,7 +161,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
-  ok('club roles are listed', (await page.locator('.roles li').count()) === 2);
+  ok('club roles and volunteering are listed', (await page.locator('.roles li').count()) === 3);
   await page.goto(`${BASE}blog/`);
   ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
   await page.locator('.cards .card h2 a').first().click();

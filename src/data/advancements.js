@@ -29,14 +29,6 @@ export const advancements = [
     sprite: 'gear',
   },
   {
-    id: 'team',
-    frame: 'task',
-    category: 'Collaboration',
-    title: 'Team Player',
-    text: 'Contributed to Adapt AI, a hardware-aware local assistant built as a team project with ManOfDiamond.',
-    sprite: 'chip',
-  },
-  {
     id: 'community',
     frame: 'goal',
     category: 'Community',
@@ -63,9 +55,9 @@ export const advancements = [
   {
     id: 'osdhack',
     frame: 'task',
-    category: 'Hackathon · OSDC',
-    title: 'Local AI, Team Build',
-    text: 'Certificate of Merit for taking part in OSDHACK’26. Built a local AI inference project in Python, FastAPI and Ollama with teammates Pulkit Sukhija, Aryan Sharma and Aishni Rathore.',
+    category: 'Hackathon · OSDC · Team',
+    title: 'Adapt AI, Team Build',
+    text: 'Certificate of Merit for taking part in OSDHACK’26. The team built Adapt AI, a local assistant that fits an Ollama model to your RAM and VRAM, with Pulkit Sukhija, Aryan Sharma and Aishni Rathore.',
     sprite: 'chip',
   },
   {

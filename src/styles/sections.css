@@ -745,6 +745,7 @@
 
 .roles h3 { margin-bottom: 0.9rem; }
 .roles ul { display: grid; gap: 1rem; }
+.roles .roles-sub { margin: 1.4rem 0 0.9rem; }
 .roles li { padding-left: 0.9rem; border-left: 3px solid var(--gold, #ffb347); }
 .role-org { font-size: 0.72rem; line-height: 1.4; color: var(--text) !important; }
 .role-title { margin-top: 0.2rem; font-weight: 600; color: var(--gold, #ffb347); }

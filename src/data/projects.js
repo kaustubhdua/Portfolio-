@@ -260,7 +260,7 @@ export const projects = [
     limits: [
       'The upstream repository is owned by a teammate (ManOfDiamond) and the link here is my fork. The README does not itemise individual contributions.',
     ],
-    status: 'Team project I contributed to. No performance figures are claimed.',
+    status: 'Team project I contributed to, built for OSDHACK’26 (Certificate of Merit for taking part) with Pulkit Sukhija, Aryan Sharma and Aishni Rathore. No performance figures are claimed.',
   },
 ];
 
