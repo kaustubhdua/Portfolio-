@@ -13,7 +13,7 @@ export const advancements = [
     frame: 'challenge',
     category: 'Engineering practice',
     title: 'Quality Gates',
-    text: 'The repositories contain GitHub Actions, CodeQL and Playwright checks. The latest JYC visual-matrix run exposed an overline text-size regression; the fix is pending exact-head CI verification.',
+    text: 'The repositories contain GitHub Actions, CodeQL and Playwright checks. The JYC visual-matrix QA previously exposed an overline text-size regression; the fix is on PR #263 and exact-head CI is still pending.',
     sprite: 'shield',
   },
   {
