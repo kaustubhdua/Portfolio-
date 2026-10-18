@@ -39,6 +39,8 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 ## Features worth knowing
 
 - **Chat:** press `/` or use the speech-bubble button. It is an offline command box (`/help`, `/projects`, `/project <name>`, `/skills`, `/skill <name>`, `/contact`) that answers from `src/data/` through `src/lib/chat.js`. It uses no AI model and sends nothing anywhere.
+- **Sound:** every effect, voice and the ambient score is synthesised in the browser, so no audio file ships and nothing is copied from any game. It stays off until the visitor presses the speaker button. To use recordings you have the rights to instead, see `public/sounds/README.md`.
+- **Free roam:** "Explore freely" hides all text and lets you walk the world (WASD, mouse, or a touch joystick), dig and place blocks. Esc or the Leave button returns to the page.
 - **Title-screen touches:** a yellow splash text beside the name and a "Did you know?" tip on the loading screen, all drawn from real project facts.
 
 ## Layout
