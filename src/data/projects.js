@@ -29,6 +29,8 @@ export const projects = [
     biome: 'crimson',
     kind: 'Own repository',
     image: 'img/projects/nirdhoom.png',
+    contribution: 'Multi-contributor prototype. This case study summarizes the product and integration surface; review commits and pull requests authored by me to attribute individual implementation work before treating a feature as solely mine.',
+    evidence: [{ label: 'Project README', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/README.md' }, { label: 'Product release roadmap', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/docs/PRODUCT-RELEASE-ROADMAP.md' }, { label: 'CI workflow', url: 'https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml' }],
     summary:
       'A field-first web app that connects farmers, field records, machine operators, dispatch, verification and residue buyers in one workflow.',
     stack: ['React 19', 'Vite', 'Supabase', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'Leaflet'],
@@ -82,6 +84,8 @@ export const projects = [
     biome: 'crimson',
     kind: 'Own repository',
     image: 'img/projects/saathi.png',
+    contribution: 'Multi-contributor MVP. This summary describes the shared product and architecture, not sole authorship; use commits and pull requests to substantiate individual implementation claims.',
+    evidence: [{ label: 'Project README', url: 'https://github.com/kaustubhdua/Saathi/blob/main/README.md' }, { label: 'Evaluation methodology', url: 'https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md' }, { label: 'GitHub Actions', url: 'https://github.com/kaustubhdua/Saathi/actions' }],
     summary:
       'A Hindi-first, voice-first assistance platform with source-aware answers, consent-based workflows and human escalation.',
     stack: ['Next.js', 'React', 'FastAPI', 'Python', 'Speech APIs', 'GitHub Actions'],
@@ -134,6 +138,8 @@ export const projects = [
     biome: 'soul',
     kind: 'Own repository',
     image: 'img/projects/patchpilot.png',
+    contribution: 'Personal project maintained in this repository. The current scope is deterministic diff triage; production precision and recall have not been established, and this is not a formal security audit.',
+    evidence: [{ label: 'README and quick start', url: 'https://github.com/kaustubhdua/PatchPilot/blob/main/README.md' }, { label: 'Benchmark methodology', url: 'https://github.com/kaustubhdua/PatchPilot/blob/main/docs/benchmark-methodology.md' }, { label: 'Roadmap and release gate', url: 'https://github.com/kaustubhdua/PatchPilot/blob/main/ROADMAP.md' }, { label: 'CI workflow', url: 'https://github.com/kaustubhdua/PatchPilot/actions/workflows/ci.yml' }],
     summary:
       'An early-stage service that reads a unified diff and returns changed-file statistics, evidence-backed risk signals, a coarse 0-100 score and test suggestions.',
     stack: ['Python', 'FastAPI', 'pytest', 'Ruff', 'Docker', 'GitHub Actions'],
@@ -181,6 +187,8 @@ export const projects = [
     biome: 'basalt',
     kind: 'Own repository',
     image: 'img/projects/smartwaste.png',
+    contribution: 'Synthetic-data engineering prototype. This case study summarizes the repository pipeline; identify individual implementation ownership from commits and source files before claiming all work as solely authored.',
+    evidence: [{ label: 'Project README', url: 'https://github.com/kaustubhdua/smart_waste_project/blob/main/README.md' }, { label: 'Repository and source', url: 'https://github.com/kaustubhdua/smart_waste_project' }],
     summary:
       'An end-to-end pipeline that predicts bin fill levels, scores collection priority from 0 to 100 and optimises truck routes with Google OR-Tools.',
     stack: ['Python', 'Random Forest', 'OR-Tools', 'Streamlit', 'Folium'],
@@ -227,6 +235,8 @@ export const projects = [
     biome: 'crimson',
     kind: 'Own repository',
     image: 'img/projects/jyc.png',
+    contribution: 'Multi-contributor public-facing club website. This case study summarizes the shared product and quality workflow; use commits and pull requests for personal attribution. Production QA must be green before describing a release as fully verified.',
+    evidence: [{ label: 'Project README', url: 'https://github.com/kaustubhdua/JYC-Website/blob/main/README.md' }, { label: 'GitHub Actions', url: 'https://github.com/kaustubhdua/JYC-Website/actions' }, { label: 'Visual route matrix test', url: 'https://github.com/kaustubhdua/JYC-Website/blob/main/scripts/visual-route-matrix.spec.js' }],
     summary:
       'The public website for JIIT Youth Club (JYC) at the Sector 128 campus: events, clubs, gallery, archive, announcements and recruitment.',
     stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
@@ -271,6 +281,8 @@ export const projects = [
     biome: 'wastes',
     kind: 'Team project · contributor',
     image: 'img/projects/adaptai.png',
+    contribution: 'Contributor in a team project; this repository is a fork. The README does not itemize individual contributions, so use commits and pull requests under my account to support specific implementation claims.',
+    evidence: [{ label: 'Fork repository', url: 'https://github.com/kaustubhdua/adapt-ai' }, { label: 'Upstream project', url: 'https://github.com/ManOfDiamond/adapt-ai' }],
     summary:
       'A team-built local assistant, which I contributed to, that recommends an Ollama model based on the machine’s RAM and VRAM, for on-device chat, file and Python workflows.',
     stack: ['FastAPI', 'Ollama', 'Local inference', 'JavaScript'],
