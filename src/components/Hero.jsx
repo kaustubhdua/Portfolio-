@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 import Embers from './Embers.jsx';
 import Sprite from './Sprite.jsx';
 import { profile } from '../data/profile.js';
@@ -207,6 +207,9 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
             </a>
             <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
               <FaEnvelope aria-hidden="true" />
+            </a>
+            <a className="icon-btn icon-btn-wa" href={profile.links.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp (opens in a new tab)">
+              <FaWhatsapp aria-hidden="true" />
             </a>
             <a className="icon-btn" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in a new tab)">
               <FaLinkedinIn aria-hidden="true" />

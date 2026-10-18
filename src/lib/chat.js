@@ -52,11 +52,20 @@ const commands = {
     ['/project <name>  details, e.g. /project patchpilot'],
     ['/skills  the inventory'],
     ['/skill <name>  where I used it, e.g. /skill docker'],
-    ['/advancements  milestones'],
-    ['/contact  email and links'],
+    ['/advancements  certificates, hackathons and milestones'],
+    ['/roles  clubs and teams'],
+    ['/blog  writing'],
+    ['/contact  email, WhatsApp and links'],
     ['/clear  empty the chat'],
   ],
-  about: () => [[`${profile.name}: ${profile.program} student at ${profile.institution}.`], [profile.about[1]], [`Motto: ${profile.motto}`]],
+  about: () => [
+    [`${profile.name}: ${profile.program} student at ${profile.institution}.`],
+    [profile.about[1]],
+    ...profile.roles.map((r) => [`${r.org}: ${r.role}.`]),
+    [`Motto: ${profile.motto}`],
+  ],
+  roles: () => profile.roles.map((r) => [`${r.org} (${r.full}): ${r.role}. ${r.note}`]),
+  blog: () => [['Notes on what I build and learn: ', link('blog/', 'open the blog')]],
   projects: () => [
     ...projects.map((p) => [`${p.name}: ${p.tagline}`]),
     ['Type /project <name> for details.'],
@@ -66,6 +75,7 @@ const commands = {
   advancements: () => advancements.map((a) => [`${a.title}: ${a.text}`]),
   contact: () => [
     [`Email: `, link(`mailto:${profile.links.email}`, profile.links.email)],
+    ['WhatsApp: ', link(profile.links.whatsapp, profile.links.whatsappNumber)],
     ['GitHub: ', link(profile.links.github, 'github.com/kaustubhdua')],
     ['LinkedIn: ', link(profile.links.linkedin, 'linkedin.com/in/kaustubh-dua-2b5a76416')],
   ],
@@ -101,11 +111,13 @@ export function reply(input) {
   if (project) return { lines: projectLines(project) };
   const skill = findSkill(text);
   if (skill) return { lines: skillLines(skill) };
-  if (/(contact|email|mail|reach|hire|linkedin|github)/.test(words)) return { lines: commands.contact() };
+  if (/(contact|email|mail|reach|hire|linkedin|github|whatsapp|phone|number)/.test(words)) return { lines: commands.contact() };
+  if (/(blog|write|writing|article|post)/.test(words)) return { lines: commands.blog() };
+  if (/(club|team|role|member|jyc|aiml|tronics)/.test(words)) return { lines: commands.roles() };
   if (/(project|built|build|work|portfolio)/.test(words)) return { lines: commands.projects() };
   if (/(skill|stack|tech|tool|language)/.test(words)) return { lines: commands.skills() };
   if (/(about|who|study|student|college|education|ecm|jiit)/.test(words)) return { lines: commands.about() };
-  if (/(achievement|advancement|milestone)/.test(words)) return { lines: commands.advancements() };
+  if (/(achievement|advancement|milestone|certificate|certification|hackathon|isro|jpmorgan|cs50)/.test(words)) return { lines: commands.advancements() };
   if (/(help|command)/.test(words)) return { lines: commands.help() };
   return { lines: UNKNOWN };
 }

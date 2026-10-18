@@ -1,5 +1,4 @@
 import { Section, Reveal } from './ui.jsx';
-import Sprite from './Sprite.jsx';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'profile');
@@ -19,7 +18,14 @@ export default function Profile() {
         <Reveal className="panel player-card">
           <div className="player-head">
             <div className="avatar">
-              <Sprite name="head" size={88} />
+              <img
+                className="avatar-img"
+                src="img/avatar.png"
+                width="112"
+                height="112"
+                alt="Pixel-art portrait of Kaustubh: curly dark hair, black glasses and a navy blazer"
+                decoding="async"
+              />
             </div>
             <div>
               <h3 className="player-name pixel">{profile.name}</h3>
@@ -42,6 +48,18 @@ export default function Profile() {
               <p key={p} className="about-p">{p}</p>
             ))}
             <blockquote className="motto pixel">{profile.motto}</blockquote>
+          </Reveal>
+          <Reveal delay={110} className="panel roles">
+            <h3 className="pixel">Teams and clubs</h3>
+            <ul>
+              {profile.roles.map((r) => (
+                <li key={r.org}>
+                  <p className="role-org pixel">{r.org}</p>
+                  <p className="role-title">{r.role}</p>
+                  <p className="role-note">{r.note}</p>
+                </li>
+              ))}
+            </ul>
           </Reveal>
           <Reveal delay={140} className="panel quest">
             <h3 className="pixel">Quest log</h3>
