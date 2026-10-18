@@ -243,9 +243,16 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   }
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(1500);
-  await page.mouse.click(24, 640);
-  await page.waitForTimeout(400);
-  ok('clicking bare ground digs a block out', Number((await canvas.getAttribute('data-dug')) ?? 0) >= 1);
+  // villagers wander, and software rendering draws only a few frames a second: try a few spots of
+  // bare ground and give each click time to be drawn before reading the result
+  let dug = 0;
+  for (const [cx, cy] of [[24, 640], [60, 700], [24, 560]]) {
+    await page.mouse.click(cx, cy);
+    await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas')?.dataset.dug ?? 0) >= 1, null, { timeout: 4000 }).catch(() => {});
+    dug = Number((await canvas.getAttribute('data-dug')) ?? 0);
+    if (dug >= 1) break;
+  }
+  ok('clicking bare ground digs a block out', dug >= 1, `dug ${dug}`);
   await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
   await page.evaluate(() => window.scrollTo(0, 0));
