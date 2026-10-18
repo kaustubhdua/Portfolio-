@@ -19,13 +19,24 @@ npm install
 npm run dev        # http://localhost:5173, rebuilds on save
 ```
 
-## Production build
+## Production build and verification
 
 ```bash
-npm run verify     # lint + production build + static dist checks
-npm run test:world # offline checks of both 3D worlds
-npm run audit      # load timings, layout shift and accessibility checks (needs a preview server)
+npm run verify     # lint + production build + static checks + offline voxel-world tests
+npm run test:e2e   # browser tests against a running production preview
+npm run audit      # performance and accessibility audit against a running preview
+npm run check:links # check project and profile links (requires network access)
 npm run preview    # serves dist/ at http://localhost:4173
+```
+
+For browser tests and the audit, build first and keep the preview server running:
+
+```bash
+npm run build
+npm run preview
+# In another terminal:
+npm run test:e2e
+npm run audit
 ```
 
 Set `SITE_URL` at build time so canonical and social-card URLs are absolute:
@@ -47,6 +58,7 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 | --- | --- |
 | `src/data/` | All copy: profile, skills, projects, advancements. Edit content here. |
 | `src/components/` | One component per section, plus `Hero`, `Nav`, `Embers`, `Loader`, `ProjectDialog`. |
+| `src/lib/voxel/` | WebGL renderer, world generation, lighting, meshing, shaders, camera path and free-roam physics. |
 | `src/styles/` | Theme tokens, base, nav, hero, shared UI and per-section CSS. |
 | `scripts/` | Build, dev server, preview server, static check, asset and font generators. |
 | `public/` | Generated hero layers, textures, thumbnails, font, favicon, social card. |
@@ -55,7 +67,7 @@ All asset URLs are relative, so `dist/` can be hosted at a domain root or under 
 
 ## Content policy
 
-Everything in `src/data/` comes from the public GitHub profile and project READMEs. Awards, certifications and metrics are intentionally absent because none are published. Prototype, simulated and demo status is stated on each project.
+Content is based on repository documentation. Awards, certifications and metrics are omitted unless verifiable. Each case study now distinguishes the shared project from personal authorship and links to README, evaluation, roadmap, or CI evidence where available. Check commit/PR history for exact individual attribution; no benchmark values are invented.
 
 ## Credits
 
@@ -64,6 +76,31 @@ The cursor spotlight, card tilt, count-up stats and scrolling technology strip f
 ## Loading, tests and CI
 
 - **Loading screens:** `index.html` contains a static boot screen that paints before any JavaScript runs. Once the app mounts, `Loader.jsx` takes over and its bar follows the real loading of the hero art. It is skippable and skipped for reduced-motion users and repeat visits.
-- **Tests:** `npm run build && npm run preview &` then `npm run test:e2e` runs the browser suite (navigation, dialogs, keyboard, reduced motion, responsive checks, console errors).
-- **CI:** `.github/workflows/ci.yml` runs lint, build, the static check and the browser tests on every push.
+- **Offline world tests:** `npm run test:world` checks both generated worlds, camera collisions, lighting, and free-roam movement. It is included in `npm run verify`.
+- **Browser tests:** `npm run test:e2e` covers navigation, dialogs, keyboard behaviour, reduced motion, responsive widths, images, and other core interactions.
+- **Performance and accessibility:** `npm run audit` measures page-load timings and layout shift and checks common accessibility and console/network issues on desktop, mobile, and 3D views.
+- **CI:** `.github/workflows/ci.yml` runs lint, build, static checks, offline world tests, browser tests, and the performance/accessibility audit on pushes and pull requests. A separate non-blocking job reports dead or authentication-walled project links.
+- **Dependency reproducibility:** a lockfile is not yet committed, so CI currently uses `npm install`. Generate `package-lock.json` with a network-enabled npm install in the supported Node/npm environment, commit the actual resolver output, then switch both CI jobs to `npm ci`.
 - **Deploy:** `vercel.json` makes Vercel zero-config. `SITE_URL` (or Vercel's production URL) sets canonical links, the social card, `sitemap.xml` and `robots.txt`.
+
+
+## Current release verification snapshot
+
+This section records the current verification boundary for this maintenance branch; it is not a substitute for a passing CI run.
+
+- **Workflow run:** [CI on the maintenance branch](https://github.com/kaustubhdua/Portfolio-/actions/workflows/ci.yml) currently fails. GitHub's connected API is not returning step records or downloadable logs for these failed private-repository jobs, so the exact failure location remains unresolved.
+- **Dependency lock:** `package-lock.json` is not committed. Do not claim that a clean install is reproducible until the lockfile is generated by npm in a network-enabled checkout, committed, and CI uses `npm ci`.
+- **Portfolio browser/performance checks:** E2E and performance/a11y checks are configured in CI but have not been independently verified as passing on this branch.
+- **External project links:** the network checker is configured as a non-blocking job. Inspect every reported redirect, authentication wall, or failed URL in a run with retrievable logs.
+- **Deployment parity:** the production URL and deployed commit still need an explicit smoke-check record. A successful source build alone does not prove that the live deployment matches this branch.
+
+## Release checklist
+
+Before describing a release as production-ready:
+
+1. Run `npm run verify` from a clean checkout.
+2. Run `npm run test:e2e` and `npm run audit` against the production build.
+3. Run `npm run check:links` and review every reported URL.
+4. Check the live deployment on a real phone and desktop, with 3D enabled and quick view enabled.
+5. Confirm all case-study statuses, demos, repository links, and technical claims match the current implementation.
+6. Review repository visibility and ensure no secrets, private data, or unlicensed assets are published.
