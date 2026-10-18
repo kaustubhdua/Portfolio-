@@ -4,8 +4,8 @@ export const advancements = [
     id: 'shipped',
     frame: 'goal',
     category: 'Projects shipped',
-    title: 'Hosted and Running',
-    text: 'Four projects, NIRDHOOM, Saathi, Smart Waste and the JYC Website, have live public demos.',
+    title: 'Public Demos Linked',
+    text: 'Four projects link to public demos. Availability does not prove production readiness: NIRDHOOM and Smart Waste remain prototypes, Saathi is an MVP, and JYC still has release checks to verify.',
     sprite: 'rocket',
   },
   {
@@ -13,7 +13,7 @@ export const advancements = [
     frame: 'challenge',
     category: 'Engineering practice',
     title: 'Quality Gates',
-    text: 'The JYC Website runs GitHub Actions, CodeQL and Playwright browser checks. Saathi runs backend tests, front-end builds and dependency audits.',
+    text: 'The repositories contain GitHub Actions, CodeQL and Playwright checks. The latest JYC visual-matrix run exposed an overline text-size regression; the fix is pending exact-head CI verification.',
     sprite: 'shield',
   },
   {
