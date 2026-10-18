@@ -63,6 +63,12 @@ export const projects = [
       'GPS validation, offline sync on real devices and low-end Android testing remain pilot gates.',
       'No browser end-to-end test harness in the current release.',
     ],
+    contribution: "Multi-contributor prototype. This case study summarizes the product and integration surface; review commits and pull requests authored by me to attribute individual implementation work before treating a feature as solely mine.",
+    evidence: [
+      { label: "Project README", url: "https://github.com/kaustubhdua/nihdhoom/blob/main/README.md" },
+      { label: "Product release roadmap", url: "https://github.com/kaustubhdua/nihdhoom/blob/main/docs/PRODUCT-RELEASE-ROADMAP.md" },
+      { label: "CI workflow", url: "https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml" },
+    ],
     status:
       'Prototype and integration foundation. Seeded records and indicative planning values are kept separate from live records, and no performance figures are claimed.',
   },
@@ -109,6 +115,12 @@ export const projects = [
       'Low-latency real-time phone transport is not finished.',
       'Healthcare is informational and navigation support only in the MVP.',
     ],
+    contribution: "Multi-contributor MVP. This summary describes the shared product and architecture, not sole authorship; use commits and pull requests to substantiate individual implementation claims.",
+    evidence: [
+      { label: "Project README", url: "https://github.com/kaustubhdua/Saathi/blob/main/README.md" },
+      { label: "Evaluation methodology", url: "https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md" },
+      { label: "GitHub Actions", url: "https://github.com/kaustubhdua/Saathi/actions" },
+    ],
     status:
       'MVP with a hosted demo. The next milestone in the README is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
   },
@@ -149,6 +161,13 @@ export const projects = [
       'Not a hosted service and not an autonomous code-fixing agent.',
       'GitHub App integration, syntax-aware parsing, persistent history and measured false-positive benchmarks are still ahead.',
       'Heuristics are not semantic analysis; binary files are counted but not analysed.',
+    ],
+    contribution: "Personal project maintained in this repository. The current scope is deterministic diff triage; the README says production precision and recall have not been established and this is not a formal security audit.",
+    evidence: [
+      { label: "README and quick start", url: "https://github.com/kaustubhdua/PatchPilot/blob/main/README.md" },
+      { label: "Benchmark methodology", url: "https://github.com/kaustubhdua/PatchPilot/blob/main/docs/benchmark-methodology.md" },
+      { label: "Roadmap and release gate", url: "https://github.com/kaustubhdua/PatchPilot/blob/main/ROADMAP.md" },
+      { label: "CI workflow", url: "https://github.com/kaustubhdua/PatchPilot/actions/workflows/ci.yml" },
     ],
     status:
       'Early-stage tool with tests and CI. No live demo exists, and no accuracy figures are claimed.',
@@ -191,6 +210,11 @@ export const projects = [
       'Data is synthetic and the routing environment is simulated.',
       'It is not evidence of a live municipal deployment.',
     ],
+    contribution: "Synthetic-data engineering prototype. This case study summarizes the repository pipeline; identify individual implementation ownership from commits and source files before claiming all work as solely authored.",
+    evidence: [
+      { label: "Project README", url: "https://github.com/kaustubhdua/smart_waste_project/blob/main/README.md" },
+      { label: "Repository and source", url: "https://github.com/kaustubhdua/smart_waste_project" },
+    ],
     status:
       'Engineering prototype with a hosted dashboard. Model accuracy, route quality and savings are treated as experiments, so no results are claimed.',
   },
@@ -230,6 +254,12 @@ export const projects = [
     limits: [
       'The README lists running the browser suite against the deployed site and verifying the production deployment as remaining work.',
     ],
+    contribution: "Multi-contributor public-facing club website. This case study summarizes the shared product and quality workflow; use commits and pull requests for personal attribution. Production QA must be green before describing a release as fully verified.",
+    evidence: [
+      { label: "Project README", url: "https://github.com/kaustubhdua/JYC-Website/blob/main/README.md" },
+      { label: "GitHub Actions", url: "https://github.com/kaustubhdua/JYC-Website/actions" },
+      { label: "Visual route matrix test", url: "https://github.com/kaustubhdua/JYC-Website/blob/main/scripts/visual-route-matrix.spec.js" },
+    ],
     status: 'Live public site with automated quality gates.',
   },
   {
@@ -259,6 +289,11 @@ export const projects = [
     decisions: ['Inference stays local, so conversations and files never leave the device.'],
     limits: [
       'The upstream repository is owned by a teammate (ManOfDiamond) and the link here is my fork. The README does not itemise individual contributions.',
+    ],
+    contribution: "Contributor in a team project; this repository is a fork. The README does not itemize individual contributions, so use commits and pull requests under my account to support specific implementation claims.",
+    evidence: [
+      { label: "Fork repository", url: "https://github.com/kaustubhdua/adapt-ai" },
+      { label: "Upstream project", url: "https://github.com/ManOfDiamond/adapt-ai" },
     ],
     status: 'Team project I contributed to. No performance figures are claimed.',
   },
