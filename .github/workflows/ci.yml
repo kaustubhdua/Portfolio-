@@ -17,8 +17,14 @@ jobs:
           node-version: 22
       # npm ci needs a real committed lockfile. Keep install until one exists.
       - run: npm install
-      - name: Lint, build, static checks, and voxel-world tests
-        run: npm run verify
+      - name: Lint
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+      - name: Static distribution checks
+        run: npm run check
+      - name: Offline voxel-world tests
+        run: npm run test:world
       - run: npx playwright install --with-deps chromium
       - name: Browser tests and performance audit against the production build
         run: |
@@ -37,4 +43,5 @@ jobs:
           node-version: 22
       # Keep npm install until package-lock.json is committed.
       - run: npm install
-      - run: npm run check:links
+      - name: Check external project and evidence links
+        run: npm run check:links
