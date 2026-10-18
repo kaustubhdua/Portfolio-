@@ -182,32 +182,36 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
         <p className="hero-role">{profile.role}</p>
         <p className="hero-intro">{profile.intro}</p>
         <div className="hero-actions">
-          <a className="btn btn-primary pixel" href="#profile" onClick={(e) => onNavigate(e, 'profile')}>
-            Explore My World
-          </a>
-          <a className="btn btn-secondary pixel" href="#forge" onClick={(e) => onNavigate(e, 'forge')}>
-            View Projects
-          </a>
-          {canExplore && (
-            <button type="button" className="btn btn-secondary pixel explore-btn" onClick={onExplore}>
-              Explore freely
+          <div className="hero-cta">
+            <a className="btn btn-primary pixel" href="#profile" onClick={(e) => onNavigate(e, 'profile')}>
+              Explore My World
+            </a>
+            <a className="btn btn-secondary pixel" href="#forge" onClick={(e) => onNavigate(e, 'forge')}>
+              View Projects
+            </a>
+            {canExplore && (
+              <button type="button" className="btn btn-secondary pixel explore-btn" onClick={onExplore}>
+                Explore freely
+              </button>
+            )}
+            <button type="button" className="btn btn-quiet pixel quick-btn" aria-pressed={quick} onClick={onQuick}>
+              {quick ? '3D view' : 'Quick view'}
             </button>
-          )}
-          <button type="button" className="btn btn-quiet pixel quick-btn" aria-pressed={quick} onClick={onQuick}>
-            {quick ? '3D view' : 'Quick view'}
-          </button>
-          <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
-            <FaGithub aria-hidden="true" />
-          </a>
-          <a className="icon-btn" href={profile.links.resume} download aria-label="Download résumé (PDF)">
-            <FaFileArrowDown aria-hidden="true" />
-          </a>
-          <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
-            <FaEnvelope aria-hidden="true" />
-          </a>
-          <a className="icon-btn" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in a new tab)">
-            <FaLinkedinIn aria-hidden="true" />
-          </a>
+          </div>
+          <div className="hero-social">
+            <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
+              <FaGithub aria-hidden="true" />
+            </a>
+            <a className="icon-btn" href={profile.links.resume} download aria-label="Download résumé (PDF)">
+              <FaFileArrowDown aria-hidden="true" />
+            </a>
+            <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
+              <FaEnvelope aria-hidden="true" />
+            </a>
+            <a className="icon-btn" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in a new tab)">
+              <FaLinkedinIn aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
 
