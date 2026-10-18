@@ -15,10 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Replace npm install with npm ci only after package-lock.json is generated and committed.
+      # npm ci needs a real committed lockfile. Keep install until one exists.
       - run: npm install
-      - name: Assert dependency lockfile is present before switching to npm ci
-        run: test -f package-lock.json || echo 'BLOCKED: package-lock.json still needs to be generated in a network-enabled checkout.'
       - name: Lint, build, static checks, and voxel-world tests
         run: npm run verify
       - run: npx playwright install --with-deps chromium
@@ -37,5 +35,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # Keep npm install until package-lock.json is committed.
       - run: npm install
       - run: npm run check:links
