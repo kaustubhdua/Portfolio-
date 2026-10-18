@@ -444,11 +444,26 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   const onKeyUp = (e) => {
     if (keys.delete(e.code)) syncKeys();
   };
+  // Chromium reports a huge, bogus pair of mouse deltas (the cursor "jumping" to the lock point and
+  // back, hundreds of ms apart) around pointer lock, which used to spin a new player round to face a
+  // wall or the sky. Ignore the first moments after a lock, drop any single event too large to be a
+  // real hand movement, and cap the rest so a genuine flick still feels right.
+  let lockedAt = 0;
+  const onLockChange = () => {
+    lockedAt = performance.now();
+  };
+  const BOGUS_DELTA = 400;
+  const MAX_DELTA = 200;
   const onMouseMove = (e) => {
     if (!exploring || document.pointerLockElement !== canvas) return;
-    player.yaw += e.movementX * 0.0022;
-    player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - e.movementY * 0.0022));
+    if (performance.now() - lockedAt < 800) return;
+    if (Math.abs(e.movementX) > BOGUS_DELTA || Math.abs(e.movementY) > BOGUS_DELTA) return;
+    const dx = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementX));
+    const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementY));
+    player.yaw += dx * 0.0022;
+    player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy * 0.0022));
   };
+  document.addEventListener('pointerlockchange', onLockChange);
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
   window.addEventListener('mousemove', onMouseMove, { passive: true });
@@ -905,6 +920,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
       ro?.disconnect();
