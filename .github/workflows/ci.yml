@@ -16,7 +16,8 @@ jobs:
         with:
           node-version: 22
       # npm ci needs a real committed lockfile. Keep install until one exists.
-      - run: npm install
+      - name: Install dependencies (retain verbose npm diagnostics)
+        run: npm install --no-audit --no-fund --loglevel verbose
       - name: Lint
         run: npm run lint
       - name: Production build
@@ -32,6 +33,16 @@ jobs:
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
           npm run audit
+      - name: Upload npm and test diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-ci-diagnostics-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            ~/.npm/_logs/**
+            playwright-report/**
+            test-results/**
 
   links:
     runs-on: ubuntu-latest
@@ -42,6 +53,14 @@ jobs:
         with:
           node-version: 22
       # Keep npm install until package-lock.json is committed.
-      - run: npm install
+      - name: Install dependencies for link checker
+        run: npm install --no-audit --no-fund --loglevel verbose
       - name: Check external project and evidence links
         run: npm run check:links
+      - name: Upload npm diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-link-diagnostics-${{ github.run_id }}
+          if-no-files-found: warn
+          path: ~/.npm/_logs/**
