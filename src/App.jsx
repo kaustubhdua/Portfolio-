@@ -1,5 +1,7 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import Loader from './components/Loader.jsx';
+import Toasts from './components/Toasts.jsx';
+import TitleScreen from './components/TitleScreen.jsx';
 import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
@@ -45,7 +47,9 @@ export default function App() {
   usePointerFx();
   const ids = useMemo(() => sections.map((s) => s.id), []);
   const active = useActiveSection(ids);
-  const [intro, setIntro] = useState(() => !introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // 'title' (menu), then 'load' (world-loading screen), then false. Skipped when seen this session or with reduced motion.
+  const [intro, setIntro] = useState(() => (!introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'title' : false));
+  const afterIntro = useRef('play');
   const [openId, setOpenId] = useState(null);
   const [soundOn, setSoundOn] = useState(false);
   const [warp, setWarp] = useState(0);
@@ -70,6 +74,13 @@ export default function App() {
     setAnnounce('Back on the page.');
   }, []);
   const canExplore = worldMode === 'on' && !trip && !intro;
+  const [wantExplore, setWantExplore] = useState(false);
+  useEffect(() => {
+    if (wantExplore && canExplore) {
+      setWantExplore(false);
+      enterExplore();
+    }
+  }, [wantExplore, canExplore, enterExplore]);
   // "Quick view" turns the 3D scenery off for visitors who just want the content.
   const [quick, setQuick] = useState(() => {
     try {
@@ -111,8 +122,21 @@ export default function App() {
   }, [trip, setTheme]);
   const endTrip = useCallback(() => setTrip(null), []);
 
+  // While the title screen is up, the page content behind it is hidden so only the world shows through.
+  useEffect(() => {
+    if (intro === 'title') document.documentElement.dataset.title = 'on';
+    else delete document.documentElement.dataset.title;
+  }, [intro]);
+
+  const chooseEntry = useCallback((what) => {
+    afterIntro.current = what;
+    setIntro('load');
+  }, []);
+
   const finishIntro = useCallback(() => {
     setIntro(false);
+    if (afterIntro.current === 'contact') requestAnimationFrame(() => document.getElementById('contact')?.scrollIntoView());
+    if (afterIntro.current === 'explore') setWantExplore(true);
     try {
       sessionStorage.setItem(SEEN_KEY, '1');
     } catch {
@@ -238,11 +262,13 @@ export default function App() {
   return (
     <WorldContext.Provider value={theme}>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
-      {intro && <Loader onDone={finishIntro} soundOn={soundOn} onSound={toggleSound} />}
+      {intro === 'title' && <TitleScreen onChoose={chooseEntry} soundOn={soundOn} onSound={toggleSound} quick={quick} onQuick={toggleQuick} />}
+      {intro === 'load' && <Loader onDone={finishIntro} soundOn={soundOn} onSound={toggleSound} />}
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
       <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} onExplore={canExplore ? enterExplore : null} />
+      <Toasts active={active} paused={Boolean(intro) || exploring || Boolean(trip)} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
       {exploring && <ExploreHud onExit={leaveExplore} />}

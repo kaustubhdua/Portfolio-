@@ -44,11 +44,19 @@ async function open({ threed = false, ...opts } = {}) {
 // First visit: boot screen, entry loader, skip.
 {
   const [ctx, page] = await open();
-  await page.waitForSelector('#root > *', { timeout: 10000 });
+  await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
   // the static boot screen fades out for a few hundred ms after the app mounts, then leaves the DOM
   await page.waitForSelector('#boot', { state: 'detached', timeout: 3000 }).catch(() => {});
   ok('static boot screen is removed once the app mounts', (await page.locator('#boot').count()) === 0);
-  ok('entry loader shows on first visit', (await page.locator('.loader:not(.boot)').count()) === 1);
+  ok('title screen shows on first visit', (await page.locator('.title-screen').count()) === 1);
+  const splashText = (await page.locator('.title-splash').innerText()).trim();
+  ok('title screen has a yellow splash line', splashText.length > 3 && (await page.locator('.title-splash').evaluate((e) => getComputedStyle(e).color)) === 'rgb(255, 255, 85)');
+  ok('Play is focused first', await page.evaluate(() => document.activeElement?.textContent === 'Play'));
+  await page.keyboard.press('ArrowDown');
+  ok('arrow keys move through the menu', await page.evaluate(() => document.activeElement?.textContent === 'Free roam'));
+  await page.locator('.title-menu .mc-button', { hasText: 'Play' }).click();
+  await page.waitForSelector('.loader:not(.boot)', { timeout: 3000 });
+  ok('entry loader follows the title screen', (await page.locator('.title-screen').count()) === 0);
   await page.keyboard.press('Escape');
   await page.waitForSelector('.loader', { state: 'detached', timeout: 3000 });
   ok('entry loader skips with Escape', true);
@@ -156,7 +164,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
 // Contact links and the blog: WhatsApp opens a chat, the blog list and its posts render and link back.
 {
   const [ctx, page] = await open();
-  await page.waitForSelector('#root > *', { timeout: 10000 });
+  await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
   const wa = await page.locator('a[href^="https://wa.me/917419911991"]').count();
   ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
@@ -170,6 +178,21 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('post links back to the blog and the portfolio', (await page.locator('a[href="../"]').count()) >= 1 && (await page.locator('a[href="../../"]').count()) >= 1);
   await page.setViewportSize({ width: 320, height: 640 });
   ok('post: no horizontal overflow at 320px', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  await ctx.close();
+}
+
+// Advancement toasts: a section reached for the first time pops one up from the top right.
+{
+  const ctx = await plainContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
+  await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await page.goto(BASE);
+  await page.waitForTimeout(1000);
+  ok('no toast before leaving the first section', (await page.locator('.toast.show').count()) === 0);
+  await page.evaluate(() => document.getElementById('contact').scrollIntoView());
+  await page.waitForSelector('.toast.show', { timeout: 4000 });
+  ok('the toast uses a game-style header', /Advancement Made!|Goal Reached!|Challenge Complete!/.test(await page.locator('.toast.show .toast-h').innerText()));
   await ctx.close();
 }
 

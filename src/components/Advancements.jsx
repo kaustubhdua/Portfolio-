@@ -1,25 +1,13 @@
-import { useEffect, useState } from 'react';
 import { Section } from './ui.jsx';
 import Sprite from './Sprite.jsx';
 import { advancements } from '../data/advancements.js';
 import { sections } from '../data/profile.js';
 import { useInView } from '../hooks/useInView.js';
-import { advancementSound } from '../lib/audio.js';
 
 const meta = sections.find((s) => s.id === 'advancements');
 
 export default function Advancements() {
   const [ref, seen] = useInView({ threshold: 0.25 });
-  const [toast, setToast] = useState(false);
-
-  // One small notification when the page is first unlocked, then it leaves.
-  useEffect(() => {
-    if (!seen) return undefined;
-    setToast(true);
-    advancementSound();
-    const t = setTimeout(() => setToast(false), 4200);
-    return () => clearTimeout(t);
-  }, [seen]);
 
   return (
     <Section id="advancements" {...meta} title="Advancements" lead="Projects, certificates and hackathons, each described as exactly what it was. Nothing here is padded.">
@@ -35,17 +23,6 @@ export default function Advancements() {
           </li>
         ))}
       </ul>
-      <div className={`toast${toast ? ' show' : ''}`} role="status">
-        {toast && (
-          <>
-            <Sprite name="star" size={28} />
-            <div>
-              <p className="pixel toast-h">Advancement Made!</p>
-              <p className="toast-t">{advancements.length} milestones unlocked</p>
-            </div>
-          </>
-        )}
-      </div>
     </Section>
   );
 }

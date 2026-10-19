@@ -104,7 +104,7 @@ html.mob-hover body { cursor: pointer; }
 
 /* Printing the page gives a clean text version, without the game scenery */
 @media print {
-  .world-canvas, .fallback-backdrop, .nav, .hud, .chat, .loader, .travel, .warp, .skip-link, .world-canvas + *, .mob-bubble { display: none !important; }
+  .world-canvas, .fallback-backdrop, .nav, .hud, .chat, .loader, .title-screen, .travel, .warp, .skip-link, .world-canvas + *, .mob-bubble { display: none !important; }
   html, body, .section, .hero { background: #fff !important; color: #000 !important; }
   .hero { min-height: 0 !important; padding: 0 !important; }
   .stage, .hero-scrim, .biome-picker, .portal-rule { display: none !important; }

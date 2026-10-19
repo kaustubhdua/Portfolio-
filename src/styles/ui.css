@@ -522,3 +522,7 @@
   color: #fff;
   text-shadow: 2px 2px 0 #20083a;
 }
+
+.toast[data-frame='challenge'] { border-color: #ff55ff; box-shadow: 0 6px 0 rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 85, 255, 0.28); }
+.toast[data-frame='challenge'] .toast-h { color: #ff55ff; }
+html[data-explore='on'] .toast { display: none; }
