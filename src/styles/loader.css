@@ -33,20 +33,21 @@
 }
 .boot { cursor: progress; }
 
-/* Small bobbing block: a tiled face with simple light and shade, original art. */
-.loader-block {
-  width: 40px;
-  height: 40px;
+/* The grid of chunks drawn while the spawn area is prepared: it fills outward from the centre. */
+.chunk-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 11), 1fr);
+  gap: 2px;
+  width: min(15rem, 62vw);
+  aspect-ratio: 1;
+  padding: 4px;
   margin-bottom: 0.5rem;
-  background: var(--tile) 0 0 / 40px 40px;
-  image-rendering: pixelated;
-  box-shadow: inset 4px 4px 0 rgba(255, 255, 255, 0.18), inset -4px -4px 0 rgba(0, 0, 0, 0.4), 0 0 0 4px #000;
-  animation: loader-bob 1.2s steps(4, jump-none) infinite alternate;
+  background: #000;
+  box-shadow: 0 0 0 2px #8b8b8b;
 }
-@keyframes loader-bob {
-  from { transform: translateY(0); }
-  to { transform: translateY(-12px); }
-}
+.chunk-grid i { background: #3a3a3a; transition: background-color 0.15s steps(2, end); }
+.chunk-grid i.is-busy { background: #d6b24a; }
+.chunk-grid i.is-done { background: #62c24f; }
 
 .loader-title {
   min-height: 1.5em;
@@ -86,7 +87,7 @@
   pointer-events: none;
   background: repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--seg) - 2px), rgba(0, 0, 0, 0.55) calc(100% / var(--seg) - 2px) calc(100% / var(--seg)));
 }
-.loader-bar span.is-live { transition: width 0.18s steps(2, end); }
+.loader-bar span.is-live { transition: none; } /* the value is already eased per frame; a CSS transition would restart each frame and never advance */
 .loader-bar span.is-idle {
   width: 10%;
   animation: boot-slide 1.6s steps(10, jump-none) infinite alternate;
@@ -140,5 +141,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .loader, .loader-bar span.is-live { transition: none; }
-  .loader-block, .loader-bar span.is-idle { animation: none; }
+  .loader-bar span.is-idle { animation: none; }
 }
