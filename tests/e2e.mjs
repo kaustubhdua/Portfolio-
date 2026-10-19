@@ -7,6 +7,7 @@
  * BASE_URL        page to test (default http://localhost:4173/)
  * PLAYWRIGHT_MODULE / PW_CHROMIUM  optional overrides for non-standard installs
  */
+import { profile } from '../src/data/profile.js';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
@@ -89,7 +90,7 @@ async function open({ threed = false, ...opts } = {}) {
   ok('biome filter narrows the cards', (await page.locator('.card').count()) === 1);
   await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('all six projects shown again', (await page.locator('.card').count()) === 6);
+  ok('all six projects shown again, plus the two coming-soon cards', (await page.locator('.card:not(.card-soon)').count()) === 6 && (await page.locator('.card-soon').count()) === 2);
   ok('three flagship projects are marked', (await page.locator('.flagship-tag').count()) === 3);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
@@ -170,14 +171,21 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
   ok('club roles and volunteering are listed', (await page.locator('.roles li').count()) === 3);
-  await page.goto(`${BASE}blog/`);
-  ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
-  await page.locator('.cards .card h2 a').first().click();
-  await page.waitForSelector('article.post');
-  ok('a post opens with one h1 and readable text', (await page.locator('h1').count()) === 1 && (await page.locator('.prose p').count()) >= 3);
-  ok('post links back to the blog and the portfolio', (await page.locator('a[href="../"]').count()) >= 1 && (await page.locator('a[href="../../"]').count()) >= 1);
-  await page.setViewportSize({ width: 320, height: 640 });
-  ok('post: no horizontal overflow at 320px', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  if (!profile.blogEnabled) {
+    ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
+    ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
+    ok('the Forge lists two coming-soon flagship cards', (await page.locator('.card-soon').count()) === 2);
+  } else {
+    await page.goto(`${BASE}blog/`);
+    ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
+    await page.locator('.cards .card h2 a').first().click();
+    await page.waitForSelector('article.post');
+    ok('a post opens with one h1 and readable text', (await page.locator('h1').count()) === 1 && (await page.locator('.prose p').count()) >= 3);
+    ok('post links back to the blog and the portfolio', (await page.locator('a[href="../"]').count()) >= 1 && (await page.locator('a[href="../../"]').count()) >= 1);
+    await page.setViewportSize({ width: 320, height: 640 });
+    ok('post: no horizontal overflow at 320px', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+
+  }
   await ctx.close();
 }
 

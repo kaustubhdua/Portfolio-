@@ -292,7 +292,7 @@ export default function App() {
       </main>
       <footer className="footer">
         <p>
-          &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft · <a href="blog/">Blog</a>
+          &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft · {profile.blogEnabled ? <a href="blog/">Blog</a> : 'Blog: coming soon'}
         </p>
         <details className="build-notes">
           <summary>How this site is built</summary>
@@ -303,7 +303,7 @@ export default function App() {
             <li>The gold trophy at the end of the road, in the village and in the Nether, is deliberately unnamed. It gets its name when I win something.</li>
             <li>The portal is plain CSS, with parallax driven by two CSS variables; animation pauses off screen and respects reduced-motion settings.</li>
             <li>Case studies use the native dialog element, and navigation works fully by keyboard.</li>
-            <li>The blog is plain Markdown in <code>content/blog</code>, turned into static pages by the build, so adding a post means adding one file.</li>
+            <li>A Markdown blog pipeline is built into the build step; the blog itself is coming soon.</li>
             <li>The chat is a rule-based helper that runs in your browser. It uses no AI service and sends nothing anywhere.</li>
             <li>Press Ctrl or Cmd + K for a command menu: jump to a section, open a case study, copy the email address or switch worlds.</li>
             <li>Browser tests run on every push and check layout at ten screen widths, keyboard use and console errors.</li>

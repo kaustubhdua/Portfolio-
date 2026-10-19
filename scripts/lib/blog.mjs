@@ -48,6 +48,7 @@ export async function loadPosts(root) {
 
 export async function writeBlog({ root, dist, siteUrl }) {
   const { profile } = await import(pathToFileURL(path.join(root, 'src/data/profile.js')).href);
+  if (!profile.blogEnabled && process.env.BLOG_PREVIEW !== '1') return { urls: [], count: 0 };
   const posts = await loadPosts(root);
   const urls = [];
 

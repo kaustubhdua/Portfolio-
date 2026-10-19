@@ -8,7 +8,10 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { pathToFileURL } from 'node:url';
 import { dist } from './lib/site.mjs';
+
+const { profile } = await import(pathToFileURL(path.resolve('src/data/profile.js')).href);
 
 const problems = [];
 const fail = (msg) => problems.push(msg);
@@ -67,7 +70,9 @@ for (const ref of refs) {
 
 // The blog: every page needs a title, description and h1, and every relative link or asset must exist.
 const blogDir = path.join(dist, 'blog');
-if (!existsSync(path.join(blogDir, 'index.html'))) fail('dist/blog/index.html is missing');
+if (!profile.blogEnabled && process.env.BLOG_PREVIEW !== '1') {
+  if (existsSync(blogDir)) fail('dist/blog exists while the blog is switched off (blogEnabled is false)');
+} else if (!existsSync(path.join(blogDir, 'index.html'))) fail('dist/blog/index.html is missing');
 else {
   const pages = [path.join(blogDir, 'index.html')];
   for (const d of readdirSync(blogDir)) {

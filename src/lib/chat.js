@@ -54,7 +54,7 @@ const commands = {
     ['/skill <name>  where I used it, e.g. /skill docker'],
     ['/advancements  certificates, hackathons and milestones'],
     ['/roles  clubs, teams and volunteering'],
-    ['/blog  writing'],
+    ['/blog  writing (coming soon)'],
     ['/trophy  the gold trophy at the end of the road'],
     ['/contact  email, WhatsApp and links'],
     ['/clear  empty the chat'],
@@ -71,7 +71,7 @@ const commands = {
     ['At the end of the road, in the village and in the Nether, a gold trophy stands on a pedestal.'],
     ['It has no name yet on purpose. It gets one when I win a competition or hackathon.'],
   ],
-  blog: () => [['Notes on what I build and learn: ', link('blog/', 'open the blog')]],
+  blog: () => (profile.blogEnabled ? [['Notes on what I build and learn: ', link('blog/', 'open the blog')]] : [['The blog is coming soon. Until then, the projects are in the Forge.']]),
   projects: () => [
     ...projects.map((p) => [`${p.name}: ${p.tagline}`]),
     ['Type /project <name> for details.'],
