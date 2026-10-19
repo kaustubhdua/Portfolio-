@@ -26,6 +26,25 @@ function carveCorridor(g, stops, surface, top) {
   }
 }
 
+
+/**
+ * A tribute monument for Technoblade, the owner's favourite YouTuber ("Technoblade never dies"): a
+ * two-step pedestal, a pillar and a glowing crown floating above it, with a lantern at each corner.
+ * It is an original design and deliberately not a likeness of any person or character. (cx, cz) is the
+ * centre and y0 the first free level. body, step and glow are block ids.
+ */
+function tributeMonument(g, cx, cz, y0, { body, step, glow }) {
+  g.fill(cx - 3, y0, cz - 3, cx + 3, y0, cz + 3, step);
+  g.fill(cx - 2, y0 + 1, cz - 2, cx + 2, y0 + 1, cz + 2, step);
+  g.fill(cx - 1, y0 + 2, cz - 1, cx + 1, y0 + 2, cz + 1, body);
+  g.fill(cx, y0 + 3, cz, cx, y0 + 7, cz, body); // pillar
+  for (let x = cx - 1; x <= cx + 1; x++)
+    for (let z = cz - 1; z <= cz + 1; z++) if (x !== cx || z !== cz) g.set(x, y0 + 8, z, glow); // crown band
+  for (const dx of [-1, 1]) for (const dz of [-1, 1]) g.set(cx + dx, y0 + 9, cz + dz, glow); // crown points
+  g.set(cx, y0 + 9, cz, glow);
+  for (const dx of [-3, 3]) for (const dz of [-3, 3]) g.set(cx + dx, y0 + 1, cz + dz, B.LANTERN);
+}
+
 /* ------------------------------------------------------------------------------------------ */
 /* Overworld: a village                                                                         */
 /* ------------------------------------------------------------------------------------------ */
@@ -320,6 +339,8 @@ function buildVillage() {
     g.set(27, GY, z, stair(B.STAIR_SPRUCE, 1));
     g.set(37, GY, z, stair(B.STAIR_SPRUCE, 0));
   }
+  // tribute monument on the east side of the plaza
+  tributeMonument(g, 38, 203, GY, { body: B.STONE, step: B.STONE_BRICK, glow: B.GLOWSTONE });
   // portal home
   g.shell(30, GY, 207, 34, GY + 4, 207, B.OBSIDIAN);
   g.fill(31, GY + 1, 207, 33, GY + 3, 207, B.AIR);
@@ -553,6 +574,9 @@ function buildFortress() {
   }
   g.fill(31, D, 196, 33, D, 198, B.BASALT);
   g.fill(32, D + 1, 197, 32, D + 1, 197, B.FIRE);
+
+  // tribute monument on the end platform, in blackstone with a glowing crown
+  tributeMonument(g, 26, 201, BY, { body: B.BLACKSTONE, step: B.NETHER_BRICK, glow: B.GLOWSTONE });
 
   const stops = stopsFor('nether', BY);
   carveCorridor(g, stops, BY, 5);

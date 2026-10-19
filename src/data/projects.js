@@ -283,7 +283,7 @@ export const explored = [
   {
     name: 'AkashChalak',
     kind: 'Prototype',
-    text: 'A satellite-assisted air-quality and hotspot decision-support prototype for India.',
+    text: 'The prototype built for the ISRO Bharatiya Antariksh Hackathon 2026: a satellite-assisted air-quality and hotspot decision-support tool for India.',
     repo: 'https://github.com/kaustubhdua/Akash-Chalak',
     live: null,
   },
