@@ -71,6 +71,7 @@ export default function Profile() {
                 </li>
               ))}
             </ul>
+            <p className="roles-soon pixel">Events and impact: coming soon</p>
           </Reveal>
           <Reveal delay={140} className="panel quest">
             <h3 className="pixel">Quest log</h3>

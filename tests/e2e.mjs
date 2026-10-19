@@ -174,6 +174,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
+    ok('cards without a live demo say "Demo: coming soon"', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 2 && (await page.locator('.roles-soon').count()) === 1);
     ok('the Forge lists two coming-soon flagship cards', (await page.locator('.card-soon').count()) === 2);
   } else {
     await page.goto(`${BASE}blog/`);
