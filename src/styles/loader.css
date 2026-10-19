@@ -23,8 +23,9 @@
   transition: opacity 0.3s ease-out;
 }
 .loader-nether {
-  --tile: url('img/tex/netherrack.png');
-  --shade: rgba(28, 0, 0, 0.6);
+  /* the game's own loading screens tile dirt, dimmed, in every dimension */
+  --tile: url('img/tex/dirt.png');
+  --shade: rgba(0, 0, 0, 0.72);
 }
 .loader.is-leaving,
 .boot.boot-out {
