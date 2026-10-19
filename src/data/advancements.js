@@ -8,8 +8,8 @@ export const advancements = [
     id: 'shipped',
     frame: 'goal',
     category: 'Projects shipped',
-    title: 'Hosted and Running',
-    text: 'Four projects, NIRDHOOM, Saathi, Smart Waste and the JYC Website, have live public demos.',
+    title: 'Public Demos Linked',
+    text: 'Four projects link to public demos: NIRDHOOM and Smart Waste are prototypes, Saathi is an MVP and the JYC Website is a live club site.',
     sprite: 'rocket',
   },
   {
