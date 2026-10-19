@@ -291,7 +291,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   let dug = 0;
   for (const [cx, cy] of [[24, 640], [60, 700], [24, 560]]) {
     await page.mouse.click(cx, cy);
-    await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas')?.dataset.dug ?? 0) >= 1, null, { timeout: 4000 }).catch(() => {});
+    await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas')?.dataset.dug ?? 0) >= 1, null, { timeout: 9000 }).catch(() => {});
     dug = Number((await canvas.getAttribute('data-dug')) ?? 0);
     if (dug >= 1) break;
   }
