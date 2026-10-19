@@ -777,3 +777,16 @@
 }
 .btn-soon { cursor: default; opacity: 0.75; border-style: dashed; }
 .btn-soon:hover { transform: none; }
+
+.roles-soon, .demo-soon {
+  margin: 1rem 0 0;
+  padding: 0.35rem 0.7rem;
+  width: fit-content;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: #ffd27a;
+  border: 2px dashed currentColor;
+  opacity: 0.9;
+}
+.demo-soon { margin: 0 0 0 auto; align-self: center; font-size: 0.58rem; }
+[data-theme='overworld'] .roles-soon, [data-theme='overworld'] .demo-soon { color: #5a3a00; }
