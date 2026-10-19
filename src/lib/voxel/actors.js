@@ -633,6 +633,38 @@ export function createActors(world) {
       ],
     });
 
+    // three more villagers, each at the job-site block of their trade, on the west side of the road
+    person(list, {
+      name: 'Cartographer',
+      role: 'librarian',
+      line: 'This map covers every project. Start in the Forge and follow the road.',
+      parts: [...humanoidParts({ skin: SKINS[1], top: hex(0x6a4a8a), legs: hex(0x40384a), hair: hex(0x3b2a1e), robe: hex(0x6a4a8a), hat: 'cap' }), ...PROPS.book()],
+      steps: [
+        { d: 8, stay: [28.5, 128.5, -PI / 2], anim: 'read' },
+        { d: 3, stay: [28.5, 128.5, -PI / 2], anim: 'scan', face: 'visitor' },
+      ],
+    });
+    person(list, {
+      name: 'Mason',
+      role: 'blacksmith',
+      line: 'Solid foundations beat clever tricks. Every wall starts with one block.',
+      parts: humanoidParts({ skin: SKINS[3], top: hex(0x8a8478), legs: hex(0x3a3340), hair: hex(0x2a1c14), apron: hex(0xb0a898) }),
+      steps: [
+        { d: 6, stay: [28.5, 122.5, -PI / 2], anim: 'hammer' },
+        { d: 3.4, stay: [28.5, 122.5, -PI / 2 + 0.6], anim: 'scan', face: 'visitor' },
+      ],
+    });
+    person(list, {
+      name: 'Fletcher',
+      role: 'farmer',
+      line: 'Straight shafts, clean fletching. Straight code works the same way.',
+      parts: humanoidParts({ skin: SKINS[0], top: hex(0x4a7a48), legs: hex(0x3a3340), hair: hex(0x6a4a2a), hat: 'straw' }),
+      steps: [
+        { d: 7, stay: [28.5, 134.5, -PI / 2], anim: 'idle' },
+        { d: 3, stay: [28.5, 134.5, -PI / 2], anim: 'scan', face: 'visitor' },
+      ],
+    });
+
     // a water carrier fills a bucket at the well and brings it down the road
     person(list, {
       name: 'Water Carrier',

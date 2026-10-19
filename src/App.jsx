@@ -294,6 +294,7 @@ export default function App() {
         <p>
           &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft · <a href="blog/">Blog</a>
         </p>
+        <p className="footer-tribute">In memory of Technoblade, my favourite YouTuber. Technoblade never dies. Find the monument at the end of the road.</p>
         <details className="build-notes">
           <summary>How this site is built</summary>
           <ul>
