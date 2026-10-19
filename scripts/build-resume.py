@@ -3,7 +3,7 @@
 Follows common technical-resume guidance: one page, one column, no tables or images (so applicant
 tracking systems read it cleanly), a standard sans font, the order Education > Skills > Projects, and
 bullets that start with a past-tense verb. Every statement comes from the public repositories and
-READMEs or from what the owner told us directly (programme, institution, graduation year 2029).
+READMEs or from what the owner told us directly (programme, institution, graduation year 2029, certificates, club roles and volunteering).
 Nothing is invented: no phone number, grades, awards, employers or performance figures. Forks and
 team projects are labelled as such.
 """
@@ -26,14 +26,14 @@ pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic
 ink, accent, muted = HexColor('#111111'), HexColor('#8c1d28'), HexColor('#4a4a4a')
 S = lambda **k: ParagraphStyle('s', **{'fontName': 'Body', 'textColor': ink, **k})
 
-name = S(fontName='Bold', fontSize=27, leading=30)
+name = S(fontName='Bold', fontSize=24, leading=27)
 sub = S(fontName='Bold', fontSize=10.5, leading=14, textColor=accent)
 contact = S(fontSize=9.2, leading=13, textColor=muted)
-head = S(fontName='Bold', fontSize=9.8, leading=12, textColor=accent, spaceBefore=9, spaceAfter=1)
-body = S(fontSize=9.4, leading=13)
-item = S(fontName='Bold', fontSize=10.2, leading=13.5, spaceBefore=5)
-detail = S(fontSize=8.6, leading=11.6, textColor=muted)
-bullet = S(fontSize=9.3, leading=12.8, leftIndent=11, bulletIndent=1)
+head = S(fontName='Bold', fontSize=9.8, leading=12, textColor=accent, spaceBefore=6, spaceAfter=0)
+body = S(fontSize=9.1, leading=12)
+item = S(fontName='Bold', fontSize=9.9, leading=12.5, spaceBefore=3)
+detail = S(fontSize=8.3, leading=10.6, textColor=muted)
+bullet = S(fontSize=8.9, leading=11.6, leftIndent=11, bulletIndent=1)
 
 link = lambda u, t: f'<a href="{u}" color="#8c1d28">{t}</a>'
 rule = lambda: HRFlowable(width='100%', thickness=0.9, color=accent, spaceAfter=3)
@@ -53,7 +53,7 @@ def project(title, tag, stack, points, repo, live=None):
     ])
 
 
-doc = SimpleDocTemplate(out, pagesize=A4, leftMargin=17*mm, rightMargin=17*mm, topMargin=13*mm, bottomMargin=11*mm,
+doc = SimpleDocTemplate(out, pagesize=A4, leftMargin=15*mm, rightMargin=15*mm, topMargin=10*mm, bottomMargin=8*mm,
                         title='Kaustubh Dua - Resume', author='Kaustubh Dua',
                         subject='Software developer, Electronics and Computer Engineering, JIIT Noida (Class of 2029)')
 
@@ -69,11 +69,11 @@ f = [
     Paragraph('PROFILE', head), rule(),
     Paragraph('Engineering student who ships full-stack products end to end: React or Next.js front ends, FastAPI and Supabase back ends, '
               'automated tests and CI. Careful about security, data boundaries and honest status labels. '
-              'Open to software engineering internships.', body),
+              'Open to software engineering internships in backend, full-stack and applied AI or data work.', body),
 
     Paragraph('EDUCATION', head), rule(),
     Paragraph('<b>Jaypee Institute of Information Technology (JIIT), Noida</b>', body),
-    Paragraph('B.Tech., Electronics &amp; Computer Engineering (ECM)  ·  Expected graduation 2029', body),
+    Paragraph('B.Tech., Electronics &amp; Computer Engineering (ECM)  ·  2nd year of 4  ·  Expected graduation 2029', body),
 
     Paragraph('SKILLS', head), rule(),
     Paragraph('<b>Languages</b>   Python · TypeScript · JavaScript · SQL · C++17', body),
@@ -96,6 +96,17 @@ f = [
     project('JIIT Youth Club website', 'Public site for a campus club · live', 'React 19, Supabase, Playwright, CodeQL',
             ['Built the site for events, clubs, gallery and recruitment, guarded by <b>browser tests and security scanning</b> on every change.'],
             'JYC-Website', 'https://jyc-website-eight.vercel.app'),
+
+    Paragraph('CERTIFICATES AND HACKATHONS', head), rule(),
+    bl('<b>JPMorgan Chase &amp; Co. Software Engineering Job Simulation</b> (Forage, April to June 2026): Kafka and H2 integration, REST API integration and a REST controller on a Java and Spring Boot backend.'),
+    bl('<b>CS50 Introduction to Databases with SQL</b> (Harvard): schema design, indexing, joins and query optimisation.'),
+    bl('<b>OSDHACK\u201926</b>: Certificate of Merit for taking part; the team built Adapt AI.'),
+    bl('<b>ISRO Bharatiya Antariksh Hackathon 2026</b>: participated with AkashChalak, a satellite-assisted air-quality and hotspot prototype built on CPCB and NASA FIRMS data.'),
+
+    Paragraph('TEAMS, CLUBS AND VOLUNTEERING', head), rule(),
+    bl('<b>JIIT Youth Club (JYC)</b>, Tech Vertical: member of the tech and management team.'),
+    bl('<b>AIML and AI-Tronics Club</b>, JIIT: member of the tech and management team.'),
+    bl('<b>National Service Scheme (NSS)</b>: volunteer on the cinematography and management teams.'),
 
     Paragraph('TEAMWORK', head), rule(),
     Paragraph('<b>Adapt AI</b>  (contributor)   Local AI assistant that recommends an Ollama model for a machine\'s RAM and VRAM. '
