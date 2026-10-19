@@ -23,7 +23,7 @@ void main() {
   uint flags = aB.w;
   if ((flags & 16u) != 0u) p.y += sin(uTime * 1.4 + aPos.x * 1.7 + aPos.z * 1.3) * 0.03 * step(0.5, fract(aPos.y + 0.12));
   gl_Position = uVP * vec4(p, 1.0);
-  vUV = vec2(float(aA.x), 1.0 - float(aA.y));
+  vUV = vec2(float(aA.x), 16.0 - float(aA.y)) / 16.0;
   vTile = float(aA.z);
   float ao = 0.42 + 0.58 * float(aB.x) / 3.0;
   float sky = float(aB.y) / 15.0;

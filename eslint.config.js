@@ -38,7 +38,7 @@ const nodeGlobals = {
 const sharedRules = {
   'no-undef': 'error',
   'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-  'no-console': 'error',
+  'no-console': ['error', { allow: ['error', 'warn'] }],
   'no-debugger': 'error',
   'no-dupe-keys': 'error',
   'no-duplicate-imports': 'error',
@@ -66,6 +66,16 @@ export default [
       ecmaVersion: 2023,
       sourceType: 'module',
       globals: nodeGlobals,
+    },
+    rules: { ...sharedRules, 'no-console': 'off' },
+  },
+  {
+    // These scripts pass functions to page.evaluate(), which run inside the browser page.
+    files: ['scripts/audit.mjs', 'scripts/render-posters.mjs', 'tests/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2023,
+      sourceType: 'module',
+      globals: { ...nodeGlobals, ...browserGlobals, PerformanceObserver: 'readonly', getComputedStyle: 'readonly' },
     },
     rules: { ...sharedRules, 'no-console': 'off' },
   },

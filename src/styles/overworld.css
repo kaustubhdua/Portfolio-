@@ -320,3 +320,22 @@
 [data-theme='overworld'] .hero-intro { text-shadow: 0 1px 6px rgba(5, 20, 45, 0.9), 0 0 2px rgba(5, 20, 45, 0.7); }
 .hero[data-world='overworld'] .biome-btn { background: rgba(8, 26, 54, 0.86); }
 [data-theme='overworld'] .btn { text-shadow: none; }
+/* The quiet button floats over the bright scene on its own dark plate, so its label must stay light
+   (the rules above make every .btn inherit the day theme's dark text). */
+[data-theme='overworld'] .btn-quiet,
+[data-theme='overworld'] .btn-quiet:hover,
+[data-theme='overworld'] .btn-quiet:focus-visible { color: #f1e7ea; text-shadow: 1px 1px 0 #000; }
+[data-theme='overworld'] .btn-quiet:hover,
+[data-theme='overworld'] .btn-quiet:focus-visible { color: #fff; }
+
+/* On phones the day hero text runs across bright sky, where white and pale-yellow words depend on
+   their halo alone. A translucent navy plate (like the game's chat backing) gives them real contrast. */
+@media (max-width: 899px) {
+  .hero[data-world='overworld'] .hero-role,
+  .hero[data-world='overworld'] .hero-intro {
+    padding: 0.5rem 0.8rem;
+    background: rgba(8, 26, 54, 0.68);
+  }
+  .hero[data-world='overworld'] .hero-role { margin-top: 1.2rem; }
+  .hero[data-world='overworld'] .hero-intro { margin-top: 0.5rem; }
+}

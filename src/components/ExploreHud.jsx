@@ -136,7 +136,7 @@ export default function ExploreHud({ onExit }) {
   return (
     <div className="explore-hud" data-touch={touch ? 'yes' : 'no'}>
       <button type="button" className="explore-exit pixel" onClick={onExit}>
-        Leave world <span aria-hidden="true">Esc</span>
+        Leave world {!touch && <span aria-hidden="true">Esc</span>}
       </button>
       {!touch && <div className="crosshair" aria-hidden="true" />}
       {hint && (

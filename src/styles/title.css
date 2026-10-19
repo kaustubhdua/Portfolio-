@@ -1,0 +1,129 @@
+/* Title screen: shown first on a visit, over the 3D world that is already building behind it. */
+.title-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.6rem, 6vh, 3.2rem);
+  box-sizing: border-box;
+  height: 100vh;
+  height: 100dvh;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(3.2rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.7) 90%), rgba(24, 6, 10, 0.45);
+  image-rendering: pixelated;
+  overflow: hidden;
+}
+.title-overworld { background: radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.6) 90%), rgba(20, 30, 40, 0.3); }
+
+.title-logo { position: relative; text-align: center; padding-inline: 0.5rem; }
+.title-logo h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 9.5vw, 4.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #d4d4d4;
+  /* stacked offsets read as the carved, extruded stone letters of a game logo */
+  text-shadow:
+    0 1px 0 #9b9b9b, 0 2px 0 #7d7d7d, 0 3px 0 #6a6a6a, 0 4px 0 #555, 0 5px 0 #444, 0 6px 0 #333,
+    3px 8px 0 #000, 0 8px 12px rgba(0, 0, 0, 0.6);
+}
+.title-logo h1 span { display: inline-block; }
+.title-edition {
+  display: inline-block;
+  margin: 0.9rem 0 0;
+  padding: 0.25rem 0.8rem;
+  font-size: clamp(0.6rem, 2.6vw, 0.95rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #000;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.2), inset -2px -2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.title-splash {
+  position: absolute;
+  right: clamp(-2.5rem, -4vw, -0.5rem);
+  bottom: -0.9rem;
+  max-width: 78vw;
+  padding: 0.6rem 0.4rem;
+  font-size: clamp(0.72rem, 3.2vw, 1.15rem);
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #ffff55;
+  text-shadow: 2px 2px 0 #3f3f15;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transform: rotate(-18deg);
+  transform-origin: 50% 50%;
+  /* about two pulses a second, like the game's */
+  animation: splash-pulse 0.25s ease-in-out infinite alternate;
+}
+.title-splash.is-long { font-size: clamp(0.6rem, 2.8vw, 0.98rem); }
+.title-splash:focus-visible { outline: 2px dashed #ffff55; outline-offset: 2px; }
+@keyframes splash-pulse {
+  from { transform: rotate(-18deg) scale(1); }
+  to { transform: rotate(-18deg) scale(1.1); }
+}
+
+.title-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: min(21rem, 88vw);
+}
+.title-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.mc-button {
+  min-height: 48px;
+  padding: 0.5rem 0.6rem;
+  font-size: clamp(0.62rem, 2.6vw, 0.82rem);
+  color: #e0e0e0;
+  text-shadow: 2px 2px 0 #3e3e3e;
+  background: #6f6f6f;
+  border: 2px solid #000;
+  box-shadow: inset 2px 2px 0 #b1b1b1, inset -2px -2px 0 #3c3c3c;
+  cursor: pointer;
+}
+.mc-button:hover,
+.mc-button:focus-visible {
+  color: #ffffa0;
+  background: #7482c8;
+  box-shadow: inset 2px 2px 0 #b6bff0, inset -2px -2px 0 #3a4480;
+  outline: 2px solid #fff;
+  outline-offset: 0;
+}
+.mc-button:active { background: #5f6cad; }
+
+.title-foot {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 1rem;
+  padding: 0.6rem max(1rem, env(safe-area-inset-right)) max(0.6rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  font-size: 0.72rem;
+  color: #e4e4e4;
+  text-shadow: 1px 1px 0 #000;
+}
+@media (max-width: 560px) {
+  .title-foot { justify-content: center; text-align: center; font-size: 0.66rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .title-splash { animation: none; }
+}
+
+html[data-title='on'] main,
+html[data-title='on'] .nav,
+html[data-title='on'] .hud,
+html[data-title='on'] .chat,
+html[data-title='on'] .mob-bubble,
+html[data-title='on'] .skip-link,
+html[data-title='on'] footer { visibility: hidden; }
+

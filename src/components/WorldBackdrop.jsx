@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { blockSound, mobSound, placeSound, stepSound } from '../lib/audio.js';
-import { onDive, setExploreApi, setLoad, setMode } from '../lib/voxel/travel.js';
+import { blockSound, mobSound, placeSound, stepSound, worldSound } from '../lib/audio.js';
+import { onDive, setExploreApi, setLoad, setMode, setReactApi } from '../lib/voxel/travel.js';
 
 // Anything the visitor can actually use must keep its own clicks; only empty space reaches the world.
 const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel,.card,.stat,.chat,.hud,.biome-picker,[role="dialog"]';
@@ -10,7 +10,7 @@ const SOLID_UI = 'a,button,input,textarea,select,summary,label,dialog,nav,.panel
  * (day) or across the fortress bridge (night). Click any creature in empty space to poke it.
  * The engine loads lazily; without WebGL 2 the page keeps its 2D scenes.
  */
-export default function WorldBackdrop({ world, sections, reduced, disabled = false, explore = false }) {
+export default function WorldBackdrop({ world, sections, reduced, disabled = false }) {
   const canvasRef = useRef(null);
   const rendererRef = useRef(null);
   const worldRef = useRef(world);
@@ -41,6 +41,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           onContextLost: () => setMode('off'),
           onProgress: setLoad,
           onStep: stepSound,
+          onWorldSound: worldSound,
         });
         if (!renderer) {
           setLoad(1);
@@ -48,6 +49,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           return;
         }
         rendererRef.current = renderer;
+        setReactApi(renderer.react);
         renderer.setWorld(worldRef.current);
         renderer.start();
         setExploreApi({
@@ -99,7 +101,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
             const cx = window.innerWidth / 2;
             const cy = window.innerHeight / 2;
             const hit = renderer.pick(cx, cy, true);
-            if (hit) mobSound(hit.name, hit.kind);
+            if (hit) mobSound(hit.name, hit.kind, hit.role);
             else {
               const ground = renderer.mine(cx, cy);
               if (ground) blockSound(ground);
@@ -113,7 +115,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
             if (ground) blockSound(ground);
             return;
           }
-          mobSound(hit.name, hit.kind);
+          mobSound(hit.name, hit.kind, hit.role);
           clearTimeout(bubbleTimer);
           setBubble({ ...hit, id: Date.now() });
           bubbleTimer = setTimeout(() => setBubble(null), 3200);
@@ -123,6 +125,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         window.addEventListener('contextmenu', onContext);
         cleanup = () => {
           stopDive();
+          setReactApi(null);
           window.removeEventListener('pointermove', onMove);
           window.removeEventListener('click', onClick);
           window.removeEventListener('contextmenu', onContext);

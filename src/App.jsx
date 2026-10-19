@@ -1,5 +1,7 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import Loader from './components/Loader.jsx';
+import Toasts from './components/Toasts.jsx';
+import TitleScreen from './components/TitleScreen.jsx';
 import PortalTravel from './components/PortalTravel.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
@@ -22,8 +24,8 @@ import { useActiveSection } from './hooks/useActiveSection.js';
 import { useReducedMotion } from './hooks/useMedia.js';
 import { WorldContext, useTheme } from './hooks/useTheme.js';
 import { usePointerFx } from './hooks/usePointerFx.js';
-import { getExploreApi, getMode, subscribeMode } from './lib/voxel/travel.js';
-import { setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
+import { getExploreApi, getMode, subscribeMode, worldReact } from './lib/voxel/travel.js';
+import { inventorySound, levelUpSound, setAmbient, setSoundWorld, soundWanted, uiClick } from './lib/audio.js';
 
 // Rarely needed on first paint, so they ship as separate chunks.
 const Chat = lazy(() => import('./components/Chat.jsx'));
@@ -45,7 +47,9 @@ export default function App() {
   usePointerFx();
   const ids = useMemo(() => sections.map((s) => s.id), []);
   const active = useActiveSection(ids);
-  const [intro, setIntro] = useState(() => !introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // 'title' (menu), then 'load' (world-loading screen), then false. Skipped when seen this session or with reduced motion.
+  const [intro, setIntro] = useState(() => (!introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'title' : false));
+  const afterIntro = useRef('play');
   const [openId, setOpenId] = useState(null);
   const [soundOn, setSoundOn] = useState(false);
   const [warp, setWarp] = useState(0);
@@ -70,6 +74,13 @@ export default function App() {
     setAnnounce('Back on the page.');
   }, []);
   const canExplore = worldMode === 'on' && !trip && !intro;
+  const [wantExplore, setWantExplore] = useState(false);
+  useEffect(() => {
+    if (wantExplore && canExplore) {
+      setWantExplore(false);
+      enterExplore();
+    }
+  }, [wantExplore, canExplore, enterExplore]);
   // "Quick view" turns the 3D scenery off for visitors who just want the content.
   const [quick, setQuick] = useState(() => {
     try {
@@ -111,8 +122,21 @@ export default function App() {
   }, [trip, setTheme]);
   const endTrip = useCallback(() => setTrip(null), []);
 
+  // While the title screen is up, the page content behind it is hidden so only the world shows through.
+  useEffect(() => {
+    if (intro === 'title') document.documentElement.dataset.title = 'on';
+    else delete document.documentElement.dataset.title;
+  }, [intro]);
+
+  const chooseEntry = useCallback((what) => {
+    afterIntro.current = what;
+    setIntro('load');
+  }, []);
+
   const finishIntro = useCallback(() => {
     setIntro(false);
+    if (afterIntro.current === 'contact') requestAnimationFrame(() => document.getElementById('contact')?.scrollIntoView());
+    if (afterIntro.current === 'explore') setWantExplore(true);
     try {
       sessionStorage.setItem(SEEN_KEY, '1');
     } catch {
@@ -138,12 +162,36 @@ export default function App() {
   }, [soundOn]);
 
   useEffect(() => () => void setAmbient(false), []);
+
+  // Moving to another section: the people nearby look up and wave, and the level goes up with a chime
+  // (the number on the experience bar is the section you are in).
+  const prevActive = useRef(active);
+  useEffect(() => {
+    const before = ids.indexOf(prevActive.current);
+    const now = ids.indexOf(active);
+    prevActive.current = active;
+    if (now === before || intro) return;
+    worldReact('section');
+    if (now > before) levelUpSound();
+  }, [active, ids, intro]);
+
+  // Opening a case study opens an inventory; closing it puts it away.
+  const dialogOpen = useRef(false);
+  useEffect(() => {
+    const isOpen = Boolean(openId);
+    if (isOpen === dialogOpen.current) return;
+    dialogOpen.current = isOpen;
+    if (!intro) inventorySound(isOpen);
+  }, [openId, intro]);
   useEffect(() => setSoundWorld(theme), [theme]);
 
   // Button presses click like the game's menus; a remembered "sound on" starts at the first gesture.
   useEffect(() => {
     const onClick = (e) => {
-      if (e.target.closest?.('button,a[href],summary,[role="button"]')) uiClick();
+      if (e.target.closest?.('button,a[href],summary,[role="button"]')) {
+        uiClick();
+        worldReact('click');
+      }
     };
     document.addEventListener('click', onClick);
     let resume = null;
@@ -214,11 +262,13 @@ export default function App() {
   return (
     <WorldContext.Provider value={theme}>
       <a className="skip-link" href="#profile" onClick={(e) => navigate(e, 'profile')}>Skip to content</a>
-      {intro && <Loader onDone={finishIntro} soundOn={soundOn} onSound={toggleSound} />}
+      {intro === 'title' && <TitleScreen onChoose={chooseEntry} soundOn={soundOn} onSound={toggleSound} quick={quick} onQuick={toggleQuick} />}
+      {intro === 'load' && <Loader onDone={finishIntro} soundOn={soundOn} onSound={toggleSound} />}
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
       <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} onExplore={canExplore ? enterExplore : null} />
+      <Toasts active={active} paused={Boolean(intro) || exploring || Boolean(trip)} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
       {exploring && <ExploreHud onExit={leaveExplore} />}
@@ -242,7 +292,7 @@ export default function App() {
       </main>
       <footer className="footer">
         <p>
-          &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft
+          &copy; {new Date().getFullYear()} {profile.name} · Pixel art and font generated in-house · Not affiliated with Mojang or Microsoft · {profile.blogEnabled ? <a href="blog/">Blog</a> : 'Blog: coming soon'}
         </p>
         <details className="build-notes">
           <summary>How this site is built</summary>
@@ -250,8 +300,10 @@ export default function App() {
             <li>React 19 bundled with esbuild: no router and no animation library, and the JavaScript is kept under a size budget that the build checks.</li>
             <li>The pixel font, the Nether scenes and every sprite are generated by scripts in this repository.</li>
             <li>The 3D village and Nether fortress are drawn by a small WebGL 2 engine written for this site (generated textures, baked lighting, no 3D library). Scrolling walks the camera along the road; the characters and creatures are original blocky designs, not Mojang assets. It loads after the page and falls back to the 2D scenes without WebGL.</li>
+            <li>The gold trophy at the end of the road, in the village and in the Nether, is deliberately unnamed. It gets its name when I win something.</li>
             <li>The portal is plain CSS, with parallax driven by two CSS variables; animation pauses off screen and respects reduced-motion settings.</li>
             <li>Case studies use the native dialog element, and navigation works fully by keyboard.</li>
+            <li>A Markdown blog pipeline is built into the build step; the blog itself is coming soon.</li>
             <li>The chat is a rule-based helper that runs in your browser. It uses no AI service and sends nothing anywhere.</li>
             <li>Press Ctrl or Cmd + K for a command menu: jump to a section, open a case study, copy the email address or switch worlds.</li>
             <li>Browser tests run on every push and check layout at ten screen widths, keyboard use and console errors.</li>

@@ -56,7 +56,7 @@ export default function Forge({ onOpen }) {
   const present = [...new Set(projects.map((p) => p.biome))];
 
   return (
-    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits. Start with the three flagships.`}>
+    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits. Two more flagship projects are coming soon.`}>
       <div className="filters" role="group" aria-label="Filter projects by biome">
         {[['all', 'All biomes'], ...present.map((b) => [b, biomeName(b, world)])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>
@@ -68,6 +68,17 @@ export default function Forge({ onOpen }) {
         {shown.map((p, i) => (
           <ProjectCard key={p.id} project={p} onOpen={onOpen} delay={i * 70} />
         ))}
+        {filter === 'all' &&
+          [1, 2].map((n) => (
+            <Reveal as="article" key={n} delay={(shown.length + n) * 70} className="card card-soon" aria-label={`Flagship project ${n}: coming soon`}>
+              <div className="card-media card-soon-media" aria-hidden="true"><span className="pixel">?</span></div>
+              <div className="card-body">
+                <p className="card-kind pixel">Flagship project {n}</p>
+                <h3 className="card-title pixel">Coming soon</h3>
+                <p className="card-summary">A bigger build, still in the planning stage. It will get a full case study here when it ships.</p>
+              </div>
+            </Reveal>
+          ))}
       </div>
 
       <Reveal className="explored">
