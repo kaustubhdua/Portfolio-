@@ -252,12 +252,12 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   const fourWays = (base) => [0, 1, 2, 3].map((f) => base + f);
   const STONEISH = new Set([
     B.STONE, B.COBBLE, B.STONE_BRICK, B.NETHERRACK, B.NETHER_BRICK, B.NETHER_FENCE, B.OBSIDIAN, B.BASALT, B.BLACKSTONE, B.GLOWSTONE,
-    B.LAMP, B.GLASS, B.ROOF, B.PANE, B.LANTERN, B.SLAB_COBBLE, B.SLAB_NETHER, B.MOSSY_COBBLE, B.FURNACE, B.ANVIL, B.SPAWNER,
+    B.LAMP, B.GLASS, B.ROOF, B.GOLD_BLOCK, B.GILDED, B.STONECUT, B.PANE, B.LANTERN, B.SLAB_COBBLE, B.SLAB_NETHER, B.MOSSY_COBBLE, B.FURNACE, B.ANVIL, B.SPAWNER,
     ...fourWays(B.STAIR_COBBLE), ...fourWays(B.STAIR_NETHER), ...fourWays(B.STAIR_BRICK),
   ]);
   const WOODISH = new Set([
     B.LOG, B.PLANKS, B.SPRUCE_PLANKS, B.SPRUCE_LOG, B.BARREL, B.DOOR, B.CRIMSON_STEM, B.WARPED_STEM, B.HAY, B.FENCE, B.TORCH,
-    B.SLAB_PLANKS, B.SLAB_SPRUCE, B.BOOKSHELF, B.CRAFTING, ...fourWays(B.STAIR_PLANKS), ...fourWays(B.STAIR_SPRUCE),
+    B.SLAB_PLANKS, B.SLAB_SPRUCE, B.BOOKSHELF, B.CRAFTING, B.LECTERN, B.CARTO, B.FLETCH, ...fourWays(B.STAIR_PLANKS), ...fourWays(B.STAIR_SPRUCE),
     ...fourWays(B.DOOR_LOW), ...fourWays(B.DOOR_UP),
   ]);
   const groundOf = (id) => (STONEISH.has(id) ? 'stone' : WOODISH.has(id) ? 'wood' : 'grass');
@@ -278,6 +278,88 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
     w.broken.push({ x, y, z, id, at: simTime + 7 + Math.random() * 3 });
     return id;
+  }
+
+
+  // ---- break animation: a click starts cracks that grow in ten stages over about half a second, then
+  // the block pops out. While walking freely, the block under the crosshair gets a thin black outline.
+  let breaking = null;
+  let hoverBlock = null;
+  const digTime = (id) => (STONEISH.has(id) ? 0.7 : WOODISH.has(id) ? 0.5 : 0.32);
+  const mineable = (w, x, y, z) => w.meta.grid.get(x, y, z) && y >= 2 && x >= 1 && x < SIZE.w - 1 && z >= 1 && z < SIZE.l - 1;
+  function pickSolid(w, clientX, clientY, reach) {
+    if (!pickCam) return null;
+    const nx = (clientX / window.innerWidth) * 2 - 1;
+    const ny = 1 - (clientY / window.innerHeight) * 2;
+    const { pos, r, u, f, tx, ty } = pickCam;
+    const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
+    // march along the ray in small steps; the first solid block is the one hit
+    for (let t = 0.3; t < reach; t += 0.05) {
+      const x = Math.floor(pos[0] + d[0] * t);
+      const y = Math.floor(pos[1] + d[1] * t);
+      const z = Math.floor(pos[2] + d[2] * t);
+      if (SOLID[w.meta.grid.get(x, y, z)]) return [x, y, z];
+    }
+    return null;
+  }
+  function finishBreak() {
+    const b = breaking;
+    breaking = null;
+    if (b && b.w.meta.grid.get(b.x, b.y, b.z) === b.id) breakBlock(b.w, b.x, b.y, b.z);
+  }
+  const hash3 = (a, b, c) => {
+    let h = Math.imul((a * 73856093) ^ (b * 19349663) ^ (c * 83492791), 2654435761);
+    h ^= h >>> 13;
+    return ((h >>> 0) % 1000) / 1000;
+  };
+  function pushBox(cx, cy, cz, sx, sy, sz, shade) {
+    const m = writer.next();
+    m.fill(0);
+    m[0] = sx; m[5] = sy; m[10] = sz; m[12] = cx; m[13] = cy; m[14] = cz; m[15] = 1;
+    const c = writer.color();
+    c[0] = shade; c[1] = shade * 0.9; c[2] = shade * 0.9; c[3] = 0;
+  }
+  function pushOutline(x, y, z) {
+    const e = 0.028;
+    for (let a = 0; a < 3; a++) {
+      const [b, c] = [0, 1, 2].filter((k) => k !== a);
+      for (const sb of [-0.5, 0.5]) {
+        for (const sc of [-0.5, 0.5]) {
+          const cen = [x + 0.5, y + 0.5, z + 0.5];
+          cen[b] += sb * 1.006;
+          cen[c] += sc * 1.006;
+          const size = [e, e, e];
+          size[a] = 1.012 + e;
+          pushBox(cen[0], cen[1], cen[2], size[0], size[1], size[2], 0.015);
+        }
+      }
+    }
+  }
+  /** Dark crack lines laid over the faces; stage 0..9 adds more of them, so the block looks more broken. */
+  function pushCracks(x, y, z, stage) {
+    const h0 = Math.floor(hash3(x, y, z) * 6);
+    for (let i = 0; i <= stage; i++) {
+      const f = (i + h0) % 6;
+      const ax = f >> 1;
+      const sgn = f & 1 ? -1 : 1;
+      const [b, c] = [0, 1, 2].filter((k) => k !== ax);
+      const along = i % 2 ? b : c;
+      const cross = along === b ? c : b;
+      const len = 0.3 + hash3(x + i, y, z + i * 3) * 0.55;
+      const o1 = (hash3(x, y + i, z) - 0.5) * 0.4;
+      const o2 = (hash3(x, y, z + i) - 0.5) * 0.7;
+      for (const branch of i >= 3 ? [false, true] : [false]) {
+        const size = [0, 0, 0];
+        size[ax] = 0.012;
+        size[along] = branch ? 0.05 : len;
+        size[cross] = branch ? len * 0.5 : 0.05;
+        const cen = [x + 0.5, y + 0.5, z + 0.5];
+        cen[ax] += sgn * 0.506;
+        cen[along] += o1 + (branch ? len * 0.2 : 0);
+        cen[cross] += o2;
+        pushBox(cen[0], cen[1], cen[2], size[0], size[1], size[2], 0.07);
+      }
+    }
   }
 
   let readyResolve;
@@ -642,6 +724,12 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
         const c = writer.color();
         c[0] = d.c[0]; c[1] = d.c[1]; c[2] = d.c[2]; c[3] = 0;
       }
+      if (breaking && (breaking.w !== w || simTime - breaking.t0 >= breaking.dur)) finishBreak();
+      hoverBlock = exploring && player ? pickSolid(w, window.innerWidth / 2, window.innerHeight / 2, 6) : null;
+      if (breaking) {
+        pushCracks(breaking.x, breaking.y, breaking.z, Math.min(9, Math.floor(((simTime - breaking.t0) / breaking.dur) * 10)));
+        pushOutline(breaking.x, breaking.y, breaking.z);
+      } else if (hoverBlock) pushOutline(hoverBlock[0], hoverBlock[1], hoverBlock[2]);
       gl.useProgram(entity.p);
       gl.disable(gl.CULL_FACE);
       gl.uniformMatrix4fv(entity.u.uVP, false, vp);
@@ -706,7 +794,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
     canvas.dataset.progress = progress.toFixed(3);
 
-    const moving = Math.abs(target - progress) > 0.0004 || dive > 0;
+    const moving = Math.abs(target - progress) > 0.0004 || dive > 0 || breaking !== null;
     if (!reduced || dirty || moving) {
       dirty = false;
       schedule();
@@ -885,21 +973,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     mine(clientX, clientY) {
       const w = worlds[current];
       if (!w || !pickCam) return null;
-      const nx = (clientX / window.innerWidth) * 2 - 1;
-      const ny = 1 - (clientY / window.innerHeight) * 2;
-      const { pos, r, u, f, tx, ty } = pickCam;
-      const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
-      // march along the ray in small steps; the first solid block is the one hit
-      for (let t = 0.3; t < 14; t += 0.05) {
-        const x = Math.floor(pos[0] + d[0] * t);
-        const y = Math.floor(pos[1] + d[1] * t);
-        const z = Math.floor(pos[2] + d[2] * t);
-        if (SOLID[w.meta.grid.get(x, y, z)]) {
-          const id = breakBlock(w, x, y, z);
-          return id ? groundOf(id) : null;
-        }
-      }
-      return null;
+      const hit = pickSolid(w, clientX, clientY, 14);
+      if (!hit) return null;
+      const [x, y, z] = hit;
+      if (!mineable(w, x, y, z)) return null;
+      const id = w.meta.grid.get(x, y, z);
+      if (breaking && breaking.x === x && breaking.y === y && breaking.z === z) return groundOf(id);
+      if (breaking) finishBreak();
+      breaking = { w, x, y, z, id, t0: simTime, dur: reduced ? 0.01 : digTime(id) };
+      dirty = true;
+      schedule();
+      return groundOf(id);
     },
     get progress() {
       return progress;

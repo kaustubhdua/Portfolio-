@@ -126,3 +126,5 @@ html[data-title='on'] .chat,
 html[data-title='on'] .mob-bubble,
 html[data-title='on'] .skip-link,
 html[data-title='on'] footer { visibility: hidden; }
+
+.footer-tribute { color: #ffff55; }

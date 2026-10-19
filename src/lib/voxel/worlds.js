@@ -28,22 +28,35 @@ function carveCorridor(g, stops, surface, top) {
 
 
 /**
- * A tribute monument for Technoblade, the owner's favourite YouTuber ("Technoblade never dies"): a
- * two-step pedestal, a pillar and a glowing crown floating above it, with a lantern at each corner and a
- * small signpost in front.
- * It is an original design and deliberately not a likeness of any person or character. (cx, cz) is the
- * centre and y0 the first free level. body, step and glow are block ids.
+ * A tribute monument for Technoblade, the owner's favourite YouTuber ("Technoblade never dies"). Two
+ * pedestal steps, four corner pillars capped with gold and a lantern, a tall obelisk and a crown of
+ * glowing blocks and gold floating above it, with a signpost in front. It is an original design,
+ * deliberately not a likeness of any person or character. (cx, cz) is the centre and y0 the first
+ * free level. body, step and glow are block ids.
  */
 function tributeMonument(g, cx, cz, y0, { body, step, glow }) {
   g.fill(cx - 3, y0, cz - 3, cx + 3, y0, cz + 3, step);
   g.fill(cx - 2, y0 + 1, cz - 2, cx + 2, y0 + 1, cz + 2, step);
   g.fill(cx - 1, y0 + 2, cz - 1, cx + 1, y0 + 2, cz + 1, body);
-  g.fill(cx, y0 + 3, cz, cx, y0 + 7, cz, body); // pillar
+  g.fill(cx - 1, y0 + 3, cz - 1, cx + 1, y0 + 3, cz + 1, body);
+  g.fill(cx, y0 + 4, cz, cx, y0 + 9, cz, body); // obelisk
+  g.set(cx, y0 + 6, cz - 1, B.GILDED); // a gilded band facing the road
+  g.set(cx, y0 + 6, cz + 1, B.GILDED);
+  g.set(cx - 1, y0 + 6, cz, B.GILDED);
+  g.set(cx + 1, y0 + 6, cz, B.GILDED);
+  for (const dx of [-3, 3]) {
+    for (const dz of [-3, 3]) {
+      g.fill(cx + dx, y0 + 1, cz + dz, cx + dx, y0 + 4, cz + dz, step);
+      g.set(cx + dx, y0 + 5, cz + dz, B.GOLD_BLOCK);
+      g.set(cx + dx, y0 + 6, cz + dz, B.LANTERN);
+    }
+  }
+  // the crown: a glowing band, gold points and a bright top
   for (let x = cx - 1; x <= cx + 1; x++)
-    for (let z = cz - 1; z <= cz + 1; z++) if (x !== cx || z !== cz) g.set(x, y0 + 8, z, glow); // crown band
-  for (const dx of [-1, 1]) for (const dz of [-1, 1]) g.set(cx + dx, y0 + 9, cz + dz, glow); // crown points
-  g.set(cx, y0 + 9, cz, glow);
-  for (const dx of [-3, 3]) for (const dz of [-3, 3]) g.set(cx + dx, y0 + 1, cz + dz, B.LANTERN);
+    for (let z = cz - 1; z <= cz + 1; z++) if (x !== cx || z !== cz) g.set(x, y0 + 10, z, glow);
+  for (const dx of [-1, 1]) for (const dz of [-1, 1]) g.set(cx + dx, y0 + 11, cz + dz, B.GOLD_BLOCK);
+  g.set(cx, y0 + 10, cz, B.GOLD_BLOCK);
+  g.set(cx, y0 + 11, cz, glow);
   // a signpost on the camera side: a fence post with a plank board (the engine draws no text)
   g.set(cx, y0 - 1, cz - 4, step);
   g.set(cx, y0, cz - 4, B.FENCE);
@@ -213,7 +226,11 @@ function buildVillage() {
   house(45, 105, 10, 12, 5, false, { wall: B.PLANKS, base: B.STONE_BRICK, roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE, chimney: true });
   for (let z = 106; z <= 115; z++) g.fill(53, GY, z, 53, GY + 1, z, B.BOOKSHELF);
   for (let x = 47; x <= 52; x++) g.fill(x, GY, 106, x, GY + 1, 106, B.BOOKSHELF);
-  g.set(41, GY, 110, B.CRAFTING); // the lectern
+  g.set(41, GY, 110, B.LECTERN); // the librarian's lectern
+  // more villagers with their job-site blocks, on the west side of the road
+  g.set(27, GY, 128, B.CARTO); // cartographer
+  g.set(27, GY, 122, B.STONECUT); // mason
+  g.set(27, GY, 134, B.FLETCH); // fletcher
   for (const x of [49, 50]) for (const z of [108, 113]) g.fill(x, GY + 10, z, x, GY + 11, z, B.FENCE);
   g.fill(49, GY + 12, 108, 50, GY + 12, 113, B.SLAB_SPRUCE);
 
@@ -579,6 +596,63 @@ function buildFortress() {
   }
   g.fill(31, D, 196, 33, D, 198, B.BASALT);
   g.fill(32, D + 1, 197, 32, D + 1, 197, B.FIRE);
+
+  // fortress corridor just inside the gate: pillars with arches, brick walls with fence windows,
+  // a balcony, a lava well and a soul-sand niche with nether wart, like the corridors of a real fortress
+  for (let z = 19; z <= 33; z++) {
+    const pillar = (z - 19) % 4 === 0;
+    for (const x of [28, 36]) {
+      g.fill(x, D + 1, z, x, D + 4, z, B.NETHER_BRICK);
+      if (!pillar) g.fill(x, D + 2, z, x, D + 3, z, B.NETHER_FENCE);
+    }
+    if (pillar) {
+      g.fill(28, D + 5, z, 36, D + 5, z, B.NETHER_BRICK);
+      g.set(29, D + 4, z, stair(B.STAIR_NETHER, 0));
+      g.set(35, D + 4, z, stair(B.STAIR_NETHER, 1));
+    }
+  }
+  // balcony on the west wall (opening in the wall, a deck with a fence rail over the drop)
+  g.fill(28, D + 1, 25, 28, D + 4, 27, B.AIR);
+  g.fill(25, D - 1, 24, 27, D, 28, B.NETHER_BRICK);
+  g.fill(25, D + 1, 24, 27, D + 1, 24, B.NETHER_FENCE);
+  g.fill(25, D + 1, 28, 27, D + 1, 28, B.NETHER_FENCE);
+  g.fill(25, D + 1, 24, 25, D + 1, 28, B.NETHER_FENCE);
+  // lava well alcove on the east wall
+  g.fill(36, D + 1, 21, 36, D + 4, 24, B.AIR);
+  g.fill(37, D - 1, 20, 40, D, 25, B.NETHER_BRICK);
+  g.fill(38, D, 22, 39, D, 23, B.LAVA);
+  g.fill(37, D + 1, 20, 40, D + 1, 20, B.NETHER_FENCE);
+  g.fill(37, D + 1, 25, 40, D + 1, 25, B.NETHER_FENCE);
+  g.fill(40, D + 1, 20, 40, D + 1, 25, B.NETHER_FENCE);
+  g.set(38, D + 1, 22, B.GLOWSTONE);
+  // soul sand with nether wart in a niche
+  g.fill(36, D + 1, 29, 36, D + 4, 32, B.AIR);
+  g.fill(37, D - 1, 28, 39, D, 33, B.NETHER_BRICK);
+  g.fill(37, D, 29, 38, D, 32, B.SOUL_SAND);
+  g.fill(37, D + 1, 29, 38, D + 1, 32, B.NWART);
+  g.fill(37, D + 1, 28, 39, D + 1, 28, B.NETHER_FENCE);
+  g.fill(37, D + 1, 33, 39, D + 1, 33, B.NETHER_FENCE);
+
+  // bastion bridge before the end platform: blackstone ramparts crowned with gilded stone, gold
+  // blocks on the corner towers, and lava running on both sides under the deck
+  for (let z = 173; z <= 181; z++) {
+    g.fill(28, D - 1, z, 36, D, z, B.BLACKSTONE);
+    for (const x of [28, 36]) {
+      g.fill(x, D + 1, z, x, D + 3, z, B.BLACKSTONE);
+      g.set(x, D + 4, z, (z + (x === 28 ? 0 : 1)) % 2 === 0 ? B.GILDED : B.AIR);
+      if (z % 3 === 0) g.set(x, D + 2, z, B.GILDED);
+    }
+  }
+  for (const x of [27, 35]) for (const z of [172, 181]) {
+    g.fill(x, D, z, x + 2, D + 6, z + 1, B.BLACKSTONE);
+    g.set(x, D + 7, z, B.GOLD_BLOCK);
+    g.set(x + 2, D + 7, z, B.GOLD_BLOCK);
+    g.set(x + 1, D + 7, z + 1, B.GOLD_BLOCK);
+  }
+  g.fill(32, D, 176, 32, D, 178, B.GILDED);
+  g.set(32, D + 1, 177, B.GOLD_BLOCK);
+  g.set(31, D + 1, 177, B.LANTERN);
+  g.set(33, D + 1, 177, B.LANTERN);
 
   // tribute monument on the end platform, in blackstone with a glowing crown
   tributeMonument(g, 26, 201, BY, { body: B.BLACKSTONE, step: B.NETHER_BRICK, glow: B.GLOWSTONE });

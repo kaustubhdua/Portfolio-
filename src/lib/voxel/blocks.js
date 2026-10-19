@@ -13,6 +13,8 @@ export const B = {
   // stairs and doors come in four facings each, in consecutive ids (see stair() and door())
   STAIR_PLANKS: 60, STAIR_SPRUCE: 64, STAIR_COBBLE: 68, STAIR_NETHER: 72, STAIR_BRICK: 76,
   DOOR_LOW: 80, DOOR_UP: 84, FLOWER_YELLOW: 88, TALL_GRASS: 89,
+  // gold and villager workstations
+  GOLD_BLOCK: 90, GILDED: 91, LECTERN: 92, CARTO: 93, STONECUT: 94, FLETCH: 95,
 };
 
 /** The block id of a stair of the given material (a B.STAIR_* value) whose tall back side faces +x, -x, +z or -z (0..3). */
@@ -136,6 +138,16 @@ export const DEF = {
   [B.BOOKSHELF]: cap(T.PLANKS, T.BOOKSHELF, T.PLANKS),
   [B.CRAFTING]: cap(T.CRAFTING_TOP, T.CRAFTING_SIDE, T.PLANKS),
   [B.SPAWNER]: { ...all(T.SPAWNER), opaque: false },
+  [B.GOLD_BLOCK]: all(T.GOLD),
+  [B.GILDED]: all(T.GILDED),
+  [B.LECTERN]: {
+    ...cap(T.LECTERN_TOP, T.LECTERN_SIDE, T.PLANKS),
+    opaque: false,
+    shape: [box([4, 0, 4, 12, 11, 12]), box([1, 11, 2, 15, 15, 14], { top: T.LECTERN_TOP })],
+  },
+  [B.CARTO]: cap(T.CARTO_TOP, T.CARTO_SIDE, T.PLANKS),
+  [B.STONECUT]: { ...cap(T.STONECUT_TOP, T.STONECUT_SIDE, T.STONE_BRICK), opaque: false, shape: [box([0, 0, 0, 16, 9, 16])] },
+  [B.FLETCH]: cap(T.FLETCH_TOP, T.FLETCH_SIDE, T.PLANKS),
   [B.SLAB_PLANKS]: { ...all(T.PLANKS), shape: slabShape },
   [B.SLAB_SPRUCE]: { ...all(T.SPRUCE_PLANKS), shape: slabShape },
   [B.SLAB_COBBLE]: { ...all(T.COBBLE), shape: slabShape },
