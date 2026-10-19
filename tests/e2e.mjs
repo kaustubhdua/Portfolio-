@@ -285,7 +285,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
     ok(`camera reaches stop ${n} at the ${id} section`, Math.abs(p - n) < 0.25, `progress ${p}`);
   }
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(1500);
+  await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.progress) < 0.1, null, { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(2500);
   // villagers wander, and software rendering draws only a few frames a second: try a few spots of
   // bare ground and give each click time to be drawn before reading the result
   let dug = 0;
