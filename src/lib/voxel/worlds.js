@@ -29,7 +29,8 @@ function carveCorridor(g, stops, surface, top) {
 
 /**
  * A tribute monument for Technoblade, the owner's favourite YouTuber ("Technoblade never dies"): a
- * two-step pedestal, a pillar and a glowing crown floating above it, with a lantern at each corner.
+ * two-step pedestal, a pillar and a glowing crown floating above it, with a lantern at each corner and a
+ * small signpost in front.
  * It is an original design and deliberately not a likeness of any person or character. (cx, cz) is the
  * centre and y0 the first free level. body, step and glow are block ids.
  */
@@ -43,6 +44,10 @@ function tributeMonument(g, cx, cz, y0, { body, step, glow }) {
   for (const dx of [-1, 1]) for (const dz of [-1, 1]) g.set(cx + dx, y0 + 9, cz + dz, glow); // crown points
   g.set(cx, y0 + 9, cz, glow);
   for (const dx of [-3, 3]) for (const dz of [-3, 3]) g.set(cx + dx, y0 + 1, cz + dz, B.LANTERN);
+  // a signpost on the camera side: a fence post with a plank board (the engine draws no text)
+  g.set(cx, y0 - 1, cz - 4, step);
+  g.set(cx, y0, cz - 4, B.FENCE);
+  g.fill(cx - 1, y0 + 1, cz - 4, cx + 1, y0 + 1, cz - 4, B.SPRUCE_PLANKS);
 }
 
 /* ------------------------------------------------------------------------------------------ */
