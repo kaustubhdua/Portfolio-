@@ -49,7 +49,7 @@ export const advancements = [
     frame: 'challenge',
     category: 'Hackathon · ISRO',
     title: 'Look Down from Orbit',
-    text: 'Took part in the ISRO Bharatiya Antariksh Hackathon 2026 with a prototype that ingests live CPCB datasets and NASA FIRMS satellite feeds to spot NAQI air-quality trends and HCHO pollution hotspots. Certificate of participation.',
+    text: 'Took part in the ISRO Bharatiya Antariksh Hackathon 2026 with a prototype that ingests live CPCB datasets and NASA FIRMS satellite feeds to spot NAQI air-quality trends and HCHO pollution hotspots. Certificate of participation. The prototype is the AkashChalak repository.',
     sprite: 'rocket',
   },
   {
