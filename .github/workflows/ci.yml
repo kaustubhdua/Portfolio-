@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -13,22 +16,41 @@ jobs:
         with:
           node-version: 22
       # No lockfile is committed yet. Once `npm install` has produced one, switch to `npm ci`.
-      - run: npm install
+      - name: Install dependencies (verbose diagnostics)
+        run: npm install --no-audit --no-fund --loglevel verbose
       - name: Export npm-generated lockfile for reproducible install migration
         uses: actions/upload-artifact@v4
         with:
           name: portfolio-generated-lockfile
           path: package-lock.json
           if-no-files-found: error
-      - run: npm run verify
-      - run: npx playwright install --with-deps chromium
-      - name: Browser tests against the production build
+      - name: Lint
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+      - name: Static distribution checks
+        run: npm run check
+      - name: Offline voxel-world tests
+        run: npm run test:world
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests and performance/accessibility audit
         run: |
           npm run preview &
           npx wait-on http://localhost:4173 --timeout 30000
           npm run test:e2e
+          npm run audit
+      - name: Upload diagnostics if verification fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-verify-diagnostics-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            ~/.npm/_logs/**
+            playwright-report/**
+            test-results/**
 
-  # Weekly-style safety net: flags dead or login-walled project links. Reported, never blocking.
   links:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -37,4 +59,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm run check:links
+      - name: Install dependencies for link checker
+        run: npm install --no-audit --no-fund --loglevel verbose
+      - name: Check external project and evidence links
+        run: npm run check:links
+      - name: Upload link-check diagnostics if it fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-link-diagnostics-${{ github.run_id }}
+          if-no-files-found: warn
+          path: ~/.npm/_logs/**

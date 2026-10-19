@@ -25,6 +25,21 @@ export default function Inventory() {
           <button type="button" className="info-more pixel" aria-expanded={more} onClick={() => setMore((m) => !m)}>
             {more ? 'Less' : 'More'}
           </button>
+          {selected.evidence?.length > 0 && (
+            <div className="info-evidence">
+              <h4 className="info-evidence-title pixel">Source evidence</h4>
+              <ul>
+                {selected.evidence.map((item) => (
+                  <li key={item.url}>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      {item.label}<span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {selected.evidenceNote && <p className="info-evidence-note">{selected.evidenceNote}</p>}
         </Reveal>
 
         <div className="slots-wrap">
