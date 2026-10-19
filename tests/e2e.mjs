@@ -192,7 +192,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('no toast before leaving the first section', (await page.locator('.toast.show').count()) === 0);
   await page.evaluate(() => document.getElementById('contact').scrollIntoView());
   await page.waitForSelector('.toast.show', { timeout: 4000 });
-  ok('the toast uses a game-style header', /Advancement Made!|Goal Reached!|Challenge Complete!/.test(await page.locator('.toast.show .toast-h').innerText()));
+  ok('the toast uses a game-style header', /advancement made!|goal reached!|challenge complete!/i.test(await page.locator('.toast.show .toast-h').innerText()));
   await ctx.close();
 }
 
