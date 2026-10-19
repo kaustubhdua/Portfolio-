@@ -763,3 +763,17 @@
   .chest-actions .btn-primary,
   .chest-actions .btn-whatsapp { grid-column: 1 / -1; }
 }
+
+/* "Coming soon" placeholders: the two flagship projects and the blog. */
+.card-soon { border-style: dashed; opacity: 0.92; }
+.card-soon-media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  font-size: clamp(2rem, 8vw, 3.2rem);
+  color: #ffd27a;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.04) 0 12px, rgba(0, 0, 0, 0.18) 12px 24px);
+  text-shadow: 3px 3px 0 #000;
+}
+.btn-soon { cursor: default; opacity: 0.75; border-style: dashed; }
+.btn-soon:hover { transform: none; }

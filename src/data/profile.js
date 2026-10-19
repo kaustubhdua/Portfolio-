@@ -5,6 +5,8 @@
  * Nothing is invented: when something is not published (grades, scores, rankings) it is left out.
  */
 export const profile = {
+  // The blog pipeline is built, but the blog stays hidden ("coming soon") until this is true.
+  blogEnabled: false,
   name: 'Kaustubh Dua',
   kicker: 'ECM student · JIIT Noida',
   role: 'Software developer building AI, data and systems products',

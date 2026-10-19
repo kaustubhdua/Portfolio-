@@ -36,7 +36,9 @@ SITE_URL=https://example.com npm run build
 
 All asset URLs are relative, so `dist/` can be hosted at a domain root or under a sub-path (GitHub Pages, Netlify, Vercel, any static host).
 
-## The blog
+## The blog (coming soon)
+
+The blog is built but switched off: `blogEnabled` in `src/data/profile.js` is `false`, so the site shows "Blog: coming soon" and ships no `/blog/` pages. Set it to `true` (and rebuild) to publish; `BLOG_PREVIEW=1 npm run build` builds it for a private look without switching it on.
 
 Posts are Markdown files in `content/blog/`, one file per post. The build turns each into a static page
 at `/blog/<file-name>/`, builds the list at `/blog/`, adds them to `sitemap.xml` and writes an RSS feed

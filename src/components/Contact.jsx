@@ -41,9 +41,15 @@ export default function Contact() {
           <a className="btn btn-secondary pixel" href={profile.links.github} target="_blank" rel="noopener noreferrer">
             <FaGithub aria-hidden="true" /> GitHub<span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <a className="btn btn-secondary pixel" href="blog/">
-            <FaBookOpen aria-hidden="true" /> Blog
-          </a>
+          {profile.blogEnabled ? (
+            <a className="btn btn-secondary pixel" href="blog/">
+              <FaBookOpen aria-hidden="true" /> Blog
+            </a>
+          ) : (
+            <span className="btn btn-secondary btn-soon pixel" role="note">
+              <FaBookOpen aria-hidden="true" /> Blog: coming soon
+            </span>
+          )}
         </div>
         <p className="chest-wa">WhatsApp: <a href={profile.links.whatsapp} target="_blank" rel="noopener noreferrer">{profile.links.whatsappNumber}</a></p>
         <p className="chest-note" role="status">{copied}</p>

@@ -5,7 +5,8 @@
  */
 export const splashes = [
   'Waiting for the first trophy!',
-  'Now with a blog!',
+  'Blog coming soon!',
+  'Flagships coming soon!',
   'Open to internships!',
   'Scroll to walk!',
   'Try free roam!',
