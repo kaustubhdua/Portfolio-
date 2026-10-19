@@ -6,12 +6,37 @@ const MIN_MS = 1400;
 const MAX_MS = 9000;
 const FADE_MS = 300;
 const SEGMENTS = 20;
+const GRID = 11; // the square of chunks drawn while the spawn area is prepared
 const PHASES = [
   [0, 'Loading world'],
   [0.12, 'Generating terrain'],
   [0.4, 'Building terrain'],
   [0.7, 'Preparing spawn area'],
 ];
+
+// Cells of the grid in spiral order from the centre, so the grid fills outward like the game's.
+const RANK = (() => {
+  const out = [];
+  let x = Math.floor(GRID / 2);
+  let y = x;
+  let dx = 1;
+  let dy = 0;
+  let len = 1;
+  while (out.length < GRID * GRID) {
+    for (let t = 0; t < 2 && out.length < GRID * GRID; t++) {
+      for (let i = 0; i < len && out.length < GRID * GRID; i++) {
+        out.push(y * GRID + x);
+        x += dx;
+        y += dy;
+      }
+      [dx, dy] = [-dy, dx];
+    }
+    len++;
+  }
+  const rank = [];
+  out.forEach((cell, k) => (rank[cell] = k));
+  return rank; // rank[cell] = when that cell fills
+})();
 
 const savedWorld = () => {
   try {
@@ -104,7 +129,13 @@ export default function Loader({ onDone, soundOn = false, onSound }) {
       aria-live="polite"
       onClick={leave}
     >
-      <div className="loader-block" aria-hidden="true" />
+      <div className="chunk-grid" aria-hidden="true" style={{ '--n': GRID }}>
+        {Array.from({ length: GRID * GRID }, (_, cell) => {
+          const k = RANK[cell];
+          const at = shown * GRID * GRID;
+          return <i key={cell} className={k < at - 6 ? 'is-done' : k < at ? 'is-busy' : ''} />;
+        })}
+      </div>
       <span className="sr-only">{phase}</span>
       <p className="loader-title pixel" aria-hidden="true">{phase}{percent > 0 && percent < 100 ? `: ${percent}%` : ''}</p>
       <div className="loader-bar" aria-hidden="true">
