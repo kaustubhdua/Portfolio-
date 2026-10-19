@@ -12,6 +12,9 @@ const NAMES = [
   'NETHERRACK', 'NETHER_BRICK', 'NETHER_FENCE', 'LAVA', 'OBSIDIAN', 'GLOWSTONE', 'BASALT_TOP', 'BASALT_SIDE',
   'BLACKSTONE', 'SOUL_SAND', 'CRIMSON_STEM', 'CRIMSON_TOP', 'WARPED_STEM', 'WARPED_TOP', 'WART', 'WARPED_WART',
   'SHROOMLIGHT', 'SNOW_TOP', 'SNOW_SIDE', 'GOLD_GRASS_TOP', 'GOLD_GRASS_SIDE', 'CLOUD', 'FIRE', 'BARREL',
+  'DOOR_LOW', 'DOOR_UP', 'IRON', 'FURNACE_FRONT', 'FURNACE_TOP', 'BOOKSHELF', 'CRAFTING_TOP', 'CRAFTING_SIDE',
+  'NWART', 'SPAWNER', 'TORCH', 'LANTERN', 'MOSSY_COBBLE', 'FLOWER_RED', 'FLOWER_YELLOW', 'TALL_GRASS',
+  'GOLD', 'GILDED', 'LECTERN_TOP', 'LECTERN_SIDE', 'CARTO_TOP', 'CARTO_SIDE', 'STONECUT_TOP', 'STONECUT_SIDE', 'FLETCH_TOP', 'FLETCH_SIDE',
 ];
 export const T = Object.fromEntries(NAMES.map((n, i) => [n, i]));
 export const TILE_COUNT = NAMES.length;
@@ -320,6 +323,174 @@ const PAINT = {
   BARREL: (x, y) => {
     const band = y % 5 === 0 || x === 0 || x === 15;
     return band ? mul([62, 48, 36], 0.9 + hash(x, y, 81) * 0.3) : mul(jit([138, 100, 58], x, y, 82, 0.12), 0.86 + (x % 4) * 0.05);
+  },
+  // ---- shaped-block textures: doors, workstations, torches, plants --------------------------
+  DOOR_LOW: (x, y) => {
+    const edge = x < 1 || x > 14 || y > 14;
+    const groove = y === 3 || y === 12 || x === 3 || x === 12 || x === 7 || x === 8;
+    const c = jit(mul([138, 100, 58], edge ? 0.62 : groove ? 0.82 : 1), x, y, 120, 0.1);
+    if (x >= 11 && x <= 12 && y >= 7 && y <= 8) return [214, 206, 190, 255]; // handle
+    return c;
+  },
+  DOOR_UP: (x, y) => {
+    const edge = x < 1 || x > 14 || y < 1;
+    const win = ((x >= 3 && x <= 5) || (x >= 10 && x <= 12)) && ((y >= 3 && y <= 5) || (y >= 8 && y <= 10));
+    if (win) return mul([54, 70, 82], 0.9 + hash(x, y, 121) * 0.25);
+    const frame = x === 7 || x === 8 || y === 7 || y === 6 || y === 11 || y === 2;
+    return jit(mul([138, 100, 58], edge ? 0.62 : frame ? 0.82 : 1), x, y, 122, 0.1);
+  },
+  IRON: (x, y) => mul(jit([86, 86, 92], x, y, 123, 0.2), 0.86 + noise(x, y, 124, 4) * 0.3),
+  FURNACE_FRONT: (x, y) => {
+    const { id, edge } = cells(x, y, 125, 4);
+    const base = mul([118, 118, 122], 0.7 + id * 0.45);
+    if (x >= 3 && x <= 12 && y >= 6 && y <= 12) {
+      const glow = y >= 10 ? (y - 9) / 3 : 0;
+      return mix([20, 18, 22], [255, 150, 40], glow * (0.55 + 0.45 * hash(x, y, 126)));
+    }
+    if (x >= 3 && x <= 12 && y >= 2 && y <= 4) return [34, 34, 38, 255];
+    return edge < 0.85 ? mul(base, 0.55) : base;
+  },
+  FURNACE_TOP: (x, y) => mul(jit([108, 108, 112], x, y, 127, 0.16), x < 1 || y < 1 || x > 14 || y > 14 ? 0.7 : 1),
+  BOOKSHELF: (x, y) => {
+    if (y < 2 || y > 13 || y === 7 || y === 8) return mul(jit([164, 126, 76], x, y, 128, 0.12), 0.85);
+    const book = Math.floor(x / 2) + (y < 7 ? 0 : 5);
+    const cols = [[150, 40, 40], [48, 90, 150], [60, 128, 70], [170, 130, 50], [110, 60, 140], [200, 190, 170]];
+    const c = cols[Math.floor(hash(book, 0, 129) * cols.length)];
+    return x % 2 === 1 && hash(x, y, 130) > 0.45 ? mul(c, 0.78) : mul(c, 0.9 + hash(x, y, 131) * 0.2);
+  },
+  CRAFTING_TOP: (x, y) => {
+    const base = mul([164, 126, 76], 0.9);
+    if (x < 1 || y < 1 || x > 14 || y > 14) return mul(base, 0.6);
+    if ((x - 1) % 4 === 3 || (y - 1) % 4 === 3) return mul(base, 0.7);
+    return jit(base, x, y, 132, 0.1);
+  },
+  CRAFTING_SIDE: (x, y) => {
+    const base = [138, 100, 58];
+    if (y < 3) return mul(jit(base, x, y, 133, 0.1), 0.62);
+    if (y >= 5 && y <= 11 && x >= 3 && x <= 12) {
+      if (x === 4 || x === 11) return [60, 46, 34, 255]; // tools hanging
+      if (y === 6 && x > 4 && x < 11) return [190, 190, 196, 255];
+    }
+    return jit(base, x, y, 134, 0.1);
+  },
+  GOLD: (x, y) => {
+    const { id, edge } = cells(x, y, 150, 6);
+    const base = mix([232, 180, 40], [255, 238, 130], id);
+    const sheen = (x + y) % 9 === 0 ? 1.12 : 1;
+    if (x === 0 || y === 0 || x === 15 || y === 15) return mul([196, 140, 24], 0.95);
+    return mul(edge < 0.6 ? mul(base, 0.82) : base, sheen);
+  },
+  GILDED: (x, y) => {
+    const { id, edge } = cells(x, y, 151, 5);
+    if (id > 0.62 && edge > 0.5) return mix([230, 178, 40], [255, 232, 120], hash(x, y, 152));
+    return mul(jit([38, 33, 40], x, y, 153, 0.4), 0.9 + noise(x, y, 154, 4) * 0.3);
+  },
+  LECTERN_TOP: (x, y) => {
+    const wood = jit([150, 112, 66], x, y, 155, 0.12);
+    if (x >= 2 && x <= 13 && y >= 3 && y <= 12) {
+      if (x === 7 || x === 8) return [120, 84, 52, 255];
+      return y === 3 || y === 12 ? [160, 140, 100, 255] : jit([232, 222, 190], x, y, 156, 0.08);
+    }
+    return mul(wood, x < 1 || y < 1 || x > 14 || y > 14 ? 0.7 : 1);
+  },
+  LECTERN_SIDE: (x, y) => {
+    const base = jit([138, 100, 58], x, y, 157, 0.12);
+    return y < 2 || x < 1 || x > 14 ? mul(base, 0.68) : y === 7 ? mul(base, 0.8) : base;
+  },
+  CARTO_TOP: (x, y) => {
+    const paper = jit([222, 208, 168], x, y, 158, 0.08);
+    if (x < 1 || y < 1 || x > 14 || y > 14) return [110, 78, 44, 255];
+    if (x >= 9 && y >= 8 && hash(Math.floor(x / 2), Math.floor(y / 2), 159) > 0.35) return jit([74, 128, 178], x, y, 160, 0.14);
+    if ((x + y * 2) % 7 === 0) return [150, 110, 70, 255];
+    if (x < 6 && y < 7 && hash(Math.floor(x / 2), Math.floor(y / 2), 161) > 0.5) return jit([96, 140, 70], x, y, 162, 0.14);
+    return paper;
+  },
+  CARTO_SIDE: (x, y) => {
+    const base = jit([138, 100, 58], x, y, 163, 0.12);
+    if (y >= 5 && y <= 10 && x >= 2 && x <= 13) return y === 5 || y === 10 ? [100, 70, 40, 255] : jit([214, 198, 156], x, y, 164, 0.08);
+    return y < 3 ? mul(base, 0.7) : base;
+  },
+  STONECUT_TOP: (x, y) => {
+    const stone = mul(jit([124, 124, 128], x, y, 165, 0.16), 0.9);
+    if (y >= 6 && y <= 8 && x >= 1 && x <= 14) return y === 7 ? [226, 228, 236, 255] : [150, 152, 160, 255];
+    return x < 1 || y < 1 || x > 14 || y > 14 ? mul(stone, 0.66) : stone;
+  },
+  STONECUT_SIDE: (x, y) => {
+    const { id, edge } = cells(x, y, 166, 4);
+    const c = mul([118, 118, 122], 0.74 + id * 0.4);
+    return edge < 0.8 ? mul(c, 0.58) : c;
+  },
+  FLETCH_TOP: (x, y) => {
+    const wood = jit([156, 118, 70], x, y, 167, 0.1);
+    if (x < 1 || y < 1 || x > 14 || y > 14) return mul(wood, 0.62);
+    if (y >= 4 && y <= 11 && x >= 3 && x <= 12) {
+      if (y === 7 || y === 8) return [84, 62, 40, 255];
+      return (x + y) % 3 === 0 ? [236, 236, 230, 255] : [170, 170, 176, 255];
+    }
+    return wood;
+  },
+  FLETCH_SIDE: (x, y) => {
+    const base = jit([138, 100, 58], x, y, 168, 0.12);
+    if (y >= 6 && y <= 7 && x >= 2 && x <= 13) return [72, 52, 34, 255];
+    if (y >= 8 && y <= 11 && x % 4 === 2) return y === 8 ? [196, 196, 204, 255] : [226, 226, 220, 255];
+    return y < 3 ? mul(base, 0.66) : base;
+  },
+  NWART: (x, y) => {
+    const stem = x >= 7 && x <= 8 && y >= 10;
+    if (stem) return [96, 30, 36, 255];
+    const d = Math.hypot((x - 7.5) / 5.8, (y - 8) / 4.2);
+    if (d < 1 && y >= 3 && y <= 12) return hash(x, y, 135) > 0.78 ? [224, 70, 70, 255] : mul([170, 28, 38], 0.8 + hash(x, y, 136) * 0.5);
+    return [0, 0, 0, 0];
+  },
+  SPAWNER: (x, y) => {
+    const bar = x % 5 === 2 || y % 5 === 2 || x === 0 || y === 0 || x === 15 || y === 15;
+    if (bar) return mul(jit([66, 70, 84], x, y, 137, 0.2), 0.8 + noise(x, y, 138, 4) * 0.4);
+    return mix([8, 8, 14], [40, 14, 12], hash(x, y, 139) * 0.5);
+  },
+  TORCH: (x, y) => {
+    if (x < 7 || x > 8) return [0, 0, 0, 0];
+    if (y < 4) return [0, 0, 0, 0];
+    if (y <= 5) return y === 4 ? [255, 240, 150, 255] : [255, 178, 56, 255];
+    return mul([128, 92, 52], 0.8 + hash(x, y, 140) * 0.4);
+  },
+  LANTERN: (x, y) => {
+    // body rows 9-15 (a lit cage), cap rows 7-8, hook above
+    if (y >= 9) {
+      const frame = x === 5 || x === 10 || y === 15 || y === 9;
+      if (x < 5 || x > 10) return [0, 0, 0, 0];
+      if (frame) return mul([46, 44, 48], 0.9 + hash(x, y, 141) * 0.3);
+      return mix([255, 232, 140], [255, 178, 70], Math.min(1, Math.hypot(x - 7.5, y - 12) / 3.4));
+    }
+    if (y >= 7) return x >= 6 && x <= 9 ? mul([54, 52, 58], 0.9 + hash(x, y, 142) * 0.2) : [0, 0, 0, 0];
+    return [0, 0, 0, 0];
+  },
+  MOSSY_COBBLE: (x, y) => {
+    const { id, edge } = cells(x, y, 143, 4);
+    const moss = hash(x, y, 144) > 0.55 && noise(x, y, 145, 4) > 0.45;
+    const c = moss ? mul([78, 112, 56], 0.7 + id * 0.5) : mul([122, 122, 126], 0.74 + id * 0.5);
+    return edge < 0.85 ? mul(c, 0.55) : c;
+  },
+  FLOWER_RED: (x, y) => {
+    const d = Math.hypot(x - 7.5, y - 3.5);
+    if (d < 3.4) return d < 1.3 ? [250, 220, 80, 255] : mul([214, 40, 52], 0.85 + hash(x, y, 146) * 0.3);
+    if (y > 6 && x >= 7 && x <= 8) return [58, 120, 44, 255];
+    if (y > 9 && (x === 6 || x === 9) && hash(x, y, 147) > 0.3) return [58, 120, 44, 255];
+    return [0, 0, 0, 0];
+  },
+  FLOWER_YELLOW: (x, y) => {
+    const d = Math.hypot(x - 7.5, y - 3.5);
+    if (d < 3.4) return d < 1.3 ? [200, 130, 40, 255] : mul([248, 220, 60], 0.85 + hash(x, y, 148) * 0.25);
+    if (y > 6 && x >= 7 && x <= 8) return [58, 120, 44, 255];
+    if (y > 9 && (x === 6 || x === 9) && hash(x, y, 149) > 0.3) return [58, 120, 44, 255];
+    return [0, 0, 0, 0];
+  },
+  TALL_GRASS: (x, y) => {
+    const blades = [2, 4, 6, 8, 10, 12, 13];
+    const i = blades.indexOf(x);
+    if (i < 0) return [0, 0, 0, 0];
+    const top = 3 + Math.floor(hash(x, 7, 150) * 7);
+    if (y < top) return [0, 0, 0, 0];
+    return mul([88, 150, 48], 0.7 + (y - top) * 0.04 + hash(x, y, 151) * 0.3);
   },
 };
 

@@ -2,6 +2,7 @@ import { build, context } from 'esbuild';
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { writeBlog } from './blog.mjs';
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const dist = path.join(root, 'dist');
@@ -75,11 +76,13 @@ function htmlPlugin() {
           .replace('<!--@SCRIPTS-->', `<script type="module" src="./${path.basename(js)}"></script>`);
         await writeFile(path.join(dist, 'index.html'), html);
         await writeSharePages(siteUrl);
+        const blog = await writeBlog({ root, dist, siteUrl });
         // Crawlers need absolute URLs, so the sitemap and robots.txt sitemap line exist only when the site URL is known.
         if (siteUrl) {
+          const locs = [`${siteUrl}/`, ...blog.urls];
           await writeFile(
             path.join(dist, 'sitemap.xml'),
-            `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${siteUrl}/</loc></url></urlset>\n`,
+            `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${locs.map((l) => `<url><loc>${l}</loc></url>`).join('')}</urlset>\n`,
           );
           await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
         }

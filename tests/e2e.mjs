@@ -7,6 +7,7 @@
  * BASE_URL        page to test (default http://localhost:4173/)
  * PLAYWRIGHT_MODULE / PW_CHROMIUM  optional overrides for non-standard installs
  */
+import { profile } from '../src/data/profile.js';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
@@ -44,9 +45,19 @@ async function open({ threed = false, ...opts } = {}) {
 // First visit: boot screen, entry loader, skip.
 {
   const [ctx, page] = await open();
-  await page.waitForSelector('#root > *', { timeout: 10000 });
+  await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
+  // the static boot screen fades out for a few hundred ms after the app mounts, then leaves the DOM
+  await page.waitForSelector('#boot', { state: 'detached', timeout: 3000 }).catch(() => {});
   ok('static boot screen is removed once the app mounts', (await page.locator('#boot').count()) === 0);
-  ok('entry loader shows on first visit', (await page.locator('.loader').count()) === 1);
+  ok('title screen shows on first visit', (await page.locator('.title-screen').count()) === 1);
+  const splashText = (await page.locator('.title-splash').innerText()).trim();
+  ok('title screen has a yellow splash line', splashText.length > 3 && (await page.locator('.title-splash').evaluate((e) => getComputedStyle(e).color)) === 'rgb(255, 255, 85)');
+  ok('Play is focused first', await page.evaluate(() => document.activeElement?.textContent === 'Play'));
+  await page.keyboard.press('ArrowDown');
+  ok('arrow keys move through the menu', await page.evaluate(() => document.activeElement?.textContent === 'Free roam'));
+  await page.locator('.title-menu .mc-button', { hasText: 'Play' }).click();
+  await page.waitForSelector('.loader:not(.boot)', { timeout: 3000 });
+  ok('entry loader follows the title screen', (await page.locator('.title-screen').count()) === 0);
   await page.keyboard.press('Escape');
   await page.waitForSelector('.loader', { state: 'detached', timeout: 3000 });
   ok('entry loader skips with Escape', true);
@@ -79,7 +90,7 @@ async function open({ threed = false, ...opts } = {}) {
   ok('biome filter narrows the cards', (await page.locator('.card').count()) === 1);
   await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('all six projects shown again', (await page.locator('.card').count()) === 6);
+  ok('all six projects shown again, plus the two coming-soon cards', (await page.locator('.card:not(.card-soon)').count()) === 6 && (await page.locator('.card-soon').count()) === 2);
   ok('three flagship projects are marked', (await page.locator('.flagship-tag').count()) === 3);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
@@ -120,7 +131,7 @@ async function open({ threed = false, ...opts } = {}) {
 {
   const [ctx, page] = await open({ reducedMotion: 'reduce' });
   await page.waitForSelector('#root > *');
-  ok('no entry loader with reduced motion', (await page.locator('.loader').count()) === 0);
+  ok('no entry loader with reduced motion', (await page.locator('.loader:not(.boot)').count()) === 0);
   ok('hero name visible immediately', await page.evaluate(() => getComputedStyle(document.querySelector('.letter')).opacity === '1'));
   await page.keyboard.press('Tab');
   ok('first Tab focuses the skip link', await page.evaluate(() => document.activeElement.classList.contains('skip-link')));
@@ -148,6 +159,48 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok(`${w}px: no horizontal overflow`, m.over <= 0, `over=${m.over}`);
   ok(`${w}px: navigation fits`, m.navFits);
   ok(`${w}px: touch targets are at least 40px`, m.small.length === 0, m.small.slice(0, 3).join(' '));
+  await ctx.close();
+}
+
+// Contact links and the blog: WhatsApp opens a chat, the blog list and its posts render and link back.
+{
+  const [ctx, page] = await open();
+  await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
+  const wa = await page.locator('a[href^="https://wa.me/917419911991"]').count();
+  ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
+  ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
+  ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
+  ok('club roles and volunteering are listed', (await page.locator('.roles li').count()) === 3);
+  if (!profile.blogEnabled) {
+    ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
+    ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
+    ok('the Forge lists two coming-soon flagship cards', (await page.locator('.card-soon').count()) === 2);
+  } else {
+    await page.goto(`${BASE}blog/`);
+    ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
+    await page.locator('.cards .card h2 a').first().click();
+    await page.waitForSelector('article.post');
+    ok('a post opens with one h1 and readable text', (await page.locator('h1').count()) === 1 && (await page.locator('.prose p').count()) >= 3);
+    ok('post links back to the blog and the portfolio', (await page.locator('a[href="../"]').count()) >= 1 && (await page.locator('a[href="../../"]').count()) >= 1);
+    await page.setViewportSize({ width: 320, height: 640 });
+    ok('post: no horizontal overflow at 320px', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+
+  }
+  await ctx.close();
+}
+
+// Advancement toasts: a section reached for the first time pops one up from the top right.
+{
+  const ctx = await plainContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
+  await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await page.goto(BASE);
+  await page.waitForTimeout(1000);
+  ok('no toast before leaving the first section', (await page.locator('.toast.show').count()) === 0);
+  await page.evaluate(() => document.getElementById('contact').scrollIntoView());
+  await page.waitForSelector('.toast.show', { timeout: 4000 });
+  ok('the toast uses a game-style header', /advancement made!|goal reached!|challenge complete!/i.test(await page.locator('.toast.show .toast-h').innerText()));
   await ctx.close();
 }
 
@@ -240,10 +293,18 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
     ok(`camera reaches stop ${n} at the ${id} section`, Math.abs(p - n) < 0.25, `progress ${p}`);
   }
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(1500);
-  await page.mouse.click(24, 640);
-  await page.waitForTimeout(400);
-  ok('clicking bare ground digs a block out', Number((await canvas.getAttribute('data-dug')) ?? 0) >= 1);
+  await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.progress) < 0.1, null, { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(2500);
+  // villagers wander, and software rendering draws only a few frames a second: try a few spots of
+  // bare ground and give each click time to be drawn before reading the result
+  let dug = 0;
+  for (const [cx, cy] of [[24, 640], [60, 700], [24, 560]]) {
+    await page.mouse.click(cx, cy);
+    await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas')?.dataset.dug ?? 0) >= 1, null, { timeout: 9000 }).catch(() => {});
+    dug = Number((await canvas.getAttribute('data-dug')) ?? 0);
+    if (dug >= 1) break;
+  }
+  ok('clicking bare ground digs a block out', dug >= 1, `dug ${dug}`);
   await page.getByRole('button', { name: /day|overworld|nether|night/i }).first().click();
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas').dataset.world === 'overworld', null, { timeout: 15000 }).catch(() => {});
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -253,11 +314,16 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const p0 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
   await page.keyboard.down('KeyW');
   // software rendering runs at a few frames a second, so wait for real movement rather than a fixed time
-  const z0 = Number(p0.split(',')[2]);
-  await page.waitForFunction((z) => Number((document.querySelector('canvas.world-canvas').dataset.pos ?? '0,0,0').split(',')[2]) > z + 1, z0, { timeout: 20000 }).catch(() => {});
+  // the camera can face any way after a portal trip, so measure distance walked, not one axis
+  const [x0, , z0] = p0.split(',').map(Number);
+  await page.waitForFunction(([x, z]) => {
+    const [px, , pz] = (document.querySelector('canvas.world-canvas').dataset.pos ?? '0,0,0').split(',').map(Number);
+    return Math.hypot(px - x, pz - z) > 1;
+  }, [x0, z0], { timeout: 20000 }).catch(() => {});
   await page.keyboard.up('KeyW');
   const p1 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
-  ok('W walks the player forward through the world', Number(p1.split(',')[2]) > z0 + 1, `${p0} -> ${p1}`);
+  const [x1, , z1] = p1.split(',').map(Number);
+  ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
@@ -267,7 +333,9 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('Quick view leaves every section readable', (await page.locator('main section.section').count()) >= 5);
   await page.locator('.quick-btn').click();
   ok('3D view comes back', await page.evaluate(() => document.documentElement.dataset.quick === 'off'));
-  ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld');
+  // the canvas is rebuilt when 3D comes back, which software rendering does slowly
+  await page.waitForFunction(() => document.querySelector('canvas.world-canvas')?.dataset.world === 'overworld', null, { timeout: 20000 }).catch(() => {});
+  ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld', String(await canvas.getAttribute('data-world')));
   await ctx.close();
 }
 

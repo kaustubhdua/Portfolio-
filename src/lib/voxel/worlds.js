@@ -1,4 +1,4 @@
-import { B } from './blocks.js';
+import { B, door, stair } from './blocks.js';
 import { Grid, rng, vnoise } from './grid.js';
 import { CENTER_X, STOP_Z, sampleCamera, stopsFor } from './journey.js';
 
@@ -24,6 +24,40 @@ function carveCorridor(g, stops, surface, top) {
       for (let z = cz - 2; z <= cz + 2; z++)
         for (let y = surface; y <= surface + top; y++) g.set(x, y, z, B.AIR);
   }
+}
+
+
+/**
+ * A gold trophy on a two-step pedestal, with a gold-and-lantern pillar at each corner and a signpost in
+ * front. It is deliberately unnamed: it stands for the first win, and gets its name when there is one.
+ * (cx, cz) is the centre and y0 the first free level. body, step and glow are block ids.
+ */
+function trophy(g, cx, cz, y0, { body, step, glow }) {
+  g.fill(cx - 3, y0, cz - 3, cx + 3, y0, cz + 3, step);
+  g.fill(cx - 2, y0 + 1, cz - 2, cx + 2, y0 + 1, cz + 2, step);
+  g.fill(cx - 1, y0 + 2, cz - 1, cx + 1, y0 + 2, cz + 1, body); // plinth
+  g.set(cx, y0 + 3, cz, B.GILDED);
+  g.fill(cx, y0 + 4, cz, cx, y0 + 5, cz, B.GOLD_BLOCK); // stem
+  g.fill(cx - 1, y0 + 5, cz - 1, cx + 1, y0 + 5, cz + 1, B.GOLD_BLOCK); // foot of the cup
+  g.fill(cx - 1, y0 + 6, cz - 1, cx + 1, y0 + 8, cz + 1, B.GOLD_BLOCK); // the cup
+  g.fill(cx, y0 + 8, cz, cx, y0 + 8, cz, B.AIR); // hollow top
+  g.set(cx, y0 + 7, cz, glow);
+  for (const dx of [-2, 2]) {
+    g.set(cx + dx, y0 + 7, cz, B.GOLD_BLOCK); // handles
+    g.set(cx + dx, y0 + 8, cz, B.GOLD_BLOCK);
+  }
+  g.set(cx, y0 + 10, cz, glow); // a bright star above it
+  for (const dx of [-3, 3]) {
+    for (const dz of [-3, 3]) {
+      g.fill(cx + dx, y0 + 1, cz + dz, cx + dx, y0 + 4, cz + dz, step);
+      g.set(cx + dx, y0 + 5, cz + dz, B.GOLD_BLOCK);
+      g.set(cx + dx, y0 + 6, cz + dz, B.LANTERN);
+    }
+  }
+  // a signpost on the camera side: a fence post with a plank board (the engine draws no text)
+  g.set(cx, y0 - 1, cz - 4, step);
+  g.set(cx, y0, cz - 4, B.FENCE);
+  g.fill(cx - 1, y0 + 1, cz - 4, cx + 1, y0 + 1, cz - 4, B.SPRUCE_PLANKS);
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -81,65 +115,130 @@ function buildVillage() {
     reserve(x0, z0, x1, z1, 2);
   };
 
+  // a fence post with a torch on top, like the lamp posts along a village street
   const lampPost = (x, z, h = 3) => {
-    g.fill(x, GY, z, x, GY + h - 1, z, B.SPRUCE_LOG);
-    g.set(x, GY + h, z, B.LAMP);
+    g.fill(x, GY, z, x, GY + h - 1, z, B.FENCE);
+    g.set(x, GY + h, z, B.TORCH);
   };
 
-  const house = (x0, z0, w, d, h, doorEast, roof = B.ROOF, wall = B.PLANKS) => {
+  // A gabled roof of stairs along z: each layer climbs one block, the ridge is a slab (odd width) or two stairs
+  // back to back (even width), and the triangular ends are filled with wall blocks.
+  const gableRoof = (x0, z0, x1, z1, y, mat, slab, wall) => {
+    for (let k = 0; ; k++) {
+      const yl = y + k;
+      const xl = x0 - 1 + k;
+      const xr = x1 + 1 - k;
+      if (xl > xr) break;
+      if (xl === xr) {
+        for (let z = z0 - 1; z <= z1 + 1; z++) g.set(xl, yl, z, slab);
+        break;
+      }
+      for (let z = z0 - 1; z <= z1 + 1; z++) {
+        g.set(xl, yl, z, stair(mat, 0));
+        g.set(xr, yl, z, stair(mat, 1));
+      }
+      if (k > 0) for (let x = xl + 1; x <= xr - 1; x++) for (const z of [z0, z1]) g.set(x, yl, z, wall);
+      if (xl + 1 === xr) break;
+    }
+  };
+
+  // A village house: cobblestone base course, log corners, plank walls, panes, a door and a gabled stair roof.
+  const house = (x0, z0, w, d, h, doorEast, opts = {}) => {
+    const { roof = B.STAIR_SPRUCE, slab = B.SLAB_SPRUCE, wall = B.PLANKS, base = B.COBBLE, chimney = false } = opts;
     const x1 = x0 + w - 1;
     const z1 = z0 + d - 1;
-    flatten(x0 - 1, z0 - 1, x1 + 1, z1 + 1, h + 4);
+    flatten(x0 - 2, z0 - 2, x1 + 2, z1 + 2, h + w);
     g.fill(x0, GY - 1, z0, x1, GY - 1, z1, B.PLANKS);
     g.shell(x0, GY, z0, x1, GY + h - 1, z1, wall);
+    for (let x = x0; x <= x1; x++) for (const z of [z0, z1]) g.set(x, GY, z, base);
+    for (let z = z0; z <= z1; z++) for (const x of [x0, x1]) g.set(x, GY, z, base);
     g.fill(x0 + 1, GY, z0 + 1, x1 - 1, GY + h - 2, z1 - 1, B.AIR);
-    g.fill(x0 + 1, GY + h - 1, z0 + 1, x1 - 1, GY + h - 1, z1 - 1, B.PLANKS);
     for (const cx of [x0, x1]) for (const cz of [z0, z1]) g.fill(cx, GY, cz, cx, GY + h - 1, cz, B.LOG);
     const dz = z0 + Math.floor(d / 2);
     const dx = doorEast ? x1 : x0;
-    g.fill(dx, GY, dz, dx, GY + 1, dz, B.AIR);
-    for (let k = 2; k < d - 2; k += 3) {
-      g.fill(x0, GY + 1, z0 + k, x0, GY + 2, z0 + k, B.GLASS);
-      g.fill(x1, GY + 1, z0 + k, x1, GY + 2, z0 + k, B.GLASS);
-      g.set(dx, GY + 1, z0 + k, k === dz - z0 ? B.AIR : B.GLASS);
+    const [lo, up] = door(doorEast ? 1 : 0);
+    g.set(dx, GY, dz, lo);
+    g.set(dx, GY + 1, dz, up);
+    for (let z = z0 + 2; z <= z1 - 2; z += 3) {
+      for (const wx of [x0, x1]) if (!(wx === dx && Math.abs(z - dz) < 2)) g.fill(wx, GY + 1, z, wx, GY + 2, z, B.PANE);
     }
-    g.fill(dx, GY, dz, dx, GY + 1, dz, B.AIR);
-    for (let k = 0; k < Math.ceil(Math.min(w, d) / 2) + 1; k++) {
-      g.fill(x0 - 1 + k, GY + h + k, z0 - 1 + k, x1 + 1 - k, GY + h + k, z1 + 1 - k, roof);
-      if (x1 + 1 - k < x0 - 1 + k || z1 + 1 - k < z0 - 1 + k) break;
+    const mx = Math.floor((x0 + x1) / 2);
+    for (const wz of [z0, z1]) g.fill(mx, GY + 1, wz, mx, GY + 2, wz, B.PANE);
+    // furnishings, visible when exploring
+    if (opts.barn) {
+      // a barn: hay bales stacked inside instead of a hearth
+      g.fill(x0 + 1, GY, z0 + 1, x1 - 1, GY + 1, z0 + 2, B.HAY);
+      g.fill(x1 - 3, GY, z1 - 2, x1 - 1, GY, z1 - 1, B.HAY);
+      g.set(x1 - 2, GY + 1, z1 - 1, B.HAY);
+      g.set(x0 + 2, GY, z1 - 1, B.BARREL);
+    } else {
+      g.set(x0 + 1, GY, z1 - 1, B.CRAFTING);
+      g.set(x1 - 1, GY, z1 - 1, B.FURNACE);
+      g.fill(x0 + 1, GY, z0 + 1, x0 + 2, GY + 1, z0 + 1, B.BOOKSHELF);
     }
-    // clear the inside again after the ceiling pass of the roof loop
-    g.fill(x0 + 1, GY, z0 + 1, x1 - 1, GY + h - 2, z1 - 1, B.AIR);
-    g.set(Math.floor((x0 + x1) / 2), GY + h - 2, Math.floor((z0 + z1) / 2), B.LAMP);
-    // porch lamp
+    g.set(mx, GY + h - 2, Math.floor((z0 + z1) / 2), B.LANTERN);
+    if (opts.upper) {
+      // a second storey: a plank floor and a row of upstairs windows
+      g.fill(x0 + 1, GY + 4, z0 + 1, x1 - 1, GY + 4, z1 - 1, B.PLANKS);
+      for (let z = z0 + 2; z <= z1 - 2; z += 3) for (const wx of [x0, x1]) g.fill(wx, GY + 5, z, wx, GY + 6, z, B.PANE);
+      for (const wz of [z0, z1]) g.fill(mx, GY + 5, wz, mx, GY + 6, wz, B.PANE);
+    }
+    gableRoof(x0, z0, x1, z1, GY + h - 1, roof, slab, wall);
+    if (chimney) {
+      const cx = x0 + 2;
+      const cz = z0 + 2;
+      g.fill(cx, GY + h, cz, cx, GY + h + Math.ceil(w / 2) + 1, cz, B.COBBLE);
+    }
+    // porch torch post beside the door
     lampPost(doorEast ? x1 + 2 : x0 - 2, dz + 2, 2);
+    // a worn dirt path from the door to the road, and a couple of flowers by the step
+    const out = doorEast ? x1 + 1 : x0 - 1;
+    const road = doorEast ? 27 : 37;
+    for (let x = Math.min(out, road); x <= Math.max(out, road); x++) g.set(x, GY - 1, dz, B.PATH);
+    g.set(out, GY, dz - 2, B.FLOWER_RED);
+    g.set(out, GY, dz + 3, B.FLOWER_YELLOW);
   };
 
   // gate
   for (const x of [28, 36]) {
     g.fill(x, GY, 17, x, GY + 6, 17, B.SPRUCE_LOG);
-    g.set(x, GY + 7, 17, B.LAMP);
+    g.set(x, GY + 7, 17, B.LANTERN);
   }
   g.fill(28, GY + 6, 17, 36, GY + 6, 17, B.SPRUCE_PLANKS);
   g.fill(31, GY + 3, 17, 33, GY + 5, 17, B.WOOL_RED);
   reserve(26, 15, 38, 19, 0);
 
   // houses
-  house(14, 22, 8, 7, 4, true);
-  house(44, 26, 8, 8, 5, false);
-  house(13, 50, 9, 8, 5, true, B.ROOF, B.COBBLE);
-  house(45, 52, 7, 7, 4, false);
-  house(44, 92, 8, 8, 4, false);
-  house(13, 150, 8, 8, 5, true);
-  house(45, 176, 8, 7, 4, false);
+  house(14, 22, 8, 7, 4, true, { chimney: true });
+  house(44, 26, 8, 8, 5, false, { roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE });
+  house(13, 50, 9, 8, 5, true, { wall: B.COBBLE, base: B.MOSSY_COBBLE, roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE });
+  house(45, 52, 7, 7, 4, false, { roof: B.STAIR_PLANKS, slab: B.SLAB_PLANKS });
+  house(44, 92, 8, 8, 4, false, { chimney: true });
+  house(13, 150, 8, 8, 5, true, { roof: B.STAIR_PLANKS, slab: B.SLAB_PLANKS, chimney: true });
+  house(45, 176, 8, 7, 4, false, { roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE });
+  // a two-storey townhouse and a barn fill the gaps along the road
+  house(14, 34, 8, 9, 8, true, { upper: true, chimney: true, roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE });
+  house(46, 134, 9, 11, 5, false, { barn: true, wall: B.SPRUCE_PLANKS, roof: B.STAIR_SPRUCE, slab: B.SLAB_SPRUCE });
+  // the meeting hall: a long house lined with bookshelves, a lectern out front, and a bell shed on the ridge
+  house(45, 105, 10, 12, 5, false, { wall: B.PLANKS, base: B.STONE_BRICK, roof: B.STAIR_COBBLE, slab: B.SLAB_COBBLE, chimney: true });
+  for (let z = 106; z <= 115; z++) g.fill(53, GY, z, 53, GY + 1, z, B.BOOKSHELF);
+  for (let x = 47; x <= 52; x++) g.fill(x, GY, 106, x, GY + 1, 106, B.BOOKSHELF);
+  g.set(41, GY, 110, B.LECTERN); // the librarian's lectern
+  // more villagers with their job-site blocks, on the west side of the road
+  g.set(27, GY, 128, B.CARTO); // cartographer
+  g.set(27, GY, 122, B.STONECUT); // mason
+  g.set(27, GY, 134, B.FLETCH); // fletcher
+  for (const x of [49, 50]) for (const z of [108, 113]) g.fill(x, GY + 10, z, x, GY + 11, z, B.FENCE);
+  g.fill(49, GY + 12, 108, 50, GY + 12, 113, B.SLAB_SPRUCE);
 
   // well near the profile stop
   flatten(40, 40, 44, 44, 5);
   g.shell(41, GY, 41, 43, GY + 1, 43, B.COBBLE);
   g.set(42, GY, 42, B.WATER);
   g.set(42, GY - 1, 42, B.WATER);
-  for (const [x, z] of [[41, 41], [43, 41], [41, 43], [43, 43]]) g.fill(x, GY + 2, z, x, GY + 3, z, B.SPRUCE_LOG);
-  g.fill(41, GY + 4, 41, 43, GY + 4, 43, B.ROOF);
+  for (const [x, z] of [[41, 41], [43, 41], [41, 43], [43, 43]]) g.fill(x, GY + 2, z, x, GY + 3, z, B.FENCE);
+  g.fill(41, GY + 4, 41, 43, GY + 4, 43, B.SLAB_COBBLE);
+  g.set(42, GY + 4, 42, B.COBBLE);
   for (let z = 25; z < 200; z += 12) {
     lampPost(27, z);
     lampPost(37, z + 6);
@@ -148,7 +247,7 @@ function buildVillage() {
   // market stalls
   const stall = (x0, z0, w, d) => {
     flatten(x0, z0, x0 + w - 1, z0 + d - 1, 4);
-    for (const x of [x0, x0 + w - 1]) for (const z of [z0, z0 + d - 1]) g.fill(x, GY, z, x, GY + 2, z, B.SPRUCE_LOG);
+    for (const x of [x0, x0 + w - 1]) for (const z of [z0, z0 + d - 1]) g.fill(x, GY, z, x, GY + 2, z, B.FENCE);
     for (let x = x0; x < x0 + w; x++) for (let z = z0; z < z0 + d; z++) g.set(x, GY + 3, z, (x + z) % 2 ? B.WOOL_RED : B.WOOL_WHITE);
     g.fill(x0 + 1, GY, z0 + d - 1, x0 + w - 2, GY, z0 + d - 1, B.BARREL);
     g.set(x0 + 1, GY, z0, B.HAY);
@@ -168,19 +267,22 @@ function buildVillage() {
   g.fill(26, GY, 95, 26, GY + 3, 105, B.AIR); // wide open front
   for (const z of [95, 105]) g.fill(26, GY, z, 26, GY + 4, z, B.SPRUCE_LOG);
   g.fill(26, GY + 4, 95, 26, GY + 4, 105, B.SPRUCE_PLANKS);
-  for (let k = 0; k < 8; k++) g.fill(13 + k, GY + 6 + k, 91 + k, 27 - k, GY + 6 + k, 109 - k, B.ROOF);
+  gableRoof(14, 92, 26, 108, GY + 5, B.STAIR_COBBLE, B.SLAB_COBBLE, B.STONE_BRICK);
   g.fill(15, GY, 93, 25, GY + 4, 107, B.AIR);
   g.fill(17, GY - 1, 99, 19, GY - 1, 101, B.LAVA);
   g.shell(16, GY - 1, 98, 20, GY - 1, 102, B.BLACKSTONE);
   g.fill(17, GY - 1, 99, 19, GY - 1, 101, B.LAVA);
-  g.fill(21, GY, 99, 22, GY, 100, B.BLACKSTONE);
+  g.set(22, GY, 99, B.ANVIL);
+  g.fill(15, GY, 99, 15, GY, 101, B.FURNACE);
+  g.set(15, GY, 97, B.CRAFTING);
+  g.fill(15, GY, 103, 15, GY + 1, 104, B.BOOKSHELF);
   g.set(18, GY, 96, B.BARREL);
   g.set(19, GY, 96, B.BARREL);
   g.fill(15, GY, 105, 15, GY + 1, 105, B.COBBLE);
-  g.fill(14, GY + 6, 106, 14, GY + 13, 106, B.COBBLE); // chimney
+  g.fill(14, GY + 6, 106, 14, GY + 12, 106, B.COBBLE); // chimney
   g.fill(14, GY, 106, 14, GY + 5, 106, B.COBBLE);
-  g.set(14, GY + 14, 106, B.FIRE);
-  g.set(20, GY + 4, 100, B.LAMP);
+  g.set(14, GY + 13, 106, B.FIRE);
+  g.set(20, GY + 4, 100, B.LANTERN);
   g.set(19, GY, 94, B.FIRE);
 
   // tower
@@ -199,9 +301,9 @@ function buildVillage() {
       if ((x + z) % 2 === 0 && (x === 39 || x === 48 || z === 121 || z === 130)) g.set(x, GY + 16, z, B.STONE_BRICK);
     }
   g.fill(39, GY + 14, 121, 48, GY + 14, 130, B.STONE_BRICK);
-  for (let k = 0; k < 5; k++) g.fill(40 + k, GY + 15 + k, 122 + k, 47 - k, GY + 15 + k, 129 - k, B.ROOF);
-  g.set(43, GY + 5, 125, B.LAMP);
-  g.set(43, GY + 5, 126, B.LAMP);
+  for (const [x, z] of [[39, 121], [48, 121], [39, 130], [48, 130]]) g.set(x, GY + 17, z, B.TORCH);
+  g.set(43, GY + 5, 125, B.LANTERN);
+  g.set(43, GY + 5, 126, B.LANTERN);
   for (let z = 123; z <= 127; z++) g.set(41, GY, z, B.AIR);
 
   // farm
@@ -215,7 +317,7 @@ function buildVillage() {
         if (rand() < 0.93) g.set(x, GY, z, B.CROP);
       }
     }
-  for (const [x, z] of [[13, 118], [27, 118], [13, 140], [27, 140]]) g.fill(x, GY, z, x, GY + 1, z, B.SPRUCE_LOG);
+  for (const [x, z] of [[13, 118], [27, 118], [13, 140], [27, 140]]) lampPost(x, z, 2);
   g.set(28, GY, 128, B.HAY);
   g.set(28, GY, 129, B.HAY);
   g.set(28, GY + 1, 128, B.HAY);
@@ -232,8 +334,8 @@ function buildVillage() {
 
   // sheep pen
   flatten(15, 160, 27, 172, 2);
-  for (let x = 15; x <= 27; x++) for (const z of [160, 172]) g.set(x, GY, z, B.SPRUCE_PLANKS);
-  for (let z = 160; z <= 172; z++) for (const x of [15, 27]) g.set(x, GY, z, B.SPRUCE_PLANKS);
+  for (let x = 15; x <= 27; x++) for (const z of [160, 172]) g.set(x, GY, z, B.FENCE);
+  for (let z = 160; z <= 172; z++) for (const x of [15, 27]) g.set(x, GY, z, B.FENCE);
   g.set(27, GY, 166, B.AIR);
   g.set(27, GY - 1, 166, B.PATH);
   g.set(18, GY, 163, B.HAY);
@@ -252,7 +354,12 @@ function buildVillage() {
   g.set(32, GY, 197, B.COBBLE);
   g.set(32, GY + 1, 197, B.FIRE);
   for (const [x, z] of [[28, 193], [36, 193], [28, 201], [36, 201]]) lampPost(x, z, 3);
-  for (const [x, z] of [[27, 197], [37, 197]]) g.fill(x, GY, z - 1, x, GY, z + 1, B.PLANKS);
+  for (let z = 196; z <= 198; z++) {
+    g.set(27, GY, z, stair(B.STAIR_SPRUCE, 1));
+    g.set(37, GY, z, stair(B.STAIR_SPRUCE, 0));
+  }
+  // the trophy on the east side of the plaza
+  trophy(g, 38, 203, GY, { body: B.STONE, step: B.STONE_BRICK, glow: B.GLOWSTONE });
   // portal home
   g.shell(30, GY, 207, 34, GY + 4, 207, B.OBSIDIAN);
   g.fill(31, GY + 1, 207, 33, GY + 3, 207, B.AIR);
@@ -277,6 +384,19 @@ function buildVillage() {
         }
     }
     reserve(x - 2, z - 2, x + 2, z + 2, 0);
+  }
+
+  // tall grass and flowers in the meadow (not on the road itself)
+  for (let z = 2; z < SIZE.l - 2; z++) {
+    for (let x = 2; x < SIZE.w - 2; x++) {
+      if (Math.abs(x - CENTER_X) < 4) continue;
+      let y = SIZE.h - 1;
+      while (y > 0 && g.get(x, y, z) === B.AIR) y--;
+      if (g.get(x, y, z) !== B.GRASS || g.get(x, y + 1, z) !== B.AIR) continue;
+      const r = rand();
+      if (r < 0.11) g.set(x, y + 1, z, B.TALL_GRASS);
+      else if (r < 0.135) g.set(x, y + 1, z, r < 0.1225 ? B.FLOWER_RED : B.FLOWER_YELLOW);
+    }
   }
 
   const stops = stopsFor('overworld', GY);
@@ -399,7 +519,8 @@ function buildFortress() {
     for (let z = 63; z <= 77; z++) {
       g.set(x, D, z, B.SOUL_SAND);
       g.set(x + 1, D, z, B.SOUL_SAND);
-      if (rand() < 0.85) g.set(x, D + 1, z, rand() < 0.5 ? B.WART : B.WARPED_WART);
+      if (rand() < 0.85) g.set(x, D + 1, z, B.NWART);
+      if (rand() < 0.85) g.set(x + 1, D + 1, z, B.NWART);
     }
   for (let x = 37; x <= 54; x++) for (const z of [60, 80]) g.set(x, D + 1, z, B.NETHER_FENCE);
   for (let z = 60; z <= 80; z++) g.set(54, D + 1, z, B.NETHER_FENCE);
@@ -472,6 +593,66 @@ function buildFortress() {
   }
   g.fill(31, D, 196, 33, D, 198, B.BASALT);
   g.fill(32, D + 1, 197, 32, D + 1, 197, B.FIRE);
+
+  // fortress corridor just inside the gate: pillars with arches, brick walls with fence windows,
+  // a balcony, a lava well and a soul-sand niche with nether wart, like the corridors of a real fortress
+  for (let z = 19; z <= 33; z++) {
+    const pillar = (z - 19) % 4 === 0;
+    for (const x of [28, 36]) {
+      g.fill(x, D + 1, z, x, D + 4, z, B.NETHER_BRICK);
+      if (!pillar) g.fill(x, D + 2, z, x, D + 3, z, B.NETHER_FENCE);
+    }
+    if (pillar) {
+      g.fill(28, D + 5, z, 36, D + 5, z, B.NETHER_BRICK);
+      g.set(29, D + 4, z, stair(B.STAIR_NETHER, 0));
+      g.set(35, D + 4, z, stair(B.STAIR_NETHER, 1));
+    }
+  }
+  // balcony on the west wall (opening in the wall, a deck with a fence rail over the drop)
+  g.fill(28, D + 1, 25, 28, D + 4, 27, B.AIR);
+  g.fill(25, D - 1, 24, 27, D, 28, B.NETHER_BRICK);
+  g.fill(25, D + 1, 24, 27, D + 1, 24, B.NETHER_FENCE);
+  g.fill(25, D + 1, 28, 27, D + 1, 28, B.NETHER_FENCE);
+  g.fill(25, D + 1, 24, 25, D + 1, 28, B.NETHER_FENCE);
+  // lava well alcove on the east wall
+  g.fill(36, D + 1, 21, 36, D + 4, 24, B.AIR);
+  g.fill(37, D - 1, 20, 40, D, 25, B.NETHER_BRICK);
+  g.fill(38, D, 22, 39, D, 23, B.LAVA);
+  g.fill(37, D + 1, 20, 40, D + 1, 20, B.NETHER_FENCE);
+  g.fill(37, D + 1, 25, 40, D + 1, 25, B.NETHER_FENCE);
+  g.fill(40, D + 1, 20, 40, D + 1, 25, B.NETHER_FENCE);
+  g.set(38, D + 1, 22, B.GLOWSTONE);
+  // soul sand with nether wart in a niche
+  g.fill(36, D + 1, 29, 36, D + 4, 32, B.AIR);
+  g.fill(37, D - 1, 28, 39, D, 33, B.NETHER_BRICK);
+  g.fill(37, D, 29, 38, D, 32, B.SOUL_SAND);
+  g.fill(37, D + 1, 29, 38, D + 1, 32, B.NWART);
+  g.fill(37, D + 1, 28, 39, D + 1, 28, B.NETHER_FENCE);
+  g.fill(37, D + 1, 33, 39, D + 1, 33, B.NETHER_FENCE);
+
+  // bastion bridge before the end platform: blackstone ramparts crowned with gilded stone, gold
+  // blocks on the corner towers, and lava running on both sides under the deck
+  for (let z = 173; z <= 181; z++) {
+    g.fill(28, D - 1, z, 36, D, z, B.BLACKSTONE);
+    for (const x of [28, 36]) {
+      g.fill(x, D + 1, z, x, D + 3, z, B.BLACKSTONE);
+      g.set(x, D + 4, z, (z + (x === 28 ? 0 : 1)) % 2 === 0 ? B.GILDED : B.AIR);
+      if (z % 3 === 0) g.set(x, D + 2, z, B.GILDED);
+    }
+  }
+  for (const x of [27, 35]) for (const z of [172, 181]) {
+    g.fill(x, D, z, x + 2, D + 6, z + 1, B.BLACKSTONE);
+    g.set(x, D + 7, z, B.GOLD_BLOCK);
+    g.set(x + 2, D + 7, z, B.GOLD_BLOCK);
+    g.set(x + 1, D + 7, z + 1, B.GOLD_BLOCK);
+  }
+  g.fill(32, D, 176, 32, D, 178, B.GILDED);
+  g.set(32, D + 1, 177, B.GOLD_BLOCK);
+  g.set(31, D + 1, 177, B.LANTERN);
+  g.set(33, D + 1, 177, B.LANTERN);
+
+  // the trophy on the end platform, in blackstone
+  trophy(g, 26, 201, BY, { body: B.BLACKSTONE, step: B.NETHER_BRICK, glow: B.GLOWSTONE });
 
   const stops = stopsFor('nether', BY);
   carveCorridor(g, stops, BY, 5);

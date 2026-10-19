@@ -36,9 +36,40 @@ SITE_URL=https://example.com npm run build
 
 All asset URLs are relative, so `dist/` can be hosted at a domain root or under a sub-path (GitHub Pages, Netlify, Vercel, any static host).
 
+## The blog (coming soon)
+
+The blog is built but switched off: `blogEnabled` in `src/data/profile.js` is `false`, so the site shows "Blog: coming soon" and ships no `/blog/` pages. Set it to `true` (and rebuild) to publish; `BLOG_PREVIEW=1 npm run build` builds it for a private look without switching it on.
+
+Posts are Markdown files in `content/blog/`, one file per post. The build turns each into a static page
+at `/blog/<file-name>/`, builds the list at `/blog/`, adds them to `sitemap.xml` and writes an RSS feed
+(`/blog/feed.xml`) when `SITE_URL` is set. The pages need no JavaScript and follow the visitor's day or
+night world.
+
+```md
+---
+title: My post title
+date: 2026-11-02
+summary: One or two sentences shown on the list page and in link previews.
+tags: Java, Backend
+draft: true        # optional: hidden from the build until you remove it (BLOG_DRAFTS=1 shows drafts)
+---
+
+## A heading
+
+Plain paragraphs, **bold**, *italic*, `code`, [links](https://example.com), lists, quotes and
+fenced code blocks all work.
+```
+
+Preview with `npm run build && npm run preview`, then open `/blog/`. The three starter posts are drawn
+only from public LinkedIn posts and certificates; read and edit them in your own voice before publishing.
+
 ## Features worth knowing
 
 - **Chat:** press `/` or use the speech-bubble button. It is an offline command box (`/help`, `/projects`, `/project <name>`, `/skills`, `/skill <name>`, `/contact`) that answers from `src/data/` through `src/lib/chat.js`. It uses no AI model and sends nothing anywhere.
+- **Sound:** every effect, voice and the ambient score is synthesised in the browser, so no audio file ships and nothing is copied from any game. It stays off until the visitor presses the speaker button. To use recordings you have the rights to instead, see `public/sounds/README.md`.
+- **Contact:** the WhatsApp links use `wa.me`, so a tap opens the chat directly. The number lives in `src/data/profile.js` (`links.whatsapp`).
+- **Avatar:** `public/img/avatar.png` is an original pixel portrait drawn by `scripts/build-avatar.py` (needs Pillow). Edit the script to change hair, glasses or clothes, then run it.
+- **Free roam:** "Explore freely" hides all text and lets you walk the world (WASD, mouse, or a touch joystick), dig and place blocks. Esc or the Leave button returns to the page.
 - **Title-screen touches:** a yellow splash text beside the name and a "Did you know?" tip on the loading screen, all drawn from real project facts.
 
 ## Layout

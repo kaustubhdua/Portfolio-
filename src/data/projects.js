@@ -260,7 +260,7 @@ export const projects = [
     limits: [
       'The upstream repository is owned by a teammate (ManOfDiamond) and the link here is my fork. The README does not itemise individual contributions.',
     ],
-    status: 'Team project I contributed to. No performance figures are claimed.',
+    status: 'Team project I contributed to, built for OSDHACK’26 (Certificate of Merit for taking part) with Pulkit Sukhija, Aryan Sharma and Aishni Rathore. No performance figures are claimed.',
   },
 ];
 
@@ -283,7 +283,7 @@ export const explored = [
   {
     name: 'AkashChalak',
     kind: 'Prototype',
-    text: 'A satellite-assisted air-quality and hotspot decision-support prototype for India.',
+    text: 'The prototype built for the ISRO Bharatiya Antariksh Hackathon 2026: a satellite-assisted air-quality and hotspot decision-support tool for India.',
     repo: 'https://github.com/kaustubhdua/Akash-Chalak',
     live: null,
   },

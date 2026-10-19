@@ -54,17 +54,32 @@
   <body>
     <!-- Instant loading screen: painted with the stylesheet, before any JavaScript runs.
          The app removes it as soon as it mounts, so it never delays the real content. -->
-    <div id="boot" class="loader loader-world loader-nether boot" role="status">
-      <div class="loader-cube" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div id="boot" class="loader loader-nether boot" role="status">
+      <div class="chunk-grid" aria-hidden="true" style="--n:11"></div>
       <p class="loader-title pixel">Loading world</p>
-      <p class="loader-status pixel">Loading...</p>
-      <div class="loader-bar" aria-hidden="true"><span></span></div>
+      <div class="loader-bar" aria-hidden="true"><span class="is-idle"></span></div>
+      <p class="loader-tip"><strong>Did you know?</strong> <span>PatchPilot never clones or executes the code it analyses.</span></p>
+      <div class="loader-actions" aria-hidden="true"></div>
     </div>
     <script>
-      setTimeout(function () {
-        var s = document.querySelector('#boot .loader-status');
-        if (s) s.textContent = 'Still loading... check your connection';
-      }, 8000);
+      (function () {
+        var b = document.getElementById('boot');
+        try {
+          if (localStorage.getItem('portfolio-world') === 'overworld') b.className = b.className.replace('loader-nether', 'loader-overworld');
+        } catch (e) {}
+        // The app removes #boot on mount; fade it out instead of popping.
+        var g = b.querySelector('.chunk-grid');
+        for (var i = 0; i < 121; i++) g.appendChild(document.createElement('i'));
+        var rm = b.remove;
+        b.remove = function () {
+          b.classList.add('boot-out');
+          setTimeout(function () { rm.call(b); }, 320);
+        };
+        setTimeout(function () {
+          var t = b.querySelector('.loader-title');
+          if (t && b.parentNode) t.textContent = 'Still loading... check your connection';
+        }, 8000);
+      })();
     </script>
     <div id="root"></div>
     <noscript>

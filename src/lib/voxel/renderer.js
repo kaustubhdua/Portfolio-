@@ -1,5 +1,5 @@
 import { buildTiles, TILE, TILE_COUNT } from './atlas.js';
-import { InstanceWriter, createActors, setLookTarget } from './actors.js';
+import { InstanceWriter, createActors, setActorSound, setLookTarget } from './actors.js';
 import { sampleCamera, scrollToProgress } from './journey.js';
 import { EYE_HEIGHT, createPlayer, stepPlayer } from './explore.js';
 import { computeLight } from './light.js';
@@ -7,6 +7,7 @@ import { B, DEF, SOLID } from './blocks.js';
 import { SLAB, meshWorld } from './mesh.js';
 import { ENTITY_FS, ENTITY_VS, PART_FS, PART_VS, SKY_FS, SKY_VS, TERRAIN_FS, TERRAIN_VS } from './shaders.js';
 import { SIZE, buildWorld } from './worlds.js';
+import { createQuality, startScale, stepQuality } from './quality.js';
 
 const MAX_QUADS = 70000;
 
@@ -64,7 +65,8 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
 /** Creates the world renderer. Returns null when WebGL 2 is not available. */
-export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent } = {}) {
+export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent, onWorldSound } = {}) {
+  setActorSound(onWorldSound ?? null);
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance', depth: true });
   if (!gl) return null;
 
@@ -247,8 +249,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     dirty = true;
     schedule();
   };
-  const STONEISH = new Set([B.STONE, B.COBBLE, B.STONE_BRICK, B.NETHERRACK, B.NETHER_BRICK, B.NETHER_FENCE, B.OBSIDIAN, B.BASALT, B.BLACKSTONE, B.GLOWSTONE, B.LAMP, B.GLASS, B.ROOF]);
-  const WOODISH = new Set([B.LOG, B.PLANKS, B.SPRUCE_PLANKS, B.SPRUCE_LOG, B.BARREL, B.DOOR, B.CRIMSON_STEM, B.WARPED_STEM, B.HAY]);
+  const fourWays = (base) => [0, 1, 2, 3].map((f) => base + f);
+  const STONEISH = new Set([
+    B.STONE, B.COBBLE, B.STONE_BRICK, B.NETHERRACK, B.NETHER_BRICK, B.NETHER_FENCE, B.OBSIDIAN, B.BASALT, B.BLACKSTONE, B.GLOWSTONE,
+    B.LAMP, B.GLASS, B.ROOF, B.GOLD_BLOCK, B.GILDED, B.STONECUT, B.PANE, B.LANTERN, B.SLAB_COBBLE, B.SLAB_NETHER, B.MOSSY_COBBLE, B.FURNACE, B.ANVIL, B.SPAWNER,
+    ...fourWays(B.STAIR_COBBLE), ...fourWays(B.STAIR_NETHER), ...fourWays(B.STAIR_BRICK),
+  ]);
+  const WOODISH = new Set([
+    B.LOG, B.PLANKS, B.SPRUCE_PLANKS, B.SPRUCE_LOG, B.BARREL, B.DOOR, B.CRIMSON_STEM, B.WARPED_STEM, B.HAY, B.FENCE, B.TORCH,
+    B.SLAB_PLANKS, B.SLAB_SPRUCE, B.BOOKSHELF, B.CRAFTING, B.LECTERN, B.CARTO, B.FLETCH, ...fourWays(B.STAIR_PLANKS), ...fourWays(B.STAIR_SPRUCE),
+    ...fourWays(B.DOOR_LOW), ...fourWays(B.DOOR_UP),
+  ]);
   const groundOf = (id) => (STONEISH.has(id) ? 'stone' : WOODISH.has(id) ? 'wood' : 'grass');
   function breakBlock(w, x, y, z) {
     const id = w.meta.grid.get(x, y, z);
@@ -267,6 +278,88 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
     w.broken.push({ x, y, z, id, at: simTime + 7 + Math.random() * 3 });
     return id;
+  }
+
+
+  // ---- break animation: a click starts cracks that grow in ten stages over about half a second, then
+  // the block pops out. While walking freely, the block under the crosshair gets a thin black outline.
+  let breaking = null;
+  let hoverBlock = null;
+  const digTime = (id) => (STONEISH.has(id) ? 0.7 : WOODISH.has(id) ? 0.5 : 0.32);
+  const mineable = (w, x, y, z) => w.meta.grid.get(x, y, z) && y >= 2 && x >= 1 && x < SIZE.w - 1 && z >= 1 && z < SIZE.l - 1;
+  function pickSolid(w, clientX, clientY, reach) {
+    if (!pickCam) return null;
+    const nx = (clientX / window.innerWidth) * 2 - 1;
+    const ny = 1 - (clientY / window.innerHeight) * 2;
+    const { pos, r, u, f, tx, ty } = pickCam;
+    const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
+    // march along the ray in small steps; the first solid block is the one hit
+    for (let t = 0.3; t < reach; t += 0.05) {
+      const x = Math.floor(pos[0] + d[0] * t);
+      const y = Math.floor(pos[1] + d[1] * t);
+      const z = Math.floor(pos[2] + d[2] * t);
+      if (SOLID[w.meta.grid.get(x, y, z)]) return [x, y, z];
+    }
+    return null;
+  }
+  function finishBreak() {
+    const b = breaking;
+    breaking = null;
+    if (b && b.w.meta.grid.get(b.x, b.y, b.z) === b.id) breakBlock(b.w, b.x, b.y, b.z);
+  }
+  const hash3 = (a, b, c) => {
+    let h = Math.imul((a * 73856093) ^ (b * 19349663) ^ (c * 83492791), 2654435761);
+    h ^= h >>> 13;
+    return ((h >>> 0) % 1000) / 1000;
+  };
+  function pushBox(cx, cy, cz, sx, sy, sz, shade) {
+    const m = writer.next();
+    m.fill(0);
+    m[0] = sx; m[5] = sy; m[10] = sz; m[12] = cx; m[13] = cy; m[14] = cz; m[15] = 1;
+    const c = writer.color();
+    c[0] = shade; c[1] = shade * 0.9; c[2] = shade * 0.9; c[3] = 0;
+  }
+  function pushOutline(x, y, z) {
+    const e = 0.028;
+    for (let a = 0; a < 3; a++) {
+      const [b, c] = [0, 1, 2].filter((k) => k !== a);
+      for (const sb of [-0.5, 0.5]) {
+        for (const sc of [-0.5, 0.5]) {
+          const cen = [x + 0.5, y + 0.5, z + 0.5];
+          cen[b] += sb * 1.006;
+          cen[c] += sc * 1.006;
+          const size = [e, e, e];
+          size[a] = 1.012 + e;
+          pushBox(cen[0], cen[1], cen[2], size[0], size[1], size[2], 0.015);
+        }
+      }
+    }
+  }
+  /** Dark crack lines laid over the faces; stage 0..9 adds more of them, so the block looks more broken. */
+  function pushCracks(x, y, z, stage) {
+    const h0 = Math.floor(hash3(x, y, z) * 6);
+    for (let i = 0; i <= stage; i++) {
+      const f = (i + h0) % 6;
+      const ax = f >> 1;
+      const sgn = f & 1 ? -1 : 1;
+      const [b, c] = [0, 1, 2].filter((k) => k !== ax);
+      const along = i % 2 ? b : c;
+      const cross = along === b ? c : b;
+      const len = 0.3 + hash3(x + i, y, z + i * 3) * 0.55;
+      const o1 = (hash3(x, y + i, z) - 0.5) * 0.4;
+      const o2 = (hash3(x, y, z + i) - 0.5) * 0.7;
+      for (const branch of i >= 3 ? [false, true] : [false]) {
+        const size = [0, 0, 0];
+        size[ax] = 0.012;
+        size[along] = branch ? 0.05 : len;
+        size[cross] = branch ? len * 0.5 : 0.05;
+        const cen = [x + 0.5, y + 0.5, z + 0.5];
+        cen[ax] += sgn * 0.506;
+        cen[along] += o1 + (branch ? len * 0.2 : 0);
+        cen[cross] += o2;
+        pushBox(cen[0], cen[1], cen[2], size[0], size[1], size[2], 0.07);
+      }
+    }
   }
 
   let readyResolve;
@@ -319,11 +412,20 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   let bobAmp = 0;
   const cam = {};
   let dirty = true;
-  let scale = Math.min(window.devicePixelRatio || 1, 1.5);
-  const maxScale = scale;
+  // Draw at up to 1.5x the page's pixels. Phones and weak machines start smaller and rise to that
+  // once they show they can keep up (see quality.js).
+  const maxScale = Math.min(window.devicePixelRatio || 1, 1.5);
+  const quality = createQuality(
+    maxScale,
+    startScale(maxScale, {
+      coarse: window.matchMedia?.('(pointer: coarse)').matches,
+      cores: navigator.hardwareConcurrency,
+      memory: navigator.deviceMemory,
+    }),
+  );
+  let scale = quality.scale;
   let width = 0;
   let height = 0;
-  let timeSlow = 0;
   let slowWindows = 0;
   const frameTimes = [];
   let frames = 0;
@@ -424,11 +526,26 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   const onKeyUp = (e) => {
     if (keys.delete(e.code)) syncKeys();
   };
+  // Chromium reports a huge, bogus pair of mouse deltas (the cursor "jumping" to the lock point and
+  // back, hundreds of ms apart) around pointer lock, which used to spin a new player round to face a
+  // wall or the sky. Ignore the first moments after a lock, drop any single event too large to be a
+  // real hand movement, and cap the rest so a genuine flick still feels right.
+  let lockedAt = 0;
+  const onLockChange = () => {
+    lockedAt = performance.now();
+  };
+  const BOGUS_DELTA = 400;
+  const MAX_DELTA = 200;
   const onMouseMove = (e) => {
     if (!exploring || document.pointerLockElement !== canvas) return;
-    player.yaw += e.movementX * 0.0022;
-    player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - e.movementY * 0.0022));
+    if (performance.now() - lockedAt < 800) return;
+    if (Math.abs(e.movementX) > BOGUS_DELTA || Math.abs(e.movementY) > BOGUS_DELTA) return;
+    const dx = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementX));
+    const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementY));
+    player.yaw += dx * 0.0022;
+    player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy * 0.0022));
   };
+  document.addEventListener('pointerlockchange', onLockChange);
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
   window.addEventListener('mousemove', onMouseMove, { passive: true });
@@ -565,7 +682,13 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       // characters
       writer.reset();
       setLookTarget(pos[0], pos[1], pos[2]);
-      for (const actor of w.actors) actor.draw(simTime, writer);
+      // People and animals far beyond the fog are not drawn; they are still stepped now and then so
+      // their position stays roughly right for when the camera comes near.
+      for (let i = 0; i < w.actors.length; i++) {
+        const actor = w.actors[i];
+        if (Math.abs(actor.pos[2] - pos[2]) > look.far + 30 && (frames + i) % 20) continue;
+        actor.draw(simTime, writer);
+      }
       for (let i = w.broken.length - 1; i >= 0; i--) {
         const b = w.broken[i];
         if (simTime >= b.at) {
@@ -601,6 +724,12 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
         const c = writer.color();
         c[0] = d.c[0]; c[1] = d.c[1]; c[2] = d.c[2]; c[3] = 0;
       }
+      if (breaking && (breaking.w !== w || simTime - breaking.t0 >= breaking.dur)) finishBreak();
+      hoverBlock = exploring && player ? pickSolid(w, window.innerWidth / 2, window.innerHeight / 2, 6) : null;
+      if (breaking) {
+        pushCracks(breaking.x, breaking.y, breaking.z, Math.min(9, Math.floor(((simTime - breaking.t0) / breaking.dur) * 10)));
+        pushOutline(breaking.x, breaking.y, breaking.z);
+      } else if (hoverBlock) pushOutline(hoverBlock[0], hoverBlock[1], hoverBlock[2]);
       gl.useProgram(entity.p);
       gl.disable(gl.CULL_FACE);
       gl.uniformMatrix4fv(entity.u.uVP, false, vp);
@@ -650,17 +779,10 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       if (frameTimes.length >= 40) {
         const avg = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
         frameTimes.length = 0;
-        if (avg > 26 && scale > 0.55) {
-          scale = Math.max(0.55, scale - 0.15);
+        if (stepQuality(quality, avg)) {
+          scale = quality.scale;
           resize();
-        } else if (avg < 14 && scale < maxScale) {
-          timeSlow++;
-          if (timeSlow > 2) {
-            scale = Math.min(maxScale, scale + 0.1);
-            timeSlow = 0;
-            resize();
-          }
-        } else timeSlow = 0;
+        }
         canvas.dataset.scale = scale.toFixed(2);
         // A device that cannot draw even the smallest picture in good time gets the 2D scenes.
         if (avg > 140 && scale <= 0.56 && ++slowWindows >= 3) {
@@ -672,7 +794,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
     canvas.dataset.progress = progress.toFixed(3);
 
-    const moving = Math.abs(target - progress) > 0.0004 || dive > 0;
+    const moving = Math.abs(target - progress) > 0.0004 || dive > 0 || breaking !== null;
     if (!reduced || dirty || moving) {
       dirty = false;
       schedule();
@@ -735,7 +857,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       let best = null;
       let bestT = 60;
       for (const a of w.actors) {
-        if (!a.pick) continue;
+        if (!a.pick || a.hidden) continue;
         const c = [a.pos[0], a.pos[1] + a.h * 0.9, a.pos[2]];
         const oc = [c[0] - pos[0], c[1] - pos[1], c[2] - pos[2]];
         const t = dot(oc, d);
@@ -757,7 +879,29 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       const clip = [0, 0, 0, 0].map((_, i) => vp[i] * c[0] + vp[4 + i] * c[1] + vp[8 + i] * c[2] + vp[12 + i]);
       const sx = ((clip[0] / clip[3]) * 0.5 + 0.5) * window.innerWidth;
       const sy = (0.5 - (clip[1] / clip[3]) * 0.5) * window.innerHeight;
-      return { name: best.name, line: best.line, kind: best.kind, x: sx, y: sy };
+      return { name: best.name, line: best.line, kind: best.kind, role: best.role, x: sx, y: sy };
+    },
+    /**
+     * The page did something (a button was pressed, the section changed): the nearest people in front
+     * of the camera wave back, and creatures without arms hop. 'section' wakes up a few more of them.
+     */
+    react(kind = 'click') {
+      const w = worlds[current];
+      if (!w || !pickCam || exploring) return;
+      const { pos, f } = pickCam;
+      const near = [];
+      for (const a of w.actors) {
+        if (!a.pick || a.hidden) continue;
+        const dx = a.pos[0] - pos[0];
+        const dz = a.pos[2] - pos[2];
+        const d = Math.hypot(dx, dz);
+        if (d < 1.5 || d > 28 || dx * f[0] + dz * f[2] <= 0) continue;
+        near.push([d, a]);
+      }
+      near.sort((p, q) => p[0] - q[0]);
+      near.slice(0, kind === 'section' ? 4 : 2).forEach(([, a], i) => a.wave(simTime + i * 0.3 + Math.random() * 0.25));
+      dirty = true;
+      schedule();
     },
     /** Free roam: leave the scroll path and walk the world. */
     setExplore(on) {
@@ -829,21 +973,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     mine(clientX, clientY) {
       const w = worlds[current];
       if (!w || !pickCam) return null;
-      const nx = (clientX / window.innerWidth) * 2 - 1;
-      const ny = 1 - (clientY / window.innerHeight) * 2;
-      const { pos, r, u, f, tx, ty } = pickCam;
-      const d = norm([f[0] + r[0] * nx * tx + u[0] * ny * ty, f[1] + r[1] * nx * tx + u[1] * ny * ty, f[2] + r[2] * nx * tx + u[2] * ny * ty]);
-      // march along the ray in small steps; the first solid block is the one hit
-      for (let t = 0.3; t < 14; t += 0.05) {
-        const x = Math.floor(pos[0] + d[0] * t);
-        const y = Math.floor(pos[1] + d[1] * t);
-        const z = Math.floor(pos[2] + d[2] * t);
-        if (SOLID[w.meta.grid.get(x, y, z)]) {
-          const id = breakBlock(w, x, y, z);
-          return id ? groundOf(id) : null;
-        }
-      }
-      return null;
+      const hit = pickSolid(w, clientX, clientY, 14);
+      if (!hit) return null;
+      const [x, y, z] = hit;
+      if (!mineable(w, x, y, z)) return null;
+      const id = w.meta.grid.get(x, y, z);
+      if (breaking && breaking.x === x && breaking.y === y && breaking.z === z) return groundOf(id);
+      if (breaking) finishBreak();
+      breaking = { w, x, y, z, id, t0: simTime, dur: reduced ? 0.01 : digTime(id) };
+      dirty = true;
+      schedule();
+      return groundOf(id);
     },
     get progress() {
       return progress;
@@ -857,12 +997,14 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     },
     dispose() {
       disposed = true;
+      setActorSound(null);
       cancelAnimationFrame(raf);
       clearTimeout(building);
       window.removeEventListener('scroll', readScroll);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
       ro?.disconnect();

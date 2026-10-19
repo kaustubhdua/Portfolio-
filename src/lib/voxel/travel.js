@@ -51,3 +51,13 @@ export const subscribeExplore = (fn) => {
   exploreListeners.add(fn);
   return () => exploreListeners.delete(fn);
 };
+
+/**
+ * Lets the page tell the 3D world that something happened (a section changed, a button was
+ * pressed) so the people nearby can react. A no-op until the renderer is running.
+ */
+let reactFn = null;
+export const setReactApi = (fn) => {
+  reactFn = fn;
+};
+export const worldReact = (kind) => reactFn?.(kind);

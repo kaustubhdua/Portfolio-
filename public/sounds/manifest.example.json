@@ -1,0 +1,6 @@
+{
+  "_note": "Copy to manifest.json and list only files you have the right to use. Names starting with _ are ignored.",
+  "ui_click": "click.ogg",
+  "step_grass": { "files": ["grass1.ogg", "grass2.ogg", "grass3.ogg"], "volume": 0.8, "pitchVariance": 0.08 },
+  "dig_stone": { "files": ["stone1.ogg", "stone2.ogg"], "pitchVariance": 0.06 }
+}

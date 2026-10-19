@@ -20,6 +20,8 @@ export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound,
       ...projects.map((p) => ({ id: `p-${p.id}`, group: 'Projects', label: `${p.name}: ${p.tagline}`, run: () => onOpenProject(p.id) })),
       { id: 'gh', group: 'Links', label: 'GitHub profile', run: open(profile.links.github) },
       { id: 'li', group: 'Links', label: 'LinkedIn profile', run: open(profile.links.linkedin) },
+      { id: 'wa', group: 'Links', label: 'Chat on WhatsApp', run: open(profile.links.whatsapp) },
+      ...(profile.blogEnabled ? [{ id: 'blog', group: 'Links', label: 'Read the blog', run: () => (window.location.href = 'blog/') }] : []),
       { id: 'cv', group: 'Links', label: 'Download résumé (PDF)', run: () => window.open(profile.links.resume, '_blank') },
       { id: 'mail', group: 'Links', label: `Send an email to ${profile.links.email}`, run: () => (window.location.href = `mailto:${profile.links.email}`) },
       {

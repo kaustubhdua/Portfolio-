@@ -363,11 +363,19 @@
 
 .hero-actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 2rem;
+}
+
+.hero-cta,
+.hero-social {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  margin-top: 2rem;
 }
 
 @media (max-width: 899px) {
@@ -376,12 +384,35 @@
   }
 }
 
+/* Phones: one big primary action, then a tidy two-column grid, then the icons. */
 @media (max-width: 480px) {
-  .hero-actions .btn {
-    flex: 1 1 100%;
+  .hero-actions {
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
-  .hero-actions .icon-btn {
-    flex: 0 0 auto;
+  .hero-cta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 0.6rem;
+  }
+  .hero-cta .btn {
+    min-height: 46px;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.62rem;
+  }
+  .hero-cta .btn-primary {
+    grid-column: 1 / -1;
+    min-height: 54px;
+    font-size: 0.72rem;
+  }
+  .hero-cta .quick-btn {
+    grid-column: 1 / -1;
+    min-height: 40px;
+  }
+  .hero-social {
+    gap: 0.6rem;
   }
 }
 
@@ -727,4 +758,21 @@
   .traveller { animation: none !important; }
   .critter-mossling { left: 22%; }
   .critter-glowfly { left: 68%; }
+}
+
+/* Phones: a softer, taller veil behind the copy so it reads over bright blocks and lava. */
+@media (max-width: 640px) {
+  .hero-scrim {
+    background:
+      linear-gradient(to bottom, rgba(11, 6, 16, 0.72) 0%, rgba(11, 6, 16, 0.58) 55%, rgba(11, 6, 16, 0.35) 78%, var(--obsidian) 100%);
+  }
+  .hero[data-world='overworld'] .hero-scrim {
+    background:
+      linear-gradient(to bottom, rgba(10, 32, 64, 0.62) 0%, rgba(10, 32, 64, 0.5) 55%, rgba(10, 32, 64, 0.3) 78%, var(--obsidian) 100%);
+  }
+  .hero-intro {
+    font-size: 0.98rem;
+    line-height: 1.55;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+  }
 }

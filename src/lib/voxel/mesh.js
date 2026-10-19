@@ -1,4 +1,4 @@
-import { DEF, OPAQUE } from './blocks.js';
+import { DEF, FULL, OPAQUE } from './blocks.js';
 
 export const SLAB = 16;
 const STRIDE = 20;
@@ -27,8 +27,9 @@ class VertexBuffer {
     this.f32[f + 2] = z;
     const b = this.count * STRIDE + 12;
     const u8 = this.u8;
-    u8[b] = u;
-    u8[b + 1] = v;
+    // texture coordinates are kept in sixteenths of a tile so stairs, slabs and fences can use part of a face
+    u8[b] = Math.round(u * 16);
+    u8[b + 1] = Math.round(v * 16);
     u8[b + 2] = tile;
     u8[b + 3] = face;
     u8[b + 4] = ao;
@@ -69,6 +70,83 @@ export function* meshWorld(grid, light, only = null) {
 
   const at = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= w || y >= h || z >= l ? -1 : (y * l + z) * w + x);
 
+  // Smooth per-corner ambient occlusion and light for the face of cell (x, y, z) looking at neighbour cell ni.
+  const faceLight = (x, y, z, F, ni) => {
+    const c0x = x + F.n[0];
+    const c0y = y + F.n[1];
+    const c0z = z + F.n[2];
+    for (let c = 0; c < 4; c++) {
+      const [a, b] = CORNERS[c];
+      const sa = a ? 1 : -1;
+      const sb = b ? 1 : -1;
+      const s1 = at(c0x + sa * F.t1[0], c0y + sa * F.t1[1], c0z + sa * F.t1[2]);
+      const s2 = at(c0x + sb * F.t2[0], c0y + sb * F.t2[1], c0z + sb * F.t2[2]);
+      const cc = at(c0x + sa * F.t1[0] + sb * F.t2[0], c0y + sa * F.t1[1] + sb * F.t2[1], c0z + sa * F.t1[2] + sb * F.t2[2]);
+      const o1 = s1 >= 0 && OPAQUE[data[s1]] ? 1 : 0;
+      const o2 = s2 >= 0 && OPAQUE[data[s2]] ? 1 : 0;
+      const oc = cc >= 0 && OPAQUE[data[cc]] ? 1 : 0;
+      ao4[c] = o1 && o2 ? 0 : 3 - (o1 + o2 + oc);
+      let sSum = 0;
+      let bSum = 0;
+      let cnt = 0;
+      for (const cell of [ni, s1, s2, o1 && o2 ? -1 : cc]) {
+        if (cell < 0 || FULL[data[cell]]) continue;
+        sSum += sky[cell];
+        bSum += blk[cell];
+        cnt++;
+      }
+      lv[c] = cnt ? Math.round(sSum / cnt) : 0;
+      lb[c] = cnt ? Math.round(bSum / cnt) : 0;
+      if (ni >= 0 && cnt === 0) {
+        lv[c] = 0;
+        lb[c] = 0;
+      }
+    }
+  };
+
+  // Draws a block built from boxes (sixteenths of a block). A face that lies on the cell's edge is hidden by a full
+  // block next to it and takes its light like a cube face; a face inside the cell uses the cell's own light.
+  const emitShape = (out, boxes, def, x, y, z, here, flags) => {
+    const ownSky = sky[here];
+    const ownBlk = blk[here];
+    for (const bx of boxes) {
+      const bb = bx.b;
+      for (let f = 0; f < 6; f++) {
+        const F = FACES[f];
+        const axis = F.n[0] ? 0 : F.n[1] ? 1 : 2;
+        const positive = F.n[axis] > 0;
+        const plane = positive ? bb[axis + 3] : bb[axis];
+        const onEdge = positive ? plane === 16 : plane === 0;
+        let ni = -1;
+        if (onEdge) {
+          ni = at(x + F.n[0], y + F.n[1], z + F.n[2]);
+          if (ni >= 0 && FULL[data[ni]]) continue;
+          faceLight(x, y, z, F, ni);
+        } else {
+          for (let c = 0; c < 4; c++) {
+            ao4[c] = 2;
+            lv[c] = ownSky;
+            lb[c] = ownBlk;
+          }
+        }
+        const tile = (f === 2 ? bx.top : f === 3 ? bx.bottom : bx.side) ?? bx.t ?? (f === 2 ? def.top : f === 3 ? def.bottom : def.side);
+        const t1 = F.t1[0] ? 0 : F.t1[1] ? 1 : 2;
+        const t2 = F.t2[0] ? 0 : F.t2[1] ? 1 : 2;
+        const flip = ao4[0] + ao4[2] > ao4[1] + ao4[3] ? 1 : 0;
+        for (let k = 0; k < 4; k++) {
+          const c = (k + flip) % 4;
+          const [a, b] = CORNERS[c];
+          const pos = [0, 0, 0];
+          pos[axis] = plane;
+          pos[t1] = a ? bb[t1 + 3] : bb[t1];
+          pos[t2] = b ? bb[t2 + 3] : bb[t2];
+          const [u, v] = F.uv(pos[t1] / 16, pos[t2] / 16);
+          out.push(x + pos[0] / 16, y + pos[1] / 16, z + pos[2] / 16, u, v, tile, f, ao4[c], lv[c], lb[c], flags);
+        }
+      }
+    }
+  };
+
   for (let slab = only ?? 0; slab < (only === null ? slabs : only + 1); slab++) {
     const solid = new VertexBuffer();
     const glass = new VertexBuffer();
@@ -97,49 +175,25 @@ export function* meshWorld(grid, light, only = null) {
             continue;
           }
 
+          if (def.shape || def.shapeFn) {
+            const boxes = def.shape ?? def.shapeFn((dx, dy, dz) => {
+              const j = at(x + dx, y + dy, z + dz);
+              return j < 0 ? 0 : data[j];
+            });
+            emitShape(out, boxes, def, x, y, z, here, flags);
+            continue;
+          }
+
           for (let f = 0; f < 6; f++) {
             const F = FACES[f];
-            const nx = x + F.n[0];
-            const ny = y + F.n[1];
-            const nz = z + F.n[2];
-            const ni = at(nx, ny, nz);
+            const ni = at(x + F.n[0], y + F.n[1], z + F.n[2]);
             const nid = ni < 0 ? 0 : data[ni];
             if (nid) {
-              if (OPAQUE[nid]) continue;
+              if (FULL[nid]) continue;
               if (nid === id && (translucent || def.leaf)) continue;
             }
             const tile = f === 2 ? def.top : f === 3 ? def.bottom : def.side;
-            const lowerTop = def.liquid && (ny > y ? true : false);
-            for (let c = 0; c < 4; c++) {
-              const [a, b] = CORNERS[c];
-              const sa = a ? 1 : -1;
-              const sb = b ? 1 : -1;
-              const c0x = nx;
-              const c0y = ny;
-              const c0z = nz;
-              const s1 = at(c0x + sa * F.t1[0], c0y + sa * F.t1[1], c0z + sa * F.t1[2]);
-              const s2 = at(c0x + sb * F.t2[0], c0y + sb * F.t2[1], c0z + sb * F.t2[2]);
-              const cc = at(c0x + sa * F.t1[0] + sb * F.t2[0], c0y + sa * F.t1[1] + sb * F.t2[1], c0z + sa * F.t1[2] + sb * F.t2[2]);
-              const o1 = s1 >= 0 && OPAQUE[data[s1]] ? 1 : 0;
-              const o2 = s2 >= 0 && OPAQUE[data[s2]] ? 1 : 0;
-              const oc = cc >= 0 && OPAQUE[data[cc]] ? 1 : 0;
-              ao4[c] = o1 && o2 ? 0 : 3 - (o1 + o2 + oc);
-              let sSum = 0;
-              let bSum = 0;
-              let cnt = 0;
-              for (const cell of [ni, s1, s2, o1 && o2 ? -1 : cc]) {
-                if (cell < 0 || OPAQUE[data[cell]]) continue;
-                sSum += sky[cell];
-                bSum += blk[cell];
-                cnt++;
-              }
-              lv[c] = cnt ? Math.round(sSum / cnt) : 0;
-              lb[c] = cnt ? Math.round(bSum / cnt) : 0;
-              if (ni >= 0 && cnt === 0) {
-                lv[c] = 0;
-                lb[c] = 0;
-              }
-            }
+            faceLight(x, y, z, F, ni);
             const flip = ao4[0] + ao4[2] > ao4[1] + ao4[3] ? 1 : 0;
             for (let k = 0; k < 4; k++) {
               const c = (k + flip) % 4;
@@ -155,7 +209,6 @@ export function* meshWorld(grid, light, only = null) {
               const [u, v] = F.uv(a, b);
               out.push(px, py, pz, u, v, tile, f, ao4[c], lv[c], lb[c], flags);
             }
-            void lowerTop;
           }
         }
       }
