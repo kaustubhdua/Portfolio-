@@ -4,7 +4,7 @@
  * repository or of the owner. Keep each under about 30 characters so it fits beside the logo.
  */
 export const splashes = [
-  'Technoblade never dies!',
+  'Waiting for the first trophy!',
   'Now with a blog!',
   'Open to internships!',
   'Scroll to walk!',

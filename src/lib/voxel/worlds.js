@@ -28,22 +28,25 @@ function carveCorridor(g, stops, surface, top) {
 
 
 /**
- * A tribute monument for Technoblade, the owner's favourite YouTuber ("Technoblade never dies"). Two
- * pedestal steps, four corner pillars capped with gold and a lantern, a tall obelisk and a crown of
- * glowing blocks and gold floating above it, with a signpost in front. It is an original design,
- * deliberately not a likeness of any person or character. (cx, cz) is the centre and y0 the first
- * free level. body, step and glow are block ids.
+ * A gold trophy on a two-step pedestal, with a gold-and-lantern pillar at each corner and a signpost in
+ * front. It is deliberately unnamed: it stands for the first win, and gets its name when there is one.
+ * (cx, cz) is the centre and y0 the first free level. body, step and glow are block ids.
  */
-function tributeMonument(g, cx, cz, y0, { body, step, glow }) {
+function trophy(g, cx, cz, y0, { body, step, glow }) {
   g.fill(cx - 3, y0, cz - 3, cx + 3, y0, cz + 3, step);
   g.fill(cx - 2, y0 + 1, cz - 2, cx + 2, y0 + 1, cz + 2, step);
-  g.fill(cx - 1, y0 + 2, cz - 1, cx + 1, y0 + 2, cz + 1, body);
-  g.fill(cx - 1, y0 + 3, cz - 1, cx + 1, y0 + 3, cz + 1, body);
-  g.fill(cx, y0 + 4, cz, cx, y0 + 9, cz, body); // obelisk
-  g.set(cx, y0 + 6, cz - 1, B.GILDED); // a gilded band facing the road
-  g.set(cx, y0 + 6, cz + 1, B.GILDED);
-  g.set(cx - 1, y0 + 6, cz, B.GILDED);
-  g.set(cx + 1, y0 + 6, cz, B.GILDED);
+  g.fill(cx - 1, y0 + 2, cz - 1, cx + 1, y0 + 2, cz + 1, body); // plinth
+  g.set(cx, y0 + 3, cz, B.GILDED);
+  g.fill(cx, y0 + 4, cz, cx, y0 + 5, cz, B.GOLD_BLOCK); // stem
+  g.fill(cx - 1, y0 + 5, cz - 1, cx + 1, y0 + 5, cz + 1, B.GOLD_BLOCK); // foot of the cup
+  g.fill(cx - 1, y0 + 6, cz - 1, cx + 1, y0 + 8, cz + 1, B.GOLD_BLOCK); // the cup
+  g.fill(cx, y0 + 8, cz, cx, y0 + 8, cz, B.AIR); // hollow top
+  g.set(cx, y0 + 7, cz, glow);
+  for (const dx of [-2, 2]) {
+    g.set(cx + dx, y0 + 7, cz, B.GOLD_BLOCK); // handles
+    g.set(cx + dx, y0 + 8, cz, B.GOLD_BLOCK);
+  }
+  g.set(cx, y0 + 10, cz, glow); // a bright star above it
   for (const dx of [-3, 3]) {
     for (const dz of [-3, 3]) {
       g.fill(cx + dx, y0 + 1, cz + dz, cx + dx, y0 + 4, cz + dz, step);
@@ -51,12 +54,6 @@ function tributeMonument(g, cx, cz, y0, { body, step, glow }) {
       g.set(cx + dx, y0 + 6, cz + dz, B.LANTERN);
     }
   }
-  // the crown: a glowing band, gold points and a bright top
-  for (let x = cx - 1; x <= cx + 1; x++)
-    for (let z = cz - 1; z <= cz + 1; z++) if (x !== cx || z !== cz) g.set(x, y0 + 10, z, glow);
-  for (const dx of [-1, 1]) for (const dz of [-1, 1]) g.set(cx + dx, y0 + 11, cz + dz, B.GOLD_BLOCK);
-  g.set(cx, y0 + 10, cz, B.GOLD_BLOCK);
-  g.set(cx, y0 + 11, cz, glow);
   // a signpost on the camera side: a fence post with a plank board (the engine draws no text)
   g.set(cx, y0 - 1, cz - 4, step);
   g.set(cx, y0, cz - 4, B.FENCE);
@@ -361,8 +358,8 @@ function buildVillage() {
     g.set(27, GY, z, stair(B.STAIR_SPRUCE, 1));
     g.set(37, GY, z, stair(B.STAIR_SPRUCE, 0));
   }
-  // tribute monument on the east side of the plaza
-  tributeMonument(g, 38, 203, GY, { body: B.STONE, step: B.STONE_BRICK, glow: B.GLOWSTONE });
+  // the trophy on the east side of the plaza
+  trophy(g, 38, 203, GY, { body: B.STONE, step: B.STONE_BRICK, glow: B.GLOWSTONE });
   // portal home
   g.shell(30, GY, 207, 34, GY + 4, 207, B.OBSIDIAN);
   g.fill(31, GY + 1, 207, 33, GY + 3, 207, B.AIR);
@@ -654,8 +651,8 @@ function buildFortress() {
   g.set(31, D + 1, 177, B.LANTERN);
   g.set(33, D + 1, 177, B.LANTERN);
 
-  // tribute monument on the end platform, in blackstone with a glowing crown
-  tributeMonument(g, 26, 201, BY, { body: B.BLACKSTONE, step: B.NETHER_BRICK, glow: B.GLOWSTONE });
+  // the trophy on the end platform, in blackstone
+  trophy(g, 26, 201, BY, { body: B.BLACKSTONE, step: B.NETHER_BRICK, glow: B.GLOWSTONE });
 
   const stops = stopsFor('nether', BY);
   carveCorridor(g, stops, BY, 5);
