@@ -135,3 +135,7 @@ Before describing a release as production-ready:
 4. Check the live deployment on a real phone and desktop, with 3D enabled and quick view enabled.
 5. Confirm all case-study statuses, demos, repository links, and technical claims match the current implementation.
 6. Review repository visibility and ensure no secrets, private data, or unlicensed assets are published.
+
+## Copyright and reuse
+
+© 2026 Kaustubh Dua. All rights reserved. See [LICENSE](LICENSE): the code, design, artwork and text may not be copied, modified or redistributed without written permission. This repository is private. A public website's HTML, CSS and JavaScript can always be downloaded by a browser, so the protection here is legal (copyright and licence) plus minified, source-map-free production builds, not technical.

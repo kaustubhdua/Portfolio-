@@ -79,7 +79,7 @@ export default function TitleScreen({ onChoose, soundOn, onSound, quick, onQuick
       </nav>
 
       <footer className="title-foot">
-        <span>Portfolio 2026</span>
+        <span>© 2026 Kaustubh Dua. All rights reserved.</span>
         <span>Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</span>
       </footer>
     </div>

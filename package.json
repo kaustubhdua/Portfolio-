@@ -1,6 +1,7 @@
 {
   "name": "nether-portfolio",
   "private": true,
+  "license": "UNLICENSED",
   "version": "1.0.0",
   "description": "Minecraft Nether themed developer portfolio for Kaustubh Dua",
   "type": "module",

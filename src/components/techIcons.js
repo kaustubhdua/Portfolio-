@@ -21,6 +21,10 @@ import {
   SiDocker,
   SiPytest,
   SiEsbuild,
+  SiPytorch,
+  SiOpencv,
+  SiSqlite,
+  SiAppium,
 } from 'react-icons/si';
 
 /** Only the icons the skills list actually uses, so unused ones are tree-shaken out of the bundle. */
@@ -47,4 +51,8 @@ export const techIcons = {
   SiDocker,
   SiPytest,
   SiEsbuild,
+  SiPytorch,
+  SiOpencv,
+  SiSqlite,
+  SiAppium,
 };
