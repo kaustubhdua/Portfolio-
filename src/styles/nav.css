@@ -222,8 +222,8 @@
 
 .hud {
   position: fixed;
-  left: 50%;
-  bottom: 0.5rem;
+  left: 4.75rem;
+  bottom: 1.05rem;
   z-index: 90;
   display: flex;
   flex-direction: row;
@@ -233,7 +233,6 @@
   padding: 0.2rem 0.45rem;
   background: rgba(11, 6, 16, 0.55);
   border-radius: 2px;
-  transform: translateX(-50%);
   pointer-events: none;
   transition: opacity 0.3s;
 }
@@ -270,9 +269,7 @@
 @media (max-width: 899px) {
   /* On phones the bar becomes a thin strip riding the top edge of the hotbar. */
   .hud {
-    bottom: calc(var(--hotbar-h) + env(safe-area-inset-bottom) + 0.25rem);
-    width: min(11rem, 52vw);
-    padding: 0.15rem 0.35rem;
+    display: none;
   }
 
   .nav-tip {
