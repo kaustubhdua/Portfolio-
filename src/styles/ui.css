@@ -289,7 +289,7 @@
 
 @media (max-width: 899px) {
   .toast {
-    top: 0.75rem;
+    top: 4.25rem;
     right: auto;
     left: 0.75rem;
     transform: translateX(calc(-100% - 2rem));

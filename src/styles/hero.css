@@ -525,8 +525,8 @@
 
 .hero-splash {
   position: absolute;
-  right: 0;
-  bottom: -1.4em;
+  right: -4.5em;
+  top: -2em;
   z-index: 2;
   display: block;
   max-width: 14em;

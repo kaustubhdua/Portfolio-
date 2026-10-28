@@ -76,9 +76,9 @@ f = [
     Paragraph('B.Tech., Electronics &amp; Computer Engineering (ECM)  ·  2nd year of 4  ·  Expected graduation 2029', body),
 
     Paragraph('SKILLS', head), rule(),
-    Paragraph('<b>Languages</b>   Python · TypeScript · JavaScript · SQL · C++17', body),
-    Paragraph('<b>Build</b>   React · Next.js · FastAPI · Supabase · PostgreSQL / PostGIS · Google OR-Tools · scikit-learn', body),
-    Paragraph('<b>Ship</b>   Git · GitHub Actions · pytest · Playwright · Docker · CodeQL', body),
+    Paragraph('<b>Languages</b>   Python · TypeScript · JavaScript · SQL · C++17 · Java', body),
+    Paragraph('<b>Build</b>   React · Next.js · FastAPI · Supabase · PostgreSQL / PostGIS · SQLAlchemy · Google OR-Tools · scikit-learn · PyTorch · OpenCV', body),
+    Paragraph('<b>Ship</b>   Git · GitHub Actions · pytest · Playwright · Appium · Docker · CodeQL', body),
 
     Paragraph('PROJECTS', head), rule(),
     project('NIRDHOOM', 'Crop-residue coordination platform · prototype', 'React 19, Supabase, PostGIS, OR-Tools, PWA',
@@ -89,6 +89,9 @@ f = [
             ['Made intent routing <b>deterministic</b> and tested it on a <b>120-case benchmark</b>, so the language model is never the source of truth.',
              'Attached a source and timestamp to every factual answer; added consent prompts and <b>human escalation</b>.'],
             'Saathi', 'https://saathi-two-pi.vercel.app'),
+    project('GenomeGuard', 'Governance layer for genomic data access · research prototype', 'Python, Starlette, NumPy, PostgreSQL, GitHub Actions',
+            ['Built consent-style policy checks, a disclosure-risk estimate and a <b>hash-chained audit log</b>; evaluated differencing and membership attacks on <b>synthetic data</b> and reported where the defences fail.'],
+            'GenomeGuard'),
     project('PatchPilot', 'Pull-request risk triage · early stage', 'Python, FastAPI, pytest, Docker',
             ['Wrote an analyser that turns a diff into <b>evidence-backed risk signals</b> and a 0-100 score, without ever running the code it reads.',
              'Hardened the API: input limits, strict schemas, rate limiting and a non-root Docker image.'],
