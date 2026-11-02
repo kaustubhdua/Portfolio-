@@ -89,6 +89,8 @@ uniform vec3 uCam;
 uniform float uTime;
 uniform float uNether;
 uniform vec3 uFog;
+uniform vec3 uSun;
+uniform float uDay;
 out vec4 outColor;
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -103,19 +105,32 @@ void main() {
     col = mix(uFog * 1.5, vec3(0.05, 0.012, 0.015), pow(h, 0.7));
   } else {
     float h = clamp(d.y, 0.0, 1.0);
-    vec3 top = vec3(0.24, 0.5, 0.93);
-    vec3 hor = vec3(0.72, 0.85, 0.98);
+    vec3 top = mix(vec3(0.015, 0.03, 0.09), vec3(0.24, 0.5, 0.93), uDay);
+    vec3 hor = uFog;
     col = mix(hor, top, pow(h, 0.55));
-    // square sun
-    vec3 sun = normalize(vec3(-0.34, 0.3, 0.89));
-    float s = dot(d, sun);
-    if (s > 0.0) {
-      vec3 sr = normalize(cross(sun, vec3(0.0, 1.0, 0.0)));
-      vec3 su = cross(sr, sun);
-      vec2 q = vec2(dot(d, sr), dot(d, su)) / s;
-      float m = max(abs(q.x), abs(q.y));
-      col += vec3(1.0, 0.9, 0.6) * pow(max(s, 0.0), 90.0) * 0.55;
-      if (m < 0.075) col = vec3(1.0, 0.97, 0.82);
+    // stars come out at night
+    if (d.y > 0.0 && uDay < 0.7) {
+      vec3 sq = floor(d * 90.0);
+      float sh = hash(sq.xy + sq.z * 7.13);
+      col += vec3(0.9, 0.92, 1.0) * step(0.9972, sh) * (0.7 - uDay) * 1.4 * smoothstep(0.0, 0.15, d.y);
+    }
+    // square sun, and a square moon on the opposite side of the sky
+    for (int i = 0; i < 2; i++) {
+      vec3 body = i == 0 ? uSun : normalize(vec3(-uSun.x * 0.5 + 0.3, -uSun.y, 0.85));
+      float s = dot(d, body);
+      if (s > 0.0 && body.y > -0.12) {
+        vec3 sr = normalize(cross(body, vec3(0.0, 1.0, 0.0)));
+        vec3 su = cross(sr, body);
+        vec2 q = vec2(dot(d, sr), dot(d, su)) / s;
+        float m = max(abs(q.x), abs(q.y));
+        if (i == 0) {
+          col += vec3(1.0, 0.9, 0.6) * pow(max(s, 0.0), 90.0) * 0.55 * uDay;
+          if (m < 0.075) col = vec3(1.0, 0.97, 0.82);
+        } else {
+          col += vec3(0.5, 0.6, 0.9) * pow(max(s, 0.0), 160.0) * 0.25 * (1.0 - uDay);
+          if (m < 0.055) col = mix(vec3(0.86, 0.9, 1.0), col, uDay * 0.85);
+        }
+      }
     }
     // blocky drifting clouds
     if (d.y > 0.015) {
@@ -127,6 +142,7 @@ void main() {
       float on = step(0.6, r) * step(0.0, 0.9 - fract(p.x / 14.0) * 0.0);
       float fade = smoothstep(0.015, 0.16, d.y);
       vec3 cc = mix(vec3(0.82, 0.88, 0.97), vec3(1.0), r2);
+      cc *= mix(vec3(0.16, 0.19, 0.3), vec3(1.0), uDay);
       col = mix(col, cc, on * fade * 0.92);
     }
   }

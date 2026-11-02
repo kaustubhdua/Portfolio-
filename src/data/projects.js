@@ -328,6 +328,13 @@ export const explored = [
     live: null,
   },
   {
+    name: 'Infracis',
+    kind: 'Team project · Next.js · not production-ready',
+    text: 'Evidence-first location due diligence for home buyers: search or pick a place, pull sourced map, weather and air-quality context, compare two locations, and get a report that separates facts, calculations, interpretations and unknowns. Built with a teammate; the repository states it is not production-ready yet.',
+    repo: 'https://github.com/kaustubhdua/infracis',
+    live: null,
+  },
+  {
     name: 'JIIT Toppers',
     kind: 'Foundation prototype · Next.js',
     text: 'A student-first workspace idea for JIIT: academics, study resources, exam prep and campus info. Currently a UI scaffold with local attendance and SGPA estimators; there is no database, login or official JIIT data.',

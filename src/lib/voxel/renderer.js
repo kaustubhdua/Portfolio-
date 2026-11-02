@@ -16,6 +16,17 @@ const LOOKS = {
   nether: { nether: 1, fog: [0.24, 0.07, 0.055], near: 34, far: 115, ambient: [0.3, 0.14, 0.12], sky: [0, 0, 0] },
 };
 
+// The village sky runs a slow day: morning, noon, dusk, night and back, one loop every DAY_LENGTH seconds.
+const DAY_LENGTH = 300;
+const NIGHT = { fog: [0.03, 0.045, 0.1], ambient: [0.07, 0.08, 0.17], sky: [0.1, 0.12, 0.24] };
+const DUSK = [0.95, 0.55, 0.38];
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, x) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+const dyn = { nether: 0, fog: [0, 0, 0], near: 0, far: 0, ambient: [0, 0, 0], sky: [0, 0, 0] };
+
 function compile(gl, type, src) {
   const s = gl.createShader(type);
   gl.shaderSource(s, src);
@@ -563,7 +574,24 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     const w = worlds[current];
-    const look = LOOKS[current];
+    const base = LOOKS[current];
+    let look = base;
+    let sunE = 0.3;
+    let dayF = 1;
+    if (!base.nether) {
+      // starts mid-morning; frozen under reduced motion because simTime does not advance
+      sunE = Math.sin((simTime / DAY_LENGTH + 0.0485) * Math.PI * 2);
+      dayF = smooth(-0.14, 0.2, sunE);
+      const dusk = Math.max(0, 1 - Math.abs(sunE) / 0.28) * 0.4 * smooth(-0.3, 0.0, sunE + 0.15);
+      for (let i = 0; i < 3; i++) {
+        dyn.fog[i] = lerp(lerp(NIGHT.fog[i], base.fog[i], dayF), DUSK[i], dusk);
+        dyn.ambient[i] = lerp(NIGHT.ambient[i], base.ambient[i], dayF);
+        dyn.sky[i] = lerp(NIGHT.sky[i], base.sky[i], dayF);
+      }
+      dyn.near = base.near;
+      dyn.far = base.far;
+      look = dyn;
+    }
 
     // smooth the scroll into camera progress
     const before = progress;
@@ -655,6 +683,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       gl.uniform1f(sky.u.uTime, simTime);
       gl.uniform1f(sky.u.uNether, look.nether);
       gl.uniform3fv(sky.u.uFog, look.fog);
+      const sl = Math.hypot(0.34, sunE, 0.89);
+      gl.uniform3f(sky.u.uSun, -0.34 / sl, sunE / sl, 0.89 / sl);
+      gl.uniform1f(sky.u.uDay, dayF);
       gl.bindVertexArray(emptyVao);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
 
