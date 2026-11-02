@@ -138,4 +138,4 @@ Before describing a release as production-ready:
 
 ## Copyright and reuse
 
-© 2026 Kaustubh Dua. All rights reserved. See [LICENSE](LICENSE): the code, design, artwork and text may not be copied, modified or redistributed without written permission. This repository is private. A public website's HTML, CSS and JavaScript can always be downloaded by a browser, so the protection here is legal (copyright and licence) plus minified, source-map-free production builds, not technical.
+© 2026 Kaustubh Dua. All rights reserved. See [LICENSE](LICENSE): the code, design, artwork and text may not be copied, modified or redistributed without written permission. The source is public to read but is not licensed for reuse. A public website's HTML, CSS and JavaScript can always be downloaded by a browser, so the protection here is legal (copyright and licence) plus minified, source-map-free production builds, not technical.
