@@ -65,6 +65,9 @@ export default function TitleScreen({ onChoose, soundOn, onSound, quick, onQuick
         <button type="button" className="mc-button pixel" onClick={() => onChoose('explore')}>
           Free roam
         </button>
+        <button type="button" className="mc-button pixel" onClick={() => onChoose('wilds')}>
+          Wilds
+        </button>
         <button type="button" className="mc-button pixel" onClick={() => onChoose('contact')}>
           Contact
         </button>

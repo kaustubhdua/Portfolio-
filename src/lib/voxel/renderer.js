@@ -27,6 +27,8 @@ const smooth = (a, b, x) => {
 };
 const dyn = { nether: 0, fog: [0, 0, 0], near: 0, far: 0, ambient: [0, 0, 0], sky: [0, 0, 0] };
 
+LOOKS.wilds = LOOKS.overworld;
+
 function compile(gl, type, src) {
   const s = gl.createShader(type);
   gl.shaderSource(s, src);
@@ -176,7 +178,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   function ensureWorld(name) {
     if (worlds[name]) return worlds[name];
     const meta = buildWorld(name);
-    const light = computeLight(meta.grid, name === 'overworld');
+    const light = computeLight(meta.grid, name !== 'nether');
     const w = {
       name,
       meta,
@@ -243,7 +245,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   const relight = (w) => {
     clearTimeout(w.relightTimer);
     w.relightTimer = setTimeout(() => {
-      const fresh = computeLight(w.meta.grid, w.name === 'overworld');
+      const fresh = computeLight(w.meta.grid, w.name !== 'nether');
       w.light.sky.set(fresh.sky);
       w.light.blk.set(fresh.blk);
       for (const zs of w.dirtySlabs ?? []) remesh(w, zs * SLAB);
@@ -380,7 +382,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   function pump() {
     building = null;
     if (disposed) return;
-    const order = [current, current === 'nether' ? 'overworld' : 'nether'];
+    const order = current === 'wilds' ? ['wilds'] : [current, current === 'nether' ? 'overworld' : 'nether'];
     const w = order.map((n) => worlds[n]).find((x) => x && !x.done);
     if (!w) return;
     const budget = w.name === current ? 9 : 4;
@@ -944,8 +946,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       touchMove.jump = false;
       syncKeys();
       if (on) {
-        sampleCamera(w.meta.stops, progress, cam);
-        player = createPlayer(cam.x, cam.y - EYE_HEIGHT + 0.05, cam.z, cam.yaw, cam.pitch);
+        sampleCamera(w.meta.stops, w.meta.spawn ? 0 : progress, cam);
+        const sp = w.meta.spawn;
+        player = sp ? createPlayer(sp.x, sp.y, sp.z, cam.yaw, 0) : createPlayer(cam.x, cam.y - EYE_HEIGHT + 0.05, cam.z, cam.yaw, cam.pitch);
         canvas.dataset.explore = 'on';
       } else {
         delete canvas.dataset.explore;

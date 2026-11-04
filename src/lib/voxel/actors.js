@@ -842,7 +842,7 @@ export function createActors(world) {
       hc[0] = 0.35; hc[1] = 0.24; hc[2] = 0.14; hc[3] = 0;
     });
     actor(list, quietOpts(quiet, 'Portal'), portalDraw(32, GY + 2.5, 207.4));
-  } else {
+  } else if (world === 'nether') {
     // Cinder guards patrol the bridge
     const lanes = [
       { x: 29.6, z0: 18, z1: 66, speed: 0.85, off: 0 },
