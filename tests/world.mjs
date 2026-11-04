@@ -90,4 +90,27 @@ import { MIN_SCALE, createQuality, startScale, stepQuality } from '../src/lib/vo
   for (let i = 0; i < 40; i++) stepQuality(phone, 16.7);
   ok('quality: a phone that keeps up rises to full size', Math.abs(phone.scale - 1.5) < 1e-9, `scale=${phone.scale}`);
 }
+
+// The Wilds: a generated landscape that free roam walks. It must be the same every visit, start the player
+// in a clear spot, and actually contain trees, water, caves and torches.
+{
+  const w = buildWorld('wilds');
+  const g = w.grid;
+  const count = (id) => g.data.reduce((n, v) => n + (v === id ? 1 : 0), 0);
+  const sp = w.spawn;
+  const fx = Math.floor(sp.x);
+  const fz = Math.floor(sp.z);
+  const fy = Math.floor(sp.y);
+  ok('wilds: the player spawns on solid ground with room to stand', SOLID[g.get(fx, fy - 1, fz)] && !SOLID[g.get(fx, fy, fz)] && !SOLID[g.get(fx, fy + 1, fz)]);
+  ok('wilds: the world has trees, water and torches', count(6) > 200 && count(10) > 50 && count(14) > 300 && count(44) > 20, `logs=${count(6)} spruce=${count(10)} water=${count(14)} torches=${count(44)}`);
+  let caves = 0;
+  for (let z = 20; z < 200; z += 2)
+    for (let x = 6; x < 58; x += 2) {
+      let top = 0;
+      for (let y = 43; y > 0; y--) if (SOLID[g.get(x, y, z)]) { top = y; break; }
+      for (let y = 4; y < top - 4; y++) if (!g.get(x, y, z)) caves++;
+    }
+  ok('wilds: tunnels are carved under the surface', caves > 300, `cave cells=${caves}`);
+  ok('wilds: the walls around the edge are too tall to climb', [0, 1, 62, 63].every((x) => [20, 100, 200].every((z) => SOLID[g.get(x, 16, z)])));
+}
 process.exit(failed ? 1 : 0);

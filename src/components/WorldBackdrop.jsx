@@ -52,12 +52,26 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         setReactApi(renderer.react);
         renderer.setWorld(worldRef.current);
         renderer.start();
+        let inWilds = false;
         setExploreApi({
           enter: () => {
             renderer.setExplore(true);
             if (!window.matchMedia('(pointer: coarse)').matches) renderer.lockPointer();
           },
-          leave: () => renderer.setExplore(false),
+          // the generated landscape: a separate world that free roam walks, left again with Escape
+          enterWilds: () => {
+            inWilds = true;
+            renderer.setWorld('wilds');
+            renderer.setExplore(true);
+            if (!window.matchMedia('(pointer: coarse)').matches) renderer.lockPointer();
+          },
+          leave: () => {
+            renderer.setExplore(false);
+            if (inWilds) {
+              inWilds = false;
+              renderer.setWorld(worldRef.current);
+            }
+          },
           moveInput: renderer.moveInput,
           jumpInput: renderer.jumpInput,
           lookBy: renderer.lookBy,

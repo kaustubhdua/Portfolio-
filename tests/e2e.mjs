@@ -55,6 +55,7 @@ async function open({ threed = false, ...opts } = {}) {
   ok('Play is focused first', await page.evaluate(() => document.activeElement?.textContent === 'Play'));
   await page.keyboard.press('ArrowDown');
   ok('arrow keys move through the menu', await page.evaluate(() => document.activeElement?.textContent === 'Free roam'));
+  ok('title screen offers the Wilds', (await page.locator('.title-menu .mc-button', { hasText: 'Wilds' }).count()) === 1);
   await page.locator('.title-menu .mc-button', { hasText: 'Play' }).click();
   await page.waitForSelector('.loader:not(.boot)', { timeout: 3000 });
   ok('entry loader follows the title screen', (await page.locator('.title-screen').count()) === 0);

@@ -73,8 +73,23 @@ export default function App() {
     setExploring(false);
     setAnnounce('Back on the page.');
   }, []);
+  const enterWilds = useCallback(() => {
+    const api = getExploreApi();
+    if (!api?.enterWilds) return;
+    api.enterWilds();
+    document.documentElement.dataset.explore = 'on';
+    setExploring(true);
+    setAnnounce('Exploring the Wilds, a generated landscape. Press Escape to return to the page.');
+  }, []);
   const canExplore = worldMode === 'on' && !trip && !intro;
   const [wantExplore, setWantExplore] = useState(false);
+  const [wantWilds, setWantWilds] = useState(false);
+  useEffect(() => {
+    if (wantWilds && canExplore) {
+      setWantWilds(false);
+      enterWilds();
+    }
+  }, [wantWilds, canExplore, enterWilds]);
   useEffect(() => {
     if (wantExplore && canExplore) {
       setWantExplore(false);
@@ -137,6 +152,7 @@ export default function App() {
     setIntro(false);
     if (afterIntro.current === 'contact') requestAnimationFrame(() => document.getElementById('contact')?.scrollIntoView());
     if (afterIntro.current === 'explore') setWantExplore(true);
+    if (afterIntro.current === 'wilds') setWantWilds(true);
     try {
       sessionStorage.setItem(SEEN_KEY, '1');
     } catch {

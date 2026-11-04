@@ -659,10 +659,149 @@ function buildFortress() {
   return { grid: g, stops, surface: BY, portal: { x: 32, y: BY + 2, z: 205, w: 3, h: 3 } };
 }
 
+
+/* ------------------------------------------------------------------------------------------ */
+/* Wilds: a generated landscape for free roam                                                  */
+/* ------------------------------------------------------------------------------------------ */
+
+const WILD_SPAWN = { x: 32, z: 16 };
+
+function buildWilds() {
+  const g = new Grid(SIZE.w, SIZE.h, SIZE.l);
+  const rand = rng(2026);
+  const hn = vnoise(101);
+  const hn2 = vnoise(102);
+  const bn = vnoise(103);
+  const top = new Int16Array(SIZE.w * SIZE.l);
+  const biomeAt = new Uint8Array(SIZE.w * SIZE.l); // 0 meadow, 1 forest, 2 desert, 3 snow
+  const ponds = [
+    { x: 18, z: 38, r: 7 },
+    { x: 46, z: 78, r: 6 },
+    { x: 30, z: 132, r: 5 },
+  ];
+
+  for (let z = 0; z < SIZE.l; z++) {
+    for (let x = 0; x < SIZE.w; x++) {
+      const bz = z + (bn(x / 24, z / 24) - 0.5) * 34;
+      const biome = bz < 52 ? 0 : bz < 108 ? 1 : bz < 158 ? 2 : 3;
+      const n = hn(x / 22, z / 22) * 0.6 + hn2(x / 8, z / 8) * 0.3 + hn(x / 3, z / 3) * 0.1;
+      let h = GY + (biome === 3 ? Math.round((n - 0.3) * 46) : Math.round((n - 0.45) * [7, 9, 11][biome]));
+      // keep the spawn clearing flat
+      h = GY + Math.round((h - GY) * clamp((Math.hypot(x - WILD_SPAWN.x, z - WILD_SPAWN.z) - 7) / 8, 0, 1));
+      h += Math.round(edgeWall(x, z) * 28);
+      for (const p of ponds) {
+        const pd = Math.hypot(x - p.x, (z - p.z) * 1.1);
+        if (pd < p.r) h = Math.min(h, GY - 3 + Math.floor(pd / 3));
+      }
+      h = clamp(h, 3, SIZE.h - 6);
+      top[z * SIZE.w + x] = h;
+      biomeAt[z * SIZE.w + x] = biome;
+      const peak = biome === 3 && h > GY + 20;
+      for (let y = 0; y < h; y++) {
+        let id = B.STONE;
+        if (y === h - 1) id = biome === 2 || h <= GY - 2 ? B.SAND : biome === 3 ? (peak ? B.STONE : B.SNOW_GRASS) : B.GRASS;
+        else if (y >= h - 4) id = biome === 2 ? B.SAND : biome === 3 && peak ? B.STONE : B.DIRT;
+        g.set(x, y, z, id);
+      }
+      if (h <= GY - 1) for (let y = h; y <= GY - 2; y++) g.set(x, y, z, B.WATER);
+    }
+  }
+
+  // trees and ground cover
+  const oak = (x, z, h) => {
+    const th = 4 + Math.floor(rand() * 3);
+    g.fill(x, h, z, x, h + th - 1, z, B.LOG);
+    for (let dy = th - 2; dy <= th + 1; dy++) {
+      const r = dy >= th ? 1 : 2;
+      for (let dz = -r; dz <= r; dz++)
+        for (let dx = -r; dx <= r; dx++) {
+          if (r === 2 && Math.abs(dx) === 2 && Math.abs(dz) === 2 && rand() < 0.6) continue;
+          if (g.get(x + dx, h + dy, z + dz) === B.AIR) g.set(x + dx, h + dy, z + dz, B.LEAVES);
+        }
+    }
+  };
+  const spruce = (x, z, h) => {
+    const th = 6 + Math.floor(rand() * 4);
+    g.fill(x, h, z, x, h + th - 1, z, B.SPRUCE_LOG);
+    for (let dy = 2; dy <= th + 1; dy++) {
+      const r = Math.min(3, Math.floor((th + 1 - dy) / 2) + (dy % 2 === 0 ? 1 : 0));
+      for (let dz = -r; dz <= r; dz++)
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.abs(dx) + Math.abs(dz) > r + 1) continue;
+          if (g.get(x + dx, h + dy, z + dz) === B.AIR) g.set(x + dx, h + dy, z + dz, B.SPRUCE_LEAVES);
+        }
+    }
+  };
+  for (let z = 4; z < SIZE.l - 4; z++) {
+    for (let x = 4; x < SIZE.w - 4; x++) {
+      const h = top[z * SIZE.w + x];
+      const biome = biomeAt[z * SIZE.w + x];
+      const below = g.get(x, h - 1, z);
+      if (Math.hypot(x - WILD_SPAWN.x, z - WILD_SPAWN.z) < 8 || g.get(x, h, z) !== B.AIR) continue;
+      const r = rand();
+      if (below === B.GRASS) {
+        if (r < (biome === 1 ? 0.045 : 0.006)) oak(x, z, h);
+        else if (r < (biome === 1 ? 0.1 : 0.12)) g.set(x, h, z, B.TALL_GRASS);
+        else if (biome === 0 && r < 0.15) g.set(x, h, z, r < 0.135 ? B.FLOWER_RED : B.FLOWER_YELLOW);
+      } else if (below === B.SNOW_GRASS && h < GY + 16 && r < 0.012) spruce(x, z, h);
+      else if (below === B.SAND && h > GY - 2 && r < 0.05) g.set(x, h - 1, z, B.GRAVEL);
+    }
+  }
+
+  // a waystone at the spawn clearing so there is something to walk toward first
+  const wx = WILD_SPAWN.x + 3;
+  const wz = WILD_SPAWN.z + 4;
+  const wh = top[wz * SIZE.w + wx];
+  g.fill(wx, wh, wz, wx, wh + 2, wz, B.COBBLE);
+  g.set(wx, wh + 3, wz, B.TORCH);
+  g.set(wx - 1, wh, wz, B.MOSSY_COBBLE);
+
+  // caves: wandering tunnels that start at the surface, with a torch now and then
+  const carvable = new Set([B.STONE, B.DIRT, B.GRASS, B.SAND, B.SNOW_GRASS, B.GRAVEL]);
+  for (let c = 0; c < 9; c++) {
+    let x = 9 + rand() * 46;
+    let z = 30 + rand() * 170;
+    let y = top[Math.floor(z) * SIZE.w + Math.floor(x)] - 1;
+    let hx = rand() - 0.5;
+    let hz = rand() - 0.5;
+    let hy = -0.4;
+    const steps = 44 + Math.floor(rand() * 44);
+    for (let s = 0; s < steps; s++) {
+      const r = 1.6 + rand() * 1.1;
+      for (let dz = -3; dz <= 3; dz++)
+        for (let dy = -3; dy <= 3; dy++)
+          for (let dx = -3; dx <= 3; dx++) {
+            if (dx * dx + dy * dy + dz * dz > r * r) continue;
+            const bx = Math.floor(x) + dx;
+            const by = Math.floor(y) + dy;
+            const bz2 = Math.floor(z) + dz;
+            if (by < 3 || !carvable.has(g.get(bx, by, bz2))) continue;
+            g.set(bx, by, bz2, B.AIR);
+          }
+      if (s % 5 === 4) {
+        let ty = Math.floor(y);
+        while (ty > 3 && g.get(Math.floor(x), ty, Math.floor(z)) === B.AIR) ty--;
+        if (g.get(Math.floor(x), ty + 1, Math.floor(z)) === B.AIR) g.set(Math.floor(x), ty + 1, Math.floor(z), B.TORCH);
+      }
+      hx = clamp(hx + (rand() - 0.5) * 0.5, -1, 1);
+      hz = clamp(hz + (rand() - 0.5) * 0.5, -1, 1);
+      hy = clamp(hy * 0.9 + (GY - 8 - y) * 0.03 + (rand() - 0.5) * 0.25, -0.5, 0.5);
+      x += hx * 1.3;
+      z += hz * 1.3;
+      y += hy;
+      if (x < 5 || x > SIZE.w - 5 || z < 18 || z > SIZE.l - 6) break;
+    }
+  }
+
+  const stops = stopsFor('overworld', GY);
+  const sp = { x: WILD_SPAWN.x + 0.5, y: top[WILD_SPAWN.z * SIZE.w + WILD_SPAWN.x] + 0.05, z: WILD_SPAWN.z + 0.5 };
+  return { grid: g, stops, surface: GY, portal: { x: 32, y: GY + 1, z: 207, w: 3, h: 3 }, spawn: sp };
+}
+
 const cache = {};
-/** Builds (once) the block grid for 'overworld' or 'nether'. */
+/** Builds (once) the block grid for 'overworld', 'nether' or 'wilds'. */
 export function buildWorld(name) {
-  cache[name] ??= name === 'overworld' ? buildVillage() : buildFortress();
+  cache[name] ??= name === 'overworld' ? buildVillage() : name === 'wilds' ? buildWilds() : buildFortress();
   return cache[name];
 }
 export { STOP_Z };
