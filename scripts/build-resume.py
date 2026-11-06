@@ -8,23 +8,15 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.colors import HexColor
 from reportlab.lib.units import mm
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, KeepTogether
 import sys
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'public/Kaustubh-Dua-Resume.pdf'
-font_dir = '/usr/share/fonts/truetype/liberation/'
-pdfmetrics.registerFont(TTFont('Body', font_dir + 'LiberationSans-Regular.ttf'))
-pdfmetrics.registerFont(TTFont('Bold', font_dir + 'LiberationSans-Bold.ttf'))
-pdfmetrics.registerFont(TTFont('Italic', font_dir + 'LiberationSans-Italic.ttf'))
-pdfmetrics.registerFontFamily('Body', normal='Body', bold='Bold', italic='Italic')
-
 ink, accent, muted = HexColor('#17151c'), HexColor('#8c1d28'), HexColor('#55515a')
 def style(**kw):
     return ParagraphStyle('resume', fontName='Body', textColor=ink, **kw)
 
-name = style(fontName='Bold', fontSize=22, leading=24)
+name = style(fontName='Helvetica-Bold', fontSize=22, leading=24)
 headline = style(fontName='Bold', fontSize=9.6, leading=12, textColor=accent)
 contact = style(fontSize=8.1, leading=10.2, textColor=muted)
 section = style(fontName='Bold', fontSize=8.8, leading=10, textColor=accent, spaceBefore=4, spaceAfter=1)
@@ -45,7 +37,7 @@ def point(text):
 
 def project(title, descriptor, stack, bullets, repo):
     return KeepTogether([
-        Paragraph(f'{title} <font name="Body" size="7.7" color="#8c1d28"> · {descriptor}</font>', role),
+        Paragraph(f'{title} <font name="Body" size="7.7" color="#8c1d28"> - {descriptor}</font>', role),
         Paragraph(stack, small),
         *[point(x) for x in bullets],
         Paragraph(link(f'https://github.com/kaustubhdua/{repo}', f'github.com/kaustubhdua/{repo}'), small),
@@ -105,13 +97,13 @@ f = [
     Paragraph('<b>Engineering:</b> Git · GitHub Actions · pytest · Playwright · Docker · CodeQL', body),
 
     Paragraph('LEADERSHIP &amp; COMMUNITY', section), rule(),
-    point('<b>Nexus Spring of Code (NSoC)</b> · Campus Ambassador · 2026–Present — representing the open-source program at JIIT Noida and helping students discover contribution opportunities.'),
+    point('<b>Nexus Spring of Code (NSoC)</b> · Campus Ambassador · 2026-Present — representing the open-source program at JIIT Noida and helping students discover contribution opportunities.'),
     point('<b>JIIT Youth Club (JYC), Tech Vertical</b> · Member, Tech and Management team.'),
 
     Paragraph('CERTIFICATES &amp; CHALLENGES', section), rule(),
     point('<b>JPMorgan Chase &amp; Co. Software Engineering Job Simulation</b> (Forage, 2026) · Java, Spring Boot, Kafka, H2 and REST API integration.'),
     point('<b>Harvard CS50 Introduction to Databases with SQL</b> · seven problem sets and a final project.'),
-    point('<b>OSDHACK’26</b> · Certificate of Merit for participation; team-built Adapt AI, a hardware-aware local Ollama assistant.'),
+    point('<b>OSDHACK'26</b> · Certificate of Merit for participation; team-built Adapt AI, a hardware-aware local Ollama assistant.'),
     point('<b>ISRO Bharatiya Antariksh Hackathon 2026</b> · participation with AkashChalak, a satellite-assisted air-quality and hotspot prototype.'),
 ]
 doc.build(f)
