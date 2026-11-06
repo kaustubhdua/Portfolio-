@@ -22,12 +22,7 @@ kaustubhdua1991@gmail.com | github.com/kaustubhdua | linkedin.com/in/kaustubh-du
 <font color="#8c1d28"><b>PROFILE</b></font><br/>
 Electronics &amp; Computer Engineering undergraduate building full-stack software and applied AI/data tools. Seeking software engineering internships across backend, full-stack and applied AI; focused on usable interfaces, clear system boundaries and reliable testing.<br/><br/>
 <font color="#8c1d28"><b>EDUCATION</b></font><br/>
-<b>Jaypee Institute of Information Technology, Noida</b> | B.Tech. Electronics &amp; Computer Engineering (ECM) | Expected 2029 | <b>CGPA: 9.26/10 overall</b><br/><br/>
-<font color="#8c1d28"><b>EXPERIENCE</b></font><br/>
-<b>Pinnacle Labs | Web Development Intern | 2026</b> | HTML5, CSS3, JavaScript, Fetch API, localStorage<br/>
-- Built Weather Core Matrix, a responsive weather dashboard with asynchronous Fetch API updates.<br/>
-- Built Nord Studio Task Manager with localStorage persistence, priority labels and All / Active / Completed filters.<br/>
-github.com/kaustubhdua/weather-core-matrix | github.com/kaustubhdua/nord-studio-task-manager<br/><br/>
+<b>Jaypee Institute of Information Technology, Noida</b> | B.Tech. Electronics &amp; Computer Engineering (ECM) | Expected 2029<br/><br/>
 <font color="#8c1d28"><b>SELECTED PROJECTS</b></font><br/>
 <b>NIRDHOOM</b> | Multi-contributor prototype | React, Supabase, PostgreSQL/PostGIS, OR-Tools<br/>
 - Contributed to a field-first workflow connecting farmer bookings, operator dispatch, evidence and residue-buyer pathways; hosted preview uses sample data.<br/>
