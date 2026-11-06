@@ -176,8 +176,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await page.locator('.open-source-panel').scrollIntoViewIfNeeded();
   await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').first().waitFor({ state: 'visible' });
   ok('six merged upstream open-source contributions are linked', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 6);
-  ok('Pinnacle Labs internship is listed', (await page.locator('.experience li').count()) === 1 && (await page.locator('.experience').getByText('Web Development Intern').count()) === 1);
-  ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
+  ok('CGPA and excluded internship are absent from public profile', !/CGPA|Pinnacle Labs|Web Development Intern/i.test(await page.locator('main').innerText()));
+  ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
   const smartWasteProject = projects.find((project) => project.id === 'smartwaste');
