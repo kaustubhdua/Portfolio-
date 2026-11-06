@@ -56,7 +56,8 @@ const commands = {
     ['/roles  clubs, teams and volunteering'],
     ['/blog  writing (coming soon)'],
     ['/trophy  the gold trophy at the end of the road'],
-    ['/contact  email, WhatsApp and links'],
+    ['/contact  email and professional links'],
+    ['/resume  resume availability'],
     ['/clear  empty the chat'],
   ],
   about: () => [
@@ -79,9 +80,9 @@ const commands = {
   ],
   skills: () => [...skillGroups.map((g) => [`${g.title}: ${g.items.map((i) => i.name).join(', ')}`]), ['Type /skill <name> to see where I used one.']],
   advancements: () => advancements.map((a) => [`${a.title}: ${a.text}`]),
+  resume: () => [['Resume: coming soon. I am preparing an updated, recruiter-ready version.']],
   contact: () => [
     [`Email: `, link(`mailto:${profile.links.email}`, profile.links.email)],
-    ['WhatsApp: ', link(profile.links.whatsapp, profile.links.whatsappNumber)],
     ['GitHub: ', link(profile.links.github, 'github.com/kaustubhdua')],
     ['LinkedIn: ', link(profile.links.linkedin, 'linkedin.com/in/kaustubh-dua-2b5a76416')],
   ],
@@ -117,7 +118,7 @@ export function reply(input) {
   if (project) return { lines: projectLines(project) };
   const skill = findSkill(text);
   if (skill) return { lines: skillLines(skill) };
-  if (/(contact|email|mail|reach|hire|linkedin|github|whatsapp|phone|number)/.test(words)) return { lines: commands.contact() };
+  if (/(contact|email|mail|reach|hire|linkedin|github)/.test(words)) return { lines: commands.contact() };
   if (/(blog|write|writing|article|post)/.test(words)) return { lines: commands.blog() };
   if (/(club|team|role|member|jyc|aiml|tronics|nss|volunteer)/.test(words)) return { lines: commands.roles() };
   if (/(project|built|build|work|portfolio)/.test(words)) return { lines: commands.projects() };
