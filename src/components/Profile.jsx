@@ -30,7 +30,7 @@ export default function Profile() {
             </div>
             <div>
               <h3 className="player-name pixel">{profile.name}</h3>
-              <p className="player-class">Frontend developer · ECM</p>
+              <p className="player-class">Software Engineering · ECM</p>
             </div>
           </div>
           <dl className="facts">
