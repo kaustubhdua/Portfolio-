@@ -210,7 +210,7 @@ export const projects = [
     name: 'JYC Website',
     tagline: 'Public website for JIIT Youth Club',
     contribution: 'Multi-contributor club website. The case study covers the shared product and its quality workflow; the commit history shows individual contributions.',
-    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/JYC-Website22/blob/main/README.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/JYC-Website2/actions"},{"label":"Visual route matrix test","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/scripts/visual-route-matrix.spec.js"}],
+    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/README.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/JYC-Website2/actions"},{"label":"Visual route matrix test","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/scripts/visual-route-matrix.spec.js"}],
     badges: ['CodeQL', 'Playwright QA', 'PWA shell'],
     biome: 'crimson',
     kind: 'Own repository',
