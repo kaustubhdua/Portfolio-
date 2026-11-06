@@ -10,7 +10,7 @@ import { useReducedMotion } from '../hooks/useMedia.js';
 // Every figure is derived from the data files, except the benchmark size that Saathi's README states.
 const stats = [
   { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected project case studies' },
-  { id: 'live', value: projects.filter((p) => p.live).length, label: 'Featured demos' },
+  { id: 'live', value: projects.filter((p) => p.flagship && p.live).length, label: 'Featured demos' },
   { id: 'opensource', value: profile.openSource.length, label: 'Merged upstream open-source PRs' },
   { id: 'bench', value: 120, label: 'Synthetic benchmark cases in Saathi' },
 ];
