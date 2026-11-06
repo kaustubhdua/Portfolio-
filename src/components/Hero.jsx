@@ -43,6 +43,9 @@ const NAME_WORDS = profile.name.split(' ').map((word) => ({
 
 export default function Hero({ ready, onNavigate, theme = 'nether', quick = false, onQuick, canExplore = false, onExplore }) {
   const heroRef = useRef(null);
+  const resumeDialogRef = useRef(null);
+  const resumeTriggerRef = useRef(null);
+  const [resumeNoticeOpen, setResumeNoticeOpen] = useState(false);
   const reduced = useReducedMotion();
   const [splash] = useState(() => splashes[Math.floor(Math.random() * splashes.length)]);
   const biomes = theme === 'overworld' ? overworldBiomes : heroBiomes;
@@ -115,6 +118,18 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
       window.removeEventListener('scroll', kick);
     };
   }, [reduced]);
+
+  useEffect(() => {
+    const dialog = resumeDialogRef.current;
+    if (!dialog) return;
+    if (resumeNoticeOpen && !dialog.open) dialog.showModal();
+    if (!resumeNoticeOpen && dialog.open) dialog.close();
+  }, [resumeNoticeOpen]);
+
+  const closeResumeNotice = () => {
+    setResumeNoticeOpen(false);
+    requestAnimationFrame(() => resumeTriggerRef.current?.focus());
+  };
 
   const creatureLayer = biome.creature === 'wisp' || biome.creature === 'glowfly' ? 'sky' : 'lava';
   const renderLayer = (l) => (
@@ -202,9 +217,9 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
             <a className="icon-btn" href={profile.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
               <FaGithub aria-hidden="true" />
             </a>
-            <a className="icon-btn" href={profile.links.resume} download aria-label="Download résumé (PDF)">
+            <button ref={resumeTriggerRef} type="button" className="icon-btn" aria-label="Resume — coming soon" aria-haspopup="dialog" onClick={() => setResumeNoticeOpen(true)}>
               <FaFileArrowDown aria-hidden="true" />
-            </a>
+            </button>
             <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
               <FaEnvelope aria-hidden="true" />
             </a>
@@ -214,6 +229,19 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
           </div>
         </div>
       </div>
+
+      <dialog
+        ref={resumeDialogRef}
+        className="resume-notice panel"
+        aria-labelledby="resume-notice-title"
+        onCancel={(event) => { event.preventDefault(); closeResumeNotice(); }}
+        onClick={(event) => { if (event.target === resumeDialogRef.current) closeResumeNotice(); }}
+      >
+        <p className="resume-notice-kicker pixel">Portfolio update</p>
+        <h2 id="resume-notice-title" className="pixel">Resume coming soon</h2>
+        <p>I’m preparing an updated, recruiter-ready resume. It will be available here soon.</p>
+        <button type="button" className="btn btn-primary pixel" onClick={closeResumeNotice}>Got it</button>
+      </dialog>
 
       <div className="biome-picker" role="group" aria-label="Choose a Nether biome for the background">
         <ul>
