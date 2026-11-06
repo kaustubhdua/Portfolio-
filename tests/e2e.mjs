@@ -81,7 +81,9 @@ async function open({ threed = false, ...opts } = {}) {
   ok('Escape closes dialog', !(await page.evaluate(() => document.querySelector('dialog.dialog').open)));
   ok('focus returns to the trigger', await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Case study: NIRDHOOM'));
 
-  const biomeFilter = page.locator('.filters button').nth(1);
+  await page.locator('#forge').scrollIntoViewIfNeeded();
+  await page.locator('#forge .filters button').first().waitFor({ state: 'visible' });
+  const biomeFilter = page.locator('#forge .filters button').nth(1);
   const selectedBiome = (await biomeFilter.innerText()).trim();
   await biomeFilter.click();
   await page.waitForFunction((label) => {
@@ -89,7 +91,7 @@ async function open({ threed = false, ...opts } = {}) {
     return cards.length > 0 && cards.every((card) => card.querySelector('.biome-tag')?.textContent.trim() === label);
   }, selectedBiome);
   ok('biome filter narrows cards to the selected biome', await page.locator('.filters button[aria-pressed="true"]').count() === 1);
-  await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
+  await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
   ok('four curated featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 4 && (await page.locator('.card-soon').count()) === 0);
   ok('all four selected case studies are marked as featured', (await page.locator('.flagship-tag').count()) === 4);
@@ -171,6 +173,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
   ok('selected campus leadership roles are listed', (await page.locator('.roles:not(.experience) li').count()) === 2 && await page.locator('.roles').getByText('Campus Ambassador').count() === 1 && await page.locator('.roles').getByText('JIIT Youth Club').count() === 1);
+  await page.locator('.open-source-panel').scrollIntoViewIfNeeded();
+  await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').first().waitFor({ state: 'visible' });
   ok('six merged upstream open-source contributions are linked', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 6);
   ok('Pinnacle Labs internship is listed', (await page.locator('.experience li').count()) === 1 && (await page.locator('.experience').getByText('Web Development Intern').count()) === 1);
   ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
