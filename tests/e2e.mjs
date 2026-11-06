@@ -158,7 +158,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
-// Contact links and the blog: WhatsApp opens a chat, the blog list and its posts render and link back.
+// Contact links and the blog: professional routes, posts and RSS render and link back.
 {
   const [ctx, page] = await open();
   await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
