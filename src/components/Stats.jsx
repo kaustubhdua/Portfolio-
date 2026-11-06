@@ -3,7 +3,7 @@ import { FaPause, FaPlay } from 'react-icons/fa6';
 import TechIcon from './TechIcon.jsx';
 import { Reveal } from './ui.jsx';
 import { projects } from '../data/projects.js';
-import profile from '../data/profile.js';
+import { profile } from '../data/profile.js';
 import { skillGroups } from '../data/skills.js';
 import { useInView } from '../hooks/useInView.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
