@@ -126,6 +126,12 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
     if (!resumeNoticeOpen && dialog.open) dialog.close();
   }, [resumeNoticeOpen]);
 
+  useEffect(() => {
+    const openNotice = () => setResumeNoticeOpen(true);
+    window.addEventListener('portfolio:resume-notice', openNotice);
+    return () => window.removeEventListener('portfolio:resume-notice', openNotice);
+  }, []);
+
   const closeResumeNotice = () => {
     setResumeNoticeOpen(false);
     requestAnimationFrame(() => resumeTriggerRef.current?.focus());
