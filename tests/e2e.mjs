@@ -84,7 +84,7 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#forge').scrollIntoViewIfNeeded();
   await page.locator('#forge .filters button').first().waitFor({ state: 'visible' });
   const biomeFilter = page.locator('#forge .filters button').nth(1);
-  const selectedBiome = (await biomeFilter.innerText()).trim();
+  await biomeFilter.innerText();
   await biomeFilter.click();
   await page.waitForFunction(() => {
     const selected = document.querySelectorAll('#forge .filters button[aria-pressed="true"]');
