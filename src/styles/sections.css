@@ -788,6 +788,13 @@
 .roles ul { display: grid; gap: 1rem; }
 .roles .roles-sub { margin: 1.4rem 0 0.9rem; }
 .roles li { padding-left: 0.9rem; border-left: 3px solid var(--gold, #ffb347); }
+.open-source-panel ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+.open-source-panel li { min-width: 0; padding-left: 0.9rem; border-left: 3px solid var(--gold, #ffb347); }
+.open-source-panel .role-org { font-size: 0.72rem; line-height: 1.4; color: var(--text) !important; }
+.open-source-panel .role-note { margin-top: 0.25rem; font-size: 0.92rem; color: var(--muted); }
+@media (max-width: 680px) {
+  .open-source-panel ul { grid-template-columns: 1fr; }
+}
 .role-org { font-size: 0.72rem; line-height: 1.4; color: var(--text) !important; }
 .role-title { margin-top: 0.2rem; font-weight: 600; color: var(--gold, #ffb347); }
 .role-note { margin-top: 0.25rem; font-size: 0.92rem; color: var(--muted); }
