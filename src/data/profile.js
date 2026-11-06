@@ -11,7 +11,7 @@ export const profile = {
   kicker: 'ECM student · JIIT Noida',
   role: 'Software Engineering Student · Full-Stack & Applied AI',
   intro:
-    'I build practical software across full-stack product engineering, applied AI and data systems—from field-first workflows and multilingual assistance to developer tools. I care about usable interfaces, clear system boundaries and tests that cover failure paths.',
+    'I build practical software across full-stack product engineering, applied AI and data systems—from field-first workflows and multilingual assistance to developer tools. I also contribute to open-source infrastructure, with six merged upstream pull requests in Lemma Platform. I care about usable interfaces, clear system boundaries and tests that cover failure paths.',
   stack: ['Python', 'TypeScript', 'React', 'FastAPI', 'PostgreSQL', 'OR-Tools'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
@@ -40,8 +40,16 @@ export const profile = {
       full: 'JIIT Noida',
       role: 'Member, Tech and Management team',
       note: 'Built and iterated the club’s public website for its clubs, events, gallery and recruitment experience.',
-      url: 'https://github.com/kaustubhdua/JYC-Website',
+      url: 'https://github.com/kaustubhdua/JYC-Website2',
     },
+  ],
+  openSource: [
+    { number: 1156, title: 'PostgreSQL 18 local volume compatibility', note: 'Aligned the managed local volume mount with the PostgreSQL 18 image contract and added regression coverage.', url: 'https://github.com/lemma-work/lemma-platform/pull/1156' },
+    { number: 1155, title: 'Podman function-sandbox tmpfs compatibility', note: 'Removed Docker-specific tmpfs ownership options rejected by Podman while preserving a writable private cache.', url: 'https://github.com/lemma-work/lemma-platform/pull/1155' },
+    { number: 1136, title: 'GitHub webhook event identity and idempotency', note: 'Preserved push-event identity and distinguished check-suite rerequests from webhook redeliveries.', url: 'https://github.com/lemma-work/lemma-platform/pull/1136' },
+    { number: 1128, title: 'Bundle sidecar path containment', note: 'Prevented file and JSON sidecar references from escaping their resource directory, including symlink paths.', url: 'https://github.com/lemma-work/lemma-platform/pull/1128' },
+    { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
+    { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
   ],
   experience: [
     {
