@@ -50,16 +50,10 @@ async function open({ threed = false, ...opts } = {}) {
   // the static boot screen fades out for a few hundred ms after the app mounts, then leaves the DOM
   await page.waitForSelector('#boot', { state: 'detached', timeout: 3000 }).catch(() => {});
   ok('static boot screen is removed once the app mounts', (await page.locator('#boot').count()) === 0);
-  ok('title screen shows on first visit', (await page.locator('.title-screen').count()) === 1);
-  const splashText = (await page.locator('.title-splash').innerText()).trim();
-  ok('title screen has a yellow splash line', splashText.length > 3 && (await page.locator('.title-splash').evaluate((e) => getComputedStyle(e).color)) === 'rgb(255, 255, 85)');
-  ok('Play is focused first', await page.evaluate(() => document.activeElement?.textContent === 'Play'));
-  await page.keyboard.press('ArrowDown');
-  ok('arrow keys move through the menu', await page.evaluate(() => document.activeElement?.textContent === 'Free roam'));
-  ok('title screen offers the Wilds', (await page.locator('.title-menu .mc-button', { hasText: 'Wilds' }).count()) === 1);
-  await page.locator('.title-menu .mc-button', { hasText: 'Play' }).click();
-  await page.waitForSelector('.loader:not(.boot)', { timeout: 3000 });
-  ok('entry loader follows the title screen', (await page.locator('.title-screen').count()) === 0);
+  ok('portfolio content is visible immediately on first visit', await page.locator('.hero-name').isVisible() && await page.locator('.hero-role').isVisible());
+  ok('standard entry has no blocking title screen', (await page.locator('.title-screen').count()) === 0);
+  ok('hero provides direct About and Projects navigation', (await page.locator('a[href="#profile"]').count()) >= 1 && (await page.locator('a[href="#forge"]').count()) >= 1);
+
   await page.keyboard.press('Escape');
   await page.waitForSelector('.loader', { state: 'detached', timeout: 3000 });
   ok('entry loader skips with Escape', true);
@@ -92,8 +86,8 @@ async function open({ threed = false, ...opts } = {}) {
   ok('biome filter narrows the cards', (await page.locator('.card').count()) === 1);
   await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('all six featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 6 && (await page.locator('.card-soon').count()) === 0);
-  ok('three flagship projects are marked', (await page.locator('.flagship-tag').count()) === 3);
+  ok('four curated featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 4 && (await page.locator('.card-soon').count()) === 0);
+  ok('all four selected case studies are marked as featured', (await page.locator('.flagship-tag').count()) === 4);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
@@ -168,11 +162,10 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
 {
   const [ctx, page] = await open();
   await page.waitForSelector('#root > *', { state: 'attached', timeout: 10000 });
-  const wa = await page.locator('a[href^="https://wa.me/917419911991"]').count();
-  ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
+  ok('professional contact routes are available', (await page.locator('a[href^="mailto:"]').count()) >= 1 && (await page.locator('a[href*="linkedin.com/in/kaustubh-dua"]').count()) >= 1 && (await page.locator('a[href="https://github.com/kaustubhdua"]').count()) >= 1);
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
-  ok('club roles and volunteering are listed', (await page.locator('.roles:not(.experience) li').count()) === 3);
+  ok('selected campus leadership roles are listed', (await page.locator('.roles:not(.experience) li').count()) === 2 && await page.locator('.roles').getByText('Campus Ambassador').count() === 1 && await page.locator('.roles').getByText('JIIT Youth Club').count() === 1);
   ok('Pinnacle Labs internship is listed', (await page.locator('.experience li').count()) === 1 && (await page.locator('.experience').getByText('Web Development Intern').count()) === 1);
   ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
@@ -182,7 +175,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
-    ok('cards without an always-on demo carry an honest note', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 5 && (await page.locator('.roles-soon').count()) === 0);
+    ok('featured projects without an always-on demo carry an honest note', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 3 && (await page.locator('.roles-soon').count()) === 0);
     ok('the Forge contains no empty coming-soon flagship cards', (await page.locator('.card-soon').count()) === 0);
   } else {
     await page.goto(`${BASE}blog/`);
