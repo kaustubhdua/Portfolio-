@@ -73,8 +73,8 @@ f = [
     Paragraph('HTML5 · CSS3 · JavaScript · Fetch API · localStorage', small),
     point('Built <b>Weather Core Matrix</b>, a responsive weather dashboard with asynchronous Fetch API updates and live weather-data rendering.'),
     point('Built <b>Nord Studio Task Manager</b>, with localStorage persistence, priority labels and All / Active / Completed filters.'),
-    Paragraph(link('https://github.com/kaustubhdua/weather-core-matrix', 'Weather Core Matrix') + '  ·  ' +
-              link('https://github.com/kaustubhdua/nord-studio-task-manager', 'Nord Studio Task Manager'), small),
+    Paragraph(link('https://github.com/kaustubhdua/weather-core-matrix', 'github.com/kaustubhdua/weather-core-matrix') + '  ·  ' +
+              link('https://github.com/kaustubhdua/nord-studio-task-manager', 'github.com/kaustubhdua/nord-studio-task-manager'), small),
 
     Paragraph('SELECTED PROJECTS', section), rule(),
     project('NIRDHOOM', 'multi-contributor prototype', 'React 19 · Supabase · PostgreSQL / PostGIS · OR-Tools · PWA',
