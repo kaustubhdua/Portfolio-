@@ -17,14 +17,6 @@ export const advancements = [
     sprite: 'chip',
   },
   {
-    id: 'pinnacle',
-    frame: 'task',
-    category: 'Professional Experience · 2026',
-    title: 'Pinnacle Labs · Web Development Intern',
-    text: 'Built two internship deliverables: a real-time weather dashboard using asynchronous Fetch API updates, and a task manager with localStorage persistence, priority labels and task-state filters.',
-    sprite: 'chip',
-  },
-  {
     id: 'jpmorgan',
     frame: 'goal',
     category: 'Job Simulation · Forage',
