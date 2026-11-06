@@ -3,12 +3,9 @@ import { FaPause, FaPlay } from 'react-icons/fa6';
 import TechIcon from './TechIcon.jsx';
 import { Reveal } from './ui.jsx';
 import { projects } from '../data/projects.js';
-import { skillGroups } from '../data/skills.js';
 import profile from '../data/profile.js';
 import { useInView } from '../hooks/useInView.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
-
-const items = skillGroups.flatMap((g) => g.items);
 
 // Every figure is derived from the data files, except the benchmark size that Saathi's README states.
 const stats = [
