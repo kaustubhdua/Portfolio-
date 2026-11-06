@@ -66,7 +66,7 @@ f = [
 
     Paragraph('EDUCATION', section), rule(),
     Paragraph('<b>Jaypee Institute of Information Technology (JIIT), Noida</b> · B.Tech., Electronics &amp; Computer Engineering (ECM)', body),
-    Paragraph('2nd year of a 4-year course · Expected graduation 2029', detail),
+    Paragraph('2nd year of a 4-year course · Expected graduation 2029 · CGPA 9.2/10 overall', detail),
 
     Paragraph('EXPERIENCE', section), rule(),
     Paragraph('Pinnacle Labs · Web Development Intern · 2026', role),
