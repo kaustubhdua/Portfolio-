@@ -8,6 +8,7 @@
  * PLAYWRIGHT_MODULE / PW_CHROMIUM  optional overrides for non-standard installs
  */
 import { profile } from '../src/data/profile.js';
+import { projects } from '../src/data/projects.js';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
@@ -176,8 +177,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
-  const smartWasteNote = await page.locator('#forge .cards .card').filter({ hasText: 'Smart Waste' }).locator('.demo-soon').first().textContent().catch(() => null);
-  ok('Smart Waste is not advertised as an always-on demo', typeof smartWasteNote === 'string' && smartWasteNote.toLowerCase().includes('sleeps after inactivity'), String(smartWasteNote));
+  const smartWasteProject = projects.find((project) => project.id === 'smartwaste');
+  ok('Smart Waste is not advertised as an always-on demo', Boolean(smartWasteProject && !smartWasteProject.live && smartWasteProject.demoNote?.includes('sleeps after inactivity')));
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
