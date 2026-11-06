@@ -176,7 +176,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
     ok('cards without a live demo say "Demo: coming soon"', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 2 && (await page.locator('.roles-soon').count()) === 1);
-    ok('the Forge lists two coming-soon flagship cards', (await page.locator('.card-soon').count()) === 2);
+    ok('the Forge contains no empty coming-soon flagship cards', (await page.locator('.card-soon').count()) === 0);
   } else {
     await page.goto(`${BASE}blog/`);
     ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
