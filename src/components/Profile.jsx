@@ -7,6 +7,7 @@ const facts = [
   ['Program', profile.program],
   ['Institution', profile.institution],
   ['Year', `${profile.year}, Class of ${profile.graduation}`],
+  ['CGPA', profile.cgpa],
   ['Looking for', profile.openTo],
   ['Focus', 'Full-stack software engineering, applied AI and data'],
   ['Working with', profile.stack.join(', ')],
