@@ -91,7 +91,7 @@ async function open({ threed = false, ...opts } = {}) {
   ok('biome filter narrows the cards', (await page.locator('.card').count()) === 1);
   await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('all six projects shown again, plus the two coming-soon cards', (await page.locator('.card:not(.card-soon)').count()) === 6 && (await page.locator('.card-soon').count()) === 2);
+  ok('all six featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 6 && (await page.locator('.card-soon').count()) === 0);
   ok('three flagship projects are marked', (await page.locator('.flagship-tag').count()) === 3);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
