@@ -16,14 +16,13 @@ export const profile = {
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
   graduation: '2029',
-  cgpa: '9.26 / 10 overall',
   year: '2nd year of a 4-year course',
   /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
   openTo: 'Software engineering internships in full-stack, backend and applied AI or data work.',
   about: [
     'I am an Electronics & Computer Engineering student at JIIT Noida, focused on software engineering and full-stack product development.',
     'I enjoy turning complex workflows into usable products, with careful API design, clear data boundaries and reliable testing.',
-    'Alongside my Web Development internship at Pinnacle Labs, I build applied AI, data and systems projects and represent Nexus Spring of Code as a campus ambassador.',
+    'I build applied AI, data and systems projects, contribute to open source, and represent Nexus Spring of Code as a campus ambassador.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
   /** Selected campus leadership roles most relevant to software engineering and open source. */
@@ -50,19 +49,6 @@ export const profile = {
     { number: 1128, title: 'Bundle sidecar path containment', note: 'Prevented file and JSON sidecar references from escaping their resource directory, including symlink paths.', url: 'https://github.com/lemma-work/lemma-platform/pull/1128' },
     { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
     { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
-  ],
-  experience: [
-    {
-      org: 'Pinnacle Labs',
-      role: 'Web Development Intern',
-      period: '2026',
-      note: 'Built a real-time weather dashboard with asynchronous Fetch API updates, and a browser-based task manager with persistent local storage, priority labels and All/Active/Completed filters.',
-      stack: ['HTML5', 'CSS3', 'JavaScript', 'Fetch API', 'localStorage'],
-      projects: [
-        { label: 'Weather Core Matrix', url: 'https://github.com/kaustubhdua/weather-core-matrix' },
-        { label: 'Nord Studio Task Manager', url: 'https://github.com/kaustubhdua/nord-studio-task-manager' },
-      ],
-    },
   ],
   workflow: [
     { step: 'Discover', note: 'Understand the real workflow and its constraints.' },
