@@ -75,7 +75,6 @@ export const profile = {
   links: {
     github: 'https://github.com/kaustubhdua',
     email: 'kaustubhdua1991@gmail.com',
-    resume: 'Kaustubh-Dua-Resume.pdf',
     linkedin: 'https://www.linkedin.com/in/kaustubh-dua-2b5a76416',
   },
 };
