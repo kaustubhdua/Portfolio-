@@ -4,6 +4,7 @@ import TechIcon from './TechIcon.jsx';
 import { Reveal } from './ui.jsx';
 import { projects } from '../data/projects.js';
 import { skillGroups } from '../data/skills.js';
+import profile from '../data/profile.js';
 import { useInView } from '../hooks/useInView.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
 
@@ -13,7 +14,7 @@ const items = skillGroups.flatMap((g) => g.items);
 const stats = [
   { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected project case studies' },
   { id: 'live', value: projects.filter((p) => p.live).length, label: 'Featured demos' },
-  { id: 'tools', value: items.length, label: 'Technologies with project evidence' },
+  { id: 'opensource', value: profile.openSource.length, label: 'Merged upstream open-source PRs' },
   { id: 'bench', value: 120, label: 'Synthetic benchmark cases in Saathi' },
 ];
 
