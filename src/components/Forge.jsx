@@ -6,6 +6,7 @@ import { useWorld } from '../hooks/useTheme.js';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
+const featuredProjects = projects.filter((project) => project.flagship);
 const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight' };
 
 export function ProjectCard({ project, onOpen, delay }) {
@@ -53,11 +54,11 @@ export function ProjectCard({ project, onOpen, delay }) {
 export default function Forge({ onOpen }) {
   const world = useWorld();
   const [filter, setFilter] = useState('all');
-  const shown = filter === 'all' ? projects : projects.filter((p) => p.biome === filter);
-  const present = [...new Set(projects.map((p) => p.biome))];
+  const shown = filter === 'all' ? featuredProjects : featuredProjects.filter((p) => p.biome === filter);
+  const present = [...new Set(featuredProjects.map((p) => p.biome))];
 
   return (
-    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[projects.length] ?? projects.length} builds, each with a case study covering architecture, decisions and honest limits.`}>
+    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[featuredProjects.length] ?? featuredProjects.length} selected case studies covering architecture, engineering decisions and honest project limits.`}>
       <div className="filters" role="group" aria-label="Filter projects by biome">
         {[['all', 'All biomes'], ...present.map((b) => [b, biomeName(b, world)])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>
@@ -72,7 +73,7 @@ export default function Forge({ onOpen }) {
       </div>
 
       <Reveal className="explored">
-        <h3 className="sub-title pixel">More from GitHub · side quests</h3>
+        <h3 className="sub-title pixel">Selected Additional Work</h3>
         <ul className="explored-grid">
           {explored.map((e) => (
             <li key={e.name} className="panel explored-item">
