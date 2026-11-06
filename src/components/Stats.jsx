@@ -11,9 +11,9 @@ const items = skillGroups.flatMap((g) => g.items);
 
 // Every figure is derived from the data files, except the benchmark size that Saathi's README states.
 const stats = [
-  { id: 'projects', value: projects.length, label: 'Featured projects' },
+  { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected project case studies' },
   { id: 'live', value: projects.filter((p) => p.live).length, label: 'Featured demos' },
-  { id: 'tools', value: items.length, label: 'Tools in the inventory' },
+  { id: 'tools', value: items.length, label: 'Technologies with project evidence' },
   { id: 'bench', value: 120, label: 'Synthetic benchmark cases in Saathi' },
 ];
 
