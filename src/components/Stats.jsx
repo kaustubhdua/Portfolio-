@@ -4,10 +4,13 @@ import TechIcon from './TechIcon.jsx';
 import { Reveal } from './ui.jsx';
 import { projects } from '../data/projects.js';
 import profile from '../data/profile.js';
+import { skillGroups } from '../data/skills.js';
 import { useInView } from '../hooks/useInView.js';
 import { useReducedMotion } from '../hooks/useMedia.js';
 
 // Every figure is derived from the data files, except the benchmark size that Saathi's README states.
+const items = skillGroups.flatMap((group) => group.items);
+
 const stats = [
   { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected project case studies' },
   { id: 'live', value: projects.filter((p) => p.flagship && p.live).length, label: 'Featured demos' },
