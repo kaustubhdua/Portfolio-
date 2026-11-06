@@ -16,7 +16,7 @@ export const WELCOME = [
   ['Type /help, or tap a suggestion below.'],
 ];
 
-export const SUGGESTIONS = ['/projects', '/skills', '/about', '/contact', '/help'];
+export const SUGGESTIONS = ['/projects', '/skills', '/about', '/contact', '/resume', '/help'];
 
 const link = (href, label) => ({ href, label });
 
