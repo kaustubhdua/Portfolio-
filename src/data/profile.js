@@ -5,13 +5,13 @@
  * Nothing is invented: when something is not published (grades, scores, rankings) it is left out.
  */
 export const profile = {
-  // The blog pipeline is built, but the blog stays hidden ("coming soon") until this is true.
-  blogEnabled: false,
+  // Four edited posts are ready; expose the static blog and its RSS feed.
+  blogEnabled: true,
   name: 'Kaustubh Dua',
   kicker: 'ECM student · JIIT Noida',
-  role: 'Software developer building AI, data and systems products',
+  role: 'Frontend Developer · Aspiring Software Engineer',
   intro:
-    'I build practical software at the intersection of AI, data, systems and product engineering, from route optimisation and voice-first assistants to decision-support workflows.',
+    'I build interactive web experiences and practical software across AI, data and systems—from custom 3D interfaces and route optimisation to voice-first assistants and decision-support workflows.',
   stack: ['Python', 'TypeScript', 'React', 'Next.js', 'FastAPI', 'PostgreSQL'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
@@ -20,9 +20,9 @@ export const profile = {
   /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
   openTo: 'Software engineering internships in backend, full-stack and applied AI or data work.',
   about: [
-    'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, interested in software engineering and problem-solving.',
+    'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, focused on frontend development and software engineering.',
     'I like turning complex workflows into useful tools, with clear system boundaries, careful validation and thoughtful UX.',
-    'My projects span OR-Tools route optimisation, voice-first multilingual assistance, crop-residue coordination, local AI and a public website for the JIIT Youth Club.',
+    'My work spans a Web Development internship at Pinnacle Labs, route optimisation, voice-first multilingual assistance, crop-residue coordination, local AI and data-governance tools.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
   /** Volunteering. Roles are stated as the owner gave them; nothing is added about what the work involved. */
@@ -47,6 +47,19 @@ export const profile = {
       full: 'JIIT Noida',
       role: 'Member, Tech and Management team',
       note: 'The campus club for machine learning, AI and electronics projects.',
+    },
+  ],
+  experience: [
+    {
+      org: 'Pinnacle Labs',
+      role: 'Web Development Intern',
+      period: '2026',
+      note: 'Built a real-time weather dashboard with asynchronous Fetch API updates, and a browser-based task manager with persistent local storage, priority labels and All/Active/Completed filters.',
+      stack: ['HTML5', 'CSS3', 'JavaScript', 'Fetch API', 'localStorage'],
+      projects: [
+        { label: 'Weather Core Matrix', url: 'https://github.com/kaustubhdua/weather-core-matrix' },
+        { label: 'Nord Studio Task Manager', url: 'https://github.com/kaustubhdua/nord-studio-task-manager' },
+      ],
     },
   ],
   workflow: [

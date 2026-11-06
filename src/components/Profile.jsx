@@ -8,13 +8,13 @@ const facts = [
   ['Institution', profile.institution],
   ['Year', `${profile.year}, Class of ${profile.graduation}`],
   ['Looking for', profile.openTo],
-  ['Focus', 'AI, data, systems and product engineering'],
+  ['Focus', 'Frontend, AI, data and systems engineering'],
   ['Working with', profile.stack.join(', ')],
 ];
 
 export default function Profile() {
   return (
-    <Section id="profile" {...meta} title="Player Profile" lead="A student developer who likes real workflows, clear boundaries and honest status labels.">
+    <Section id="profile" {...meta} title="Player Profile" lead="A frontend developer and ECM student who likes real workflows, clear boundaries and honest status labels.">
       <div className="profile-grid">
         <Reveal className="panel player-card">
           <div className="player-head">
@@ -30,7 +30,7 @@ export default function Profile() {
             </div>
             <div>
               <h3 className="player-name pixel">{profile.name}</h3>
-              <p className="player-class">ECM student</p>
+              <p className="player-class">Frontend developer · ECM</p>
             </div>
           </div>
           <dl className="facts">
@@ -49,6 +49,28 @@ export default function Profile() {
               <p key={p} className="about-p">{p}</p>
             ))}
             <blockquote className="motto pixel">{profile.motto}</blockquote>
+          </Reveal>
+          <Reveal delay={100} className="panel roles experience" aria-label="Professional experience">
+            <h3 className="pixel">Experience</h3>
+            <ul>
+              {profile.experience.map((e) => (
+                <li key={e.org}>
+                  <p className="role-org pixel">{e.org}</p>
+                  <p className="role-title">{e.role} · {e.period}</p>
+                  <p className="role-note">{e.note}</p>
+                  <p className="role-note">
+                    Selected work:{' '}
+                    {e.projects.map((project, i) => (
+                      <span key={project.url}>
+                        {i > 0 ? ' · ' : ''}
+                        <a href={project.url} target="_blank" rel="noopener noreferrer">{project.label}</a>
+                      </span>
+                    ))}
+                  </p>
+                  <p className="role-note">Stack: {e.stack.join(' · ')}</p>
+                </li>
+              ))}
+            </ul>
           </Reveal>
           <Reveal delay={110} className="panel roles">
             <h3 className="pixel">Teams and clubs</h3>
@@ -71,7 +93,6 @@ export default function Profile() {
                 </li>
               ))}
             </ul>
-            <p className="roles-soon pixel">Events and impact: coming soon</p>
           </Reveal>
           <Reveal delay={140} className="panel quest">
             <h3 className="pixel">Quest log</h3>

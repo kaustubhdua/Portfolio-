@@ -30,7 +30,7 @@ The camera path is a spline through seven stops, one per section. The page repor
 - The world loads after the page, so the text paints first and the 3D scene never blocks reading.
 - An adaptive quality controller lowers the render resolution if frames run long, and raises it again only after a sustained good stretch, so it settles instead of flickering.
 - Rendering pauses when the tab is hidden or the canvas is off screen.
-- JavaScript has a size budget that the build checks, currently 160 kB gzipped.
+- JavaScript has a size budget that the build checks, currently 172 kB gzipped.
 - Without WebGL, or with reduced motion on, the site falls back to 2D scenes. Nothing depends on the 3D layer to be readable.
 
 ## Free roam

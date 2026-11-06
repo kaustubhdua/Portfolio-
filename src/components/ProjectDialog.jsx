@@ -44,7 +44,7 @@ export default function ProjectDialog({ project, onClose }) {
             </a>
             {project.live && (
               <a className="btn btn-secondary btn-sm pixel" href={project.live} target="_blank" rel="noopener noreferrer">
-                <FaArrowUpRightFromSquare aria-hidden="true" /> Live demo<span className="sr-only"> (opens in a new tab)</span>
+                <FaArrowUpRightFromSquare aria-hidden="true" /> {project.liveLabel ?? 'Live demo'}<span className="sr-only"> (opens in a new tab)</span>
               </a>
             )}
           </div>

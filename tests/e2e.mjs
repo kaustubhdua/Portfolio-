@@ -171,15 +171,20 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('WhatsApp links go straight to the chat (hero, contact section, footer text)', wa >= 2, `${wa} links`);
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
-  ok('club roles and volunteering are listed', (await page.locator('.roles li').count()) === 3);
+  ok('club roles and volunteering are listed', (await page.locator('.roles:not(.experience) li').count()) === 3);
+  ok('Pinnacle Labs internship is listed', (await page.locator('.experience li').count()) === 1 && (await page.locator('.experience').getByText('Web Development Intern').count()) === 1);
+  ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
+  ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
+  ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
+  ok('Smart Waste is not advertised as an always-on demo', (await page.locator('.card').filter({ hasText: 'Smart Waste' }).locator('.demo-soon').innerText()) === 'Hosted demo sleeps after inactivity');
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
-    ok('cards without a verified live demo say "Demo: coming soon"', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 4 && (await page.locator('.roles-soon').count()) === 1);
+    ok('cards without an always-on demo carry an honest note', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 5 && (await page.locator('.roles-soon').count()) === 0);
     ok('the Forge contains no empty coming-soon flagship cards', (await page.locator('.card-soon').count()) === 0);
   } else {
     await page.goto(`${BASE}blog/`);
-    ok('blog list has one h1 and at least one post', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 1);
+    ok('blog list has one h1 and all four published posts', (await page.locator('h1').count()) === 1 && (await page.locator('.cards .card').count()) >= 4);
     await page.locator('.cards .card h2 a').first().click();
     await page.waitForSelector('article.post');
     ok('a post opens with one h1 and readable text', (await page.locator('h1').count()) === 1 && (await page.locator('.prose p').count()) >= 3);

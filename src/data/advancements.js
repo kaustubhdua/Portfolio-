@@ -7,10 +7,18 @@ export const advancements = [
   {
     id: 'shipped',
     frame: 'goal',
-    category: 'Projects shipped',
-    title: 'Public Demos Linked',
-    text: 'Four projects link to public demos: NIRDHOOM and Smart Waste are prototypes, Saathi is an MVP and the JYC Website is a live club site.',
+    category: 'Project availability',
+    title: 'Reachable Demo Links',
+    text: 'Three demo destinations are currently reachable: NIRDHOOM (a sample-data prototype), GitGlobe (an upstream-hosted fork demo) and GenomeGuard (a research instance with documented limits). Saathi and JYC are not advertised until their deployments are verified; Smart Waste and SATARK are not marked live while their Streamlit hosts are asleep.',
     sprite: 'rocket',
+  },
+  {
+    id: 'pinnacle',
+    frame: 'task',
+    category: 'Internship · Pinnacle Labs',
+    title: 'Web Development Intern',
+    text: 'Completed a 2026 Web Development Internship, building a real-time weather dashboard with asynchronous Fetch API updates and a task manager with localStorage persistence, priority labels and task-state filters.',
+    sprite: 'chip',
   },
   {
     id: 'ci',

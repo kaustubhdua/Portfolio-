@@ -39,9 +39,9 @@ export function ProjectCard({ project, onOpen, delay }) {
         <a className="icon-btn icon-btn-sm" href={project.repo} target="_blank" rel="noopener noreferrer" aria-label={`${project.name} on GitHub (opens in a new tab)`}>
           <FaGithub aria-hidden="true" />
         </a>
-        {!project.live && <span className="demo-soon pixel">Demo: coming soon</span>}
+        {!project.live && <span className="demo-soon pixel">{project.demoNote || 'Demo: coming soon'}</span>}
         {project.live && (
-          <a className="icon-btn icon-btn-sm" href={project.live} target="_blank" rel="noopener noreferrer" aria-label={`${project.name} live demo (opens in a new tab)`}>
+          <a className="icon-btn icon-btn-sm" href={project.live} target="_blank" rel="noopener noreferrer" aria-label={`${project.name} ${project.liveLabel ?? 'live demo'} (opens in a new tab)`}>
             <FaArrowUpRightFromSquare aria-hidden="true" />
           </a>
         )}
@@ -82,7 +82,7 @@ export default function Forge({ onOpen }) {
               <p className="explored-links">
                 <a href={e.repo} target="_blank" rel="noopener noreferrer">GitHub<span className="sr-only"> (opens in a new tab)</span></a>
                 {e.live && (
-                  <a href={e.live} target="_blank" rel="noopener noreferrer">Live demo<span className="sr-only"> (opens in a new tab)</span></a>
+                  <a href={e.live} target="_blank" rel="noopener noreferrer">{e.liveLabel ?? 'Live demo'}<span className="sr-only"> (opens in a new tab)</span></a>
                 )}
               </p>
             </li>

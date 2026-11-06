@@ -36,6 +36,7 @@ export const projects = [
     stack: ['React 19', 'Vite', 'Supabase', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'Leaflet'],
     repo: 'https://github.com/kaustubhdua/nihdhoom',
     live: 'https://nihdhoom-9qiu.vercel.app/',
+    liveLabel: 'Hosted prototype',
     problem:
       'Clearing crop residue involves several parties: farmers, machine operators, dispatchers and residue buyers. NIRDHOOM models the whole path from a field request to verified lots a buyer can see.',
     features: [
@@ -173,7 +174,7 @@ export const projects = [
       'An end-to-end pipeline that predicts bin fill levels, scores collection priority from 0 to 100 and optimises truck routes with Google OR-Tools.',
     stack: ['Python', 'Random Forest', 'OR-Tools', 'Streamlit', 'Folium'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
-    live: 'https://smartwasteproject-glmvz89ttkxfktcssfdfuc.streamlit.app/',
+    demoNote: 'Hosted demo sleeps after inactivity',
     problem:
       'Collection trucks waste distance on bins that are not full yet. This prototype shows how predicted fill levels and a priority score can drive a capacity-aware routing plan.',
     features: [
@@ -199,7 +200,7 @@ export const projects = [
       'It is not evidence of a live municipal deployment.',
     ],
     status:
-      'Engineering prototype with a hosted dashboard. Model accuracy, route quality and savings are treated as experiments, so no results are claimed.',
+      'Engineering prototype with a Streamlit deployment that sleeps after inactivity. Model accuracy, route quality and savings remain experimental; no always-on demo is advertised and no results are claimed.',
   },
   {
     id: 'jyc',
@@ -279,16 +280,16 @@ export const explored = [
   {
     name: 'GitGlobe',
     kind: 'Fork of ydabas-hue/GitGlobe',
-    text: 'An interactive 3D globe that places GitHub repositories by what they do, using embeddings, Three.js and a FastAPI search API.',
+    text: 'An interactive 3D globe that places GitHub repositories by what they do, using embeddings, Three.js and a FastAPI search API. This is a fork; the linked demo is hosted by the upstream project owner.',
     repo: 'https://github.com/kaustubhdua/GitGlobe',
     live: 'https://gitglobe-yd-mj.vercel.app',
+    liveLabel: 'Upstream demo',
   },
   {
     name: 'SATARK',
     kind: 'Fork of harshilgupta926/Satark',
-    text: 'A Streamlit workspace for triaging suspicious messages, links, images, QR codes and PDFs. A learning aid, not an antivirus.',
+    text: 'A Streamlit workspace for triaging suspicious messages, links, images, QR codes and PDFs. A learning aid, not an antivirus. The hosted app sleeps after inactivity, so no live demo is advertised here.',
     repo: 'https://github.com/kaustubhdua/Satark',
-    live: 'https://satark-32uppvjxwmderrchbhj7gj.streamlit.app/',
   },
   {
     name: 'AkashChalak',
@@ -310,6 +311,7 @@ export const explored = [
     text: 'A governance layer for genomic data access: consent-style policy checks, disclosure-risk estimates, output protection, query-abuse monitoring and a hash-chained audit log. Attacks are evaluated on synthetic data and the limits are published. Research software, not for clinical use.',
     repo: 'https://github.com/kaustubhdua/GenomeGuard',
     live: 'https://genomeguard.onrender.com',
+    liveLabel: 'Research instance',
   },
   {
     name: 'BharatSim',
