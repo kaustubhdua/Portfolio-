@@ -9,6 +9,14 @@ export const advancements = [
     sprite: 'banner',
   },
   {
+    id: 'opensource',
+    frame: 'goal',
+    category: 'Open Source · Upstream Contributions',
+    title: 'Lemma Platform · 6 Merged PRs',
+    text: 'Merged contributions to lemma-work/lemma-platform across PostgreSQL 18 and Podman compatibility, GitHub webhook idempotency, bundle path containment, Python SDK error handling and JSONC diagnostics.',
+    sprite: 'chip',
+  },
+  {
     id: 'pinnacle',
     frame: 'task',
     category: 'Professional Experience · 2026',
