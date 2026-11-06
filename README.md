@@ -3,7 +3,7 @@
 Live site: [kaustubhdua.vercel.app](https://kaustubhdua.vercel.app)  
 Owner: [Kaustubh Dua](https://github.com/kaustubhdua) · JIIT Noida, Electronics & Computer Engineering
 
-A recruiter-facing portfolio built as an interactive voxel world. It combines a custom WebGL scene with a clear, directly accessible portfolio: selected projects, professional experience, open-source contributions, skills, a one-page resume and contact links.
+A recruiter-facing portfolio built as an interactive voxel world. It combines a custom WebGL scene with a clear, directly accessible portfolio: selected projects, open-source contributions, skills, a one-page resume and contact links.
 
 ## What it demonstrates
 
@@ -22,7 +22,7 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 - [PatchPilot](https://github.com/kaustubhdua/PatchPilot) — evidence-backed pull-request diff triage; it does not execute repository code.
 - [JIIT Youth Club Website 2](https://github.com/kaustubhdua/JYC-Website2) — campus-club website for societies, events, gallery and recruitment.
 
-The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), the Pinnacle Labs Web Development Internship and the NSoC Campus Ambassador role.
+The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), the NSoC Campus Ambassador role.
 
 ## Tech stack
 
