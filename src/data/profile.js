@@ -1,7 +1,7 @@
 /**
  * Identity and copy. Everything here comes from the public GitHub profile and
  * profile README of kaustubhdua, the owner's public LinkedIn posts and certificates, and
- * facts the owner stated directly (graduation year 2029, club roles, WhatsApp number).
+ * facts the owner stated directly (graduation year 2029 and campus roles).
  * Nothing is invented: when something is not published (grades, scores, rankings) it is left out.
  */
 export const profile = {
@@ -82,7 +82,6 @@ export const profile = {
     email: 'kaustubhdua1991@gmail.com',
     resume: 'Kaustubh-Dua-Resume.pdf',
     linkedin: 'https://www.linkedin.com/in/kaustubh-dua-2b5a76416',
-    // wa.me opens the WhatsApp chat directly (country code 91 for India, no + or spaces)
   },
 };
 
