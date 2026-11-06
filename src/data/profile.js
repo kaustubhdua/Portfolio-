@@ -9,44 +9,37 @@ export const profile = {
   blogEnabled: true,
   name: 'Kaustubh Dua',
   kicker: 'ECM student · JIIT Noida',
-  role: 'Frontend Developer · Aspiring Software Engineer',
+  role: 'Software Engineering Student · Full-Stack & Applied AI',
   intro:
-    'I build interactive web experiences and practical software across AI, data and systems—from custom 3D interfaces and route optimisation to voice-first assistants and decision-support workflows.',
-  stack: ['Python', 'TypeScript', 'React', 'Next.js', 'FastAPI', 'PostgreSQL'],
+    'I build practical software across full-stack product engineering, applied AI and data systems—from field-first workflows and multilingual assistance to developer tools. I care about usable interfaces, clear system boundaries and tests that cover failure paths.',
+  stack: ['Python', 'TypeScript', 'React', 'FastAPI', 'PostgreSQL', 'OR-Tools'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
   graduation: '2029',
   year: '2nd year of a 4-year course',
   /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
-  openTo: 'Software engineering internships in backend, full-stack and applied AI or data work.',
+  openTo: 'Software engineering internships in full-stack, backend and applied AI or data work.',
   about: [
-    'I am an Electronics & Computer Engineering (ECM) student at the Jaypee Institute of Information Technology, Noida, focused on frontend development and software engineering.',
-    'I like turning complex workflows into useful tools, with clear system boundaries, careful validation and thoughtful UX.',
-    'My work spans a Web Development internship at Pinnacle Labs, route optimisation, voice-first multilingual assistance, crop-residue coordination, local AI and data-governance tools.',
+    'I am an Electronics & Computer Engineering student at JIIT Noida, focused on software engineering and full-stack product development.',
+    'I enjoy turning complex workflows into usable products, with careful API design, clear data boundaries and reliable testing.',
+    'Alongside my Web Development internship at Pinnacle Labs, I build applied AI, data and systems projects and represent Nexus Spring of Code as a campus ambassador.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
-  /** Volunteering. Roles are stated as the owner gave them; nothing is added about what the work involved. */
-  volunteering: [
-    {
-      org: 'NSS',
-      full: 'National Service Scheme',
-      role: 'Volunteer, Cinematography and Management',
-      note: 'Volunteers on the cinematography and management teams.',
-    },
-  ],
-  /** Teams and clubs. Roles are stated exactly as the owner gave them. */
+  /** Selected campus leadership roles most relevant to software engineering and open source. */
   roles: [
     {
-      org: 'JYC Tech Vertical',
-      full: 'JIIT Youth Club',
-      role: 'Member, Tech and Management team',
-      note: 'The technical arm of the club behind the campus events and fests. Built the club’s public website.',
+      org: 'Nexus Spring of Code (NSoC)',
+      full: 'Open-source program',
+      role: 'Campus Ambassador · 2026–Present',
+      note: 'Representing the program at JIIT Noida and helping students discover open-source contribution opportunities.',
+      url: 'https://www.nsoc.in/',
     },
     {
-      org: 'AIML and AI-Tronics Club',
+      org: 'JIIT Youth Club (JYC) · Tech Vertical',
       full: 'JIIT Noida',
       role: 'Member, Tech and Management team',
-      note: 'The campus club for machine learning, AI and electronics projects.',
+      note: 'Built and iterated the club’s public website for its clubs, events, gallery and recruitment experience.',
+      url: 'https://github.com/kaustubhdua/JYC-Website',
     },
   ],
   experience: [
@@ -90,18 +83,16 @@ export const profile = {
     resume: 'Kaustubh-Dua-Resume.pdf',
     linkedin: 'https://www.linkedin.com/in/kaustubh-dua-2b5a76416',
     // wa.me opens the WhatsApp chat directly (country code 91 for India, no + or spaces)
-    whatsapp: 'https://wa.me/917419911991?text=Hi%20Kaustubh%2C%20I%20found%20your%20portfolio.',
-    whatsappNumber: '+91 74199 11991',
   },
 };
 
 /** Navigation and section registry. `label` is the thematic name, `hint` the plain-language one. */
 export const sections = [
-  { id: 'spawn', label: 'Spawn Point', short: 'Spawn', hint: 'Home', sprite: 'torch' },
-  { id: 'profile', label: 'Character Profile', short: 'Profile', hint: 'About', sprite: 'head' },
-  { id: 'inventory', label: 'Inventory', short: 'Inventory', hint: 'Skills', sprite: 'chest' },
-  { id: 'forge', label: 'The Forge', short: 'Forge', hint: 'Projects', sprite: 'anvil' },
-  { id: 'advancements', label: 'Advancements', short: 'Advances', hint: 'Highlights', sprite: 'star' },
-  { id: 'world', label: 'World Map', short: 'World Map', hint: 'Domains', sprite: 'map' },
-  { id: 'contact', label: 'Ender Chest', short: 'Ender Chest', hint: 'Contact', sprite: 'ender' },
+  { id: 'spawn', label: 'Home', short: 'Home', hint: 'Spawn Point', sprite: 'torch' },
+  { id: 'profile', label: 'About', short: 'About', hint: 'Character Profile', sprite: 'head' },
+  { id: 'inventory', label: 'Skills', short: 'Skills', hint: 'Inventory', sprite: 'chest' },
+  { id: 'forge', label: 'Projects', short: 'Projects', hint: 'The Forge', sprite: 'anvil' },
+  { id: 'advancements', label: 'Experience', short: 'Experience', hint: 'Highlights', sprite: 'star' },
+  { id: 'world', label: 'Focus', short: 'Focus', hint: 'World Map', sprite: 'map' },
+  { id: 'contact', label: 'Contact', short: 'Contact', hint: 'Ender Chest', sprite: 'ender' },
 ];
