@@ -81,9 +81,14 @@ async function open({ threed = false, ...opts } = {}) {
   ok('Escape closes dialog', !(await page.evaluate(() => document.querySelector('dialog.dialog').open)));
   ok('focus returns to the trigger', await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Case study: NIRDHOOM'));
 
-  await page.locator('.filters').getByRole('button', { name: 'Basalt Deltas' }).click();
-  await page.waitForTimeout(300);
-  ok('biome filter narrows the cards', (await page.locator('.card').count()) === 1);
+  const biomeFilter = page.locator('.filters button').nth(1);
+  const selectedBiome = (await biomeFilter.innerText()).trim();
+  await biomeFilter.click();
+  await page.waitForFunction((label) => {
+    const cards = [...document.querySelectorAll('#forge .card')];
+    return cards.length > 0 && cards.every((card) => card.querySelector('.biome-tag')?.textContent.trim() === label);
+  }, selectedBiome);
+  ok('biome filter narrows cards to the selected biome', await page.locator('.filters button[aria-pressed="true"]').count() === 1);
   await page.locator('.filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
   ok('four curated featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 4 && (await page.locator('.card-soon').count()) === 0);
