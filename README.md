@@ -3,7 +3,7 @@
 Live site: [kaustubhdua.vercel.app](https://kaustubhdua.vercel.app)  
 Owner: [Kaustubh Dua](https://github.com/kaustubhdua) · JIIT Noida, Electronics & Computer Engineering
 
-A recruiter-facing portfolio built as an interactive voxel world. It combines a custom WebGL scene with a clear, directly accessible portfolio: selected projects, open-source contributions, skills, a one-page resume and contact links.
+A recruiter-facing portfolio built as an interactive voxel world. It combines a custom WebGL scene with a clear, directly accessible portfolio: selected projects, open-source contributions, skills, a coming-soon resume notice and contact links.
 
 ## What it demonstrates
 
@@ -13,7 +13,7 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 - **Responsive UI:** project case studies, profile, experience, skills, focus areas and contact content adapt to desktop and mobile layouts.
 - **Accessibility:** keyboard navigation, command palette (`Ctrl+K`), semantic content, reduced-motion handling and a non-3D fallback.
 - **Honest project evidence:** flagship projects are curated, team work is labelled, demo availability is stated accurately, and job simulations or hackathon participation are not presented as employment or awards.
-- **Resume generation:** the committed one-page ATS-readable PDF is generated from `scripts/build-resume.py`.
+- **Resume availability:** the resume entry points currently show a coming-soon notice; no downloadable PDF is publicly exposed.
 
 ## Selected work featured on the site
 
@@ -62,13 +62,9 @@ npm run verify
 
 `npm run verify` runs lint, production build, repository checks and world tests. The Playwright browser suite is available separately through `npm run test:e2e`.
 
-## Regenerate the resume
+## Resume status
 
-The current PDF is committed at `public/Kaustubh-Dua-Resume.pdf`. To regenerate it after editing the source, install ReportLab in your Python environment and run:
-
-```bash
-python scripts/build-resume.py
-```
+The resume is intentionally not published yet. The portfolio shows a consistent coming-soon notice wherever the resume action appears. The source generator remains in `scripts/build-resume.py` for the next release.
 
 ## Repository layout
 
