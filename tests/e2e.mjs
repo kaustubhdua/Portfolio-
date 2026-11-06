@@ -114,6 +114,15 @@ async function open({ threed = false, ...opts } = {}) {
   ok('contact resume action opens the same coming-soon dialog', await page.getByRole('dialog', { name: 'Resume coming soon' }).isVisible());
   await page.getByRole('button', { name: 'Got it' }).click();
 
+  await page.getByRole('button', { name: 'Open chat (shortcut: slash key)' }).click();
+  await page.locator('#chat-input').fill('/resume');
+  await page.locator('.chat-form button[type="submit"]').click();
+  ok('portfolio chat explains resume is coming soon', await page.locator('.chat-log').getByText(/Resume: coming soon/i).count() === 1);
+  await page.locator('#chat-input').fill('/contact');
+  await page.locator('.chat-form button[type="submit"]').click();
+  ok('portfolio chat exposes email and professional links only', (await page.locator('.chat-log a[href*="wa.me"]').count()) === 0 && (await page.locator('.chat-log').getByText(/WhatsApp/i).count()) === 0);
+  await page.getByRole('button', { name: 'Close chat' }).click();
+
   await page.keyboard.press('Control+k');
   await page.getByRole('combobox', { name: 'Type a command or search' }).fill('resume');
   await page.getByRole('option', { name: 'Resume — coming soon' }).click();
