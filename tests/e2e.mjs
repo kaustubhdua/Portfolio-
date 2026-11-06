@@ -93,8 +93,8 @@ async function open({ threed = false, ...opts } = {}) {
   ok('biome filter narrows cards to the selected biome', await page.locator('.filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('four curated featured projects shown without empty placeholder cards', (await page.locator('.card').count()) === 4 && (await page.locator('.card-soon').count()) === 0);
-  ok('all four selected case studies are marked as featured', (await page.locator('.flagship-tag').count()) === 4);
+  ok('four curated featured projects shown without empty placeholder cards', (await page.locator('#forge .card').count()) === 4 && (await page.locator('#forge .card-soon').count()) === 0);
+  ok('all four selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === 4);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
