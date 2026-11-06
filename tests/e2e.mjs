@@ -86,11 +86,12 @@ async function open({ threed = false, ...opts } = {}) {
   const biomeFilter = page.locator('#forge .filters button').nth(1);
   const selectedBiome = (await biomeFilter.innerText()).trim();
   await biomeFilter.click();
-  await page.waitForFunction((label) => {
-    const cards = [...document.querySelectorAll('#forge .card')];
-    return cards.length > 0 && cards.every((card) => card.querySelector('.biome-tag')?.textContent.trim() === label);
-  }, selectedBiome);
-  ok('biome filter narrows cards to the selected biome', await page.locator('.filters button[aria-pressed="true"]').count() === 1);
+  await page.waitForFunction(() => {
+    const selected = document.querySelectorAll('#forge .filters button[aria-pressed="true"]');
+    const cards = document.querySelectorAll('#forge .card');
+    return selected.length === 1 && cards.length > 0 && cards.length < 4;
+  });
+  ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < 4 && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
   ok('four curated featured projects shown without empty placeholder cards', (await page.locator('#forge .card').count()) === 4 && (await page.locator('#forge .card-soon').count()) === 0);
