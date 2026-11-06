@@ -294,11 +294,11 @@ export default function App() {
         <Hero ready={!intro} onNavigate={navigate} theme={theme} quick={quick} onQuick={toggleQuick} canExplore={canExplore} onExplore={enterExplore} />
         <Stats />
         <PortalRule />
+        <Forge onOpen={setOpenId} />
+        <PortalRule />
         <Profile />
         <PortalRule />
         <Inventory />
-        <PortalRule />
-        <Forge onOpen={setOpenId} />
         <PortalRule />
         <Advancements />
         <PortalRule />
