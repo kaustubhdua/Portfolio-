@@ -1,14 +1,14 @@
 """Build Kaustubh Dua's concise, one-page, ATS-readable recruiter resume.
 
 This file is the source of truth for public/Kaustubh-Dua-Resume.pdf.
-It deliberately distinguishes merged upstream contributions, team prototypes,
-job simulations, hackathon participation and unverified deployments.
+It distinguishes merged upstream contributions, team prototypes, job simulations,
+hackathon participation and unverified deployments.
 """
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.colors import HexColor
 from reportlab.lib.units import mm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, HRFlowable
 import sys
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'public/Kaustubh-Dua-Resume.pdf'
