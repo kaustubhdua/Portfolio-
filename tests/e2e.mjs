@@ -104,8 +104,21 @@ async function open({ threed = false, ...opts } = {}) {
   await resumeTrigger.click();
   ok('resume action opens a coming-soon dialog', await page.getByRole('dialog', { name: 'Resume coming soon' }).isVisible());
   ok('resume action does not expose a PDF download', (await page.locator('a[download][href$=".pdf"]').count()) === 0);
+  ok('resume action is absent from direct PDF links', (await page.locator('a[href*="Kaustubh-Dua-Resume.pdf"]').count()) === 0);
+  ok('personal WhatsApp contact route is not exposed', (await page.locator('a[href*="wa.me"]').count()) === 0);
   await page.keyboard.press('Escape');
   ok('resume notice closes with Escape and restores focus', !(await page.getByRole('dialog').count()) || !(await page.getByRole('dialog').isVisible()) && await resumeTrigger.evaluate((el) => document.activeElement === el));
+
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Resume: coming soon' }).click();
+  ok('contact resume action opens the same coming-soon dialog', await page.getByRole('dialog', { name: 'Resume coming soon' }).isVisible());
+  await page.getByRole('button', { name: 'Got it' }).click();
+
+  await page.keyboard.press('Control+k');
+  await page.getByRole('combobox', { name: 'Type a command or search' }).fill('resume');
+  await page.getByRole('option', { name: 'Resume — coming soon' }).click();
+  ok('command palette resume action opens the coming-soon dialog', await page.getByRole('dialog', { name: 'Resume coming soon' }).isVisible());
+  await page.getByRole('button', { name: 'Got it' }).click();
 
   const sound = page.locator('.sound-toggle');
   ok('ambient sound is off by default', (await sound.getAttribute('aria-pressed')) === 'false');
