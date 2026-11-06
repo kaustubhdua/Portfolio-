@@ -32,7 +32,7 @@ export default function Contact() {
           <a className="btn btn-secondary pixel" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">
             <FaLinkedinIn aria-hidden="true" /> LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <button type="button" className="btn btn-secondary pixel" onClick={() => window.dispatchEvent(new Event('portfolio:resume-notice'))}>
+          <button type="button" className="btn btn-secondary pixel" onClick={() => window.dispatchEvent(new window.Event('portfolio:resume-notice'))}>
             <FaClock aria-hidden="true" /> Resume: coming soon
           </button>
           <a className="btn btn-secondary pixel" href={profile.links.github} target="_blank" rel="noopener noreferrer">
