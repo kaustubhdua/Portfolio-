@@ -15,7 +15,7 @@ export default function Inventory() {
   const [more, setMore] = useState(false);
 
   return (
-    <Section id="inventory" {...meta} title="Inventory" lead="Tools I have actually used. Select a slot to see where.">
+    <Section id="inventory" {...meta} title="Technical Skills" lead="Core technologies used in the projects and internship work shown here. Select one to see repository evidence.">
       <div className="inventory">
         <Reveal className={`panel info${more ? ' is-more' : ''}`} aria-live="polite">
           <div className="info-icon"><TechIcon item={selected} size={44} /></div>
