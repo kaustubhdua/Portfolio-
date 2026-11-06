@@ -84,7 +84,6 @@ export const projects = [
       'A Hindi-first, voice-first assistance platform with source-aware answers, consent-based workflows and human escalation.',
     stack: ['Next.js', 'React', 'FastAPI', 'Python', 'Speech APIs', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Saathi',
-    live: 'https://saathi-two-pi.vercel.app',
     problem:
       'Information and service workflows are hard to reach for people who prefer speaking in their own language. Saathi aims at field-ready workflows rather than disconnected AI demos.',
     features: [
@@ -114,7 +113,7 @@ export const projects = [
       'Healthcare is informational and navigation support only in the MVP.',
     ],
     status:
-      'MVP with a hosted demo. The next milestone in the README is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
+      'MVP prototype. Its previously listed public demo URL no longer resolves, so no live demo is advertised until a working deployment is verified. The next milestone is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
   },
   {
     id: 'patchpilot',
@@ -204,7 +203,7 @@ export const projects = [
   },
   {
     id: 'jyc',
-    stage: 'Live site',
+    stage: 'Deployment unverified',
     name: 'JYC Website',
     tagline: 'Public website for JIIT Youth Club',
     contribution: 'Multi-contributor club website. The case study covers the shared product and its quality workflow; the commit history shows individual contributions.',
@@ -217,7 +216,6 @@ export const projects = [
       'The public website for JIIT Youth Club (JYC) at the Sector 128 campus: events, clubs, gallery, archive, announcements and recruitment.',
     stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/JYC-Website',
-    live: 'https://jyc-website-eight.vercel.app',
     problem:
       'JYC coordinates major college events and fests and needs one public home for them. The site is deliberately not a student portal or social network.',
     features: [
@@ -240,7 +238,7 @@ export const projects = [
     limits: [
       'The README lists running the browser suite against the deployed site and verifying the production deployment as remaining work.',
     ],
-    status: 'Live public site with automated quality gates.',
+    status: 'Public club website with automated quality gates. The previously listed deployment URL no longer resolves, so a current production URL must be confirmed before advertising a live demo.',
   },
   {
     id: 'adaptai',
