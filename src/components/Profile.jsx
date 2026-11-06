@@ -88,6 +88,21 @@ export default function Profile() {
         </div>
       </div>
 
+      <Reveal delay={140} className="panel roles open-source-panel">
+        <h3 className="pixel">Open Source Contributions</h3>
+        <p className="role-note">Six merged pull requests to the upstream Lemma Platform repository. Selected changes span runtime compatibility, webhook correctness, path safety and SDK/parser reliability.</p>
+        <ul>
+          {profile.openSource.map((item) => (
+            <li key={item.number}>
+              <p className="role-org pixel">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">PR #{item.number} · {item.title}<span className="sr-only"> (opens in a new tab)</span></a>
+              </p>
+              <p className="role-note">{item.note}</p>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
       <Reveal className="workflow" aria-label="How I build">
         <h3 className="sub-title pixel">Engineering Approach</h3>
         <ol className="hotbar-flow">
