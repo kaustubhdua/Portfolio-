@@ -88,7 +88,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <Reveal delay={140} className="panel roles open-source-panel">
+      <Reveal delay={140} className="panel open-source-panel">
         <h3 className="pixel">Open Source Contributions</h3>
         <p className="role-note">Six merged pull requests to the upstream Lemma Platform repository. Selected changes span runtime compatibility, webhook correctness, path safety and SDK/parser reliability.</p>
         <ul>
