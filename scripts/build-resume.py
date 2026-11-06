@@ -67,7 +67,7 @@ story = [
     Paragraph('github.com/kaustubhdua/JYC-Website2', detail),
     *section_heading('OPEN-SOURCE CONTRIBUTIONS'),
     Paragraph('<b>Lemma Platform | 6 merged upstream PRs</b> - PostgreSQL 18 and Podman compatibility (#1156, #1155); GitHub webhook event identity/idempotency (#1136); bundle sidecar path containment (#1128); Python SDK auth-refresh errors (#1125); JSONC diagnostics (#1124).', body),
-    Paragraph('github.com/lemma-work/lemma-platform/pull/{1156,1155,1136,1128,1125,1124}', detail),
+    Paragraph('github.com/lemma-work/lemma-platform/pull/1156 | /pull/1155 | /pull/1136 | /pull/1128 | /pull/1125 | /pull/1124', detail),
     *section_heading('SKILLS'),
     Paragraph('<b>Languages:</b> Python, TypeScript, JavaScript, C++17, Java, SQL | <b>Frontend:</b> React, Next.js, Vite, Tailwind CSS, Three.js/WebGL', body),
     Paragraph('<b>Backend &amp; Data:</b> FastAPI, PostgreSQL/PostGIS, Supabase, SQLAlchemy, OR-Tools, scikit-learn, PyTorch | <b>Engineering:</b> Git, GitHub Actions, pytest, Playwright, Docker, CodeQL', body),
