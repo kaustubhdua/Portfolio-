@@ -27,7 +27,7 @@ bullet = style(fontSize=7.75, leading=9.3, leftIndent=10, bulletIndent=1)
 small = style(fontSize=7.1, leading=8.3, textColor=muted)
 
 def link(url, label):
-    return f'<a href="{url}" color="#8c1d28">{label}</a>'
+    return label
 
 def rule():
     return HRFlowable(width='100%', thickness=0.65, color=accent, spaceAfter=2)
@@ -56,9 +56,9 @@ f = [
     Spacer(1, 2),
     Paragraph(
         link('mailto:kaustubhdua1991@gmail.com', 'kaustubhdua1991@gmail.com') + '  ·  ' +
-        link('https://github.com/kaustubhdua', 'GitHub') + '  ·  ' +
-        link('https://www.linkedin.com/in/kaustubh-dua-2b5a76416', 'LinkedIn') + '  ·  ' +
-        link('https://kaustubhdua.vercel.app', 'Portfolio'), contact),
+        link('https://github.com/kaustubhdua', 'github.com/kaustubhdua') + '  ·  ' +
+        link('https://www.linkedin.com/in/kaustubh-dua-2b5a76416', 'linkedin.com/in/kaustubh-dua-2b5a76416') + '  ·  ' +
+        link('https://kaustubhdua.vercel.app', 'kaustubhdua.vercel.app'), contact),
     Paragraph('PROFILE', section), rule(),
     Paragraph('Electronics &amp; Computer Engineering undergraduate at JIIT Noida building full-stack software and applied AI/data tools. '
               'Interested in software engineering internships across backend, full-stack and applied AI. Focused on usable interfaces, '
