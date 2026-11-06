@@ -21,7 +21,7 @@ export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound,
       { id: 'gh', group: 'Links', label: 'GitHub profile', run: open(profile.links.github) },
       { id: 'li', group: 'Links', label: 'LinkedIn profile', run: open(profile.links.linkedin) },
       ...(profile.blogEnabled ? [{ id: 'blog', group: 'Links', label: 'Read the blog', run: () => (window.location.href = 'blog/') }] : []),
-      { id: 'cv', group: 'Links', label: 'Resume — coming soon', run: () => window.dispatchEvent(new Event('portfolio:resume-notice')) },
+      { id: 'cv', group: 'Links', label: 'Resume — coming soon', run: () => window.dispatchEvent(new window.Event('portfolio:resume-notice')) },
       { id: 'mail', group: 'Links', label: `Send an email to ${profile.links.email}`, run: () => (window.location.href = `mailto:${profile.links.email}`) },
       {
         id: 'copy',
