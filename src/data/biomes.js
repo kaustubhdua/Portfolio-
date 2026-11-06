@@ -68,7 +68,6 @@ export const overworldBiomes = [
 export const splashes = [
   '6 upstream PRs merged!',
   'NSoC Campus Ambassador!',
-  '9.2 CGPA overall!',
   '120-case benchmark!',
   'No fake skill bars!',
   'Verify everything!',
