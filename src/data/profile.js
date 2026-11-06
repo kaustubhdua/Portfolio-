@@ -16,7 +16,7 @@ export const profile = {
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
   graduation: '2029',
-  cgpa: '9.2 / 10 overall',
+  cgpa: '9.26 / 10 overall',
   year: '2nd year of a 4-year course',
   /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
   openTo: 'Software engineering internships in full-stack, backend and applied AI or data work.',
