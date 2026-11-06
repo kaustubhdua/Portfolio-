@@ -166,6 +166,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('every external link opens safely', await page.evaluate(() => [...document.querySelectorAll('a[target="_blank"]')].every((a) => /noopener/.test(a.rel))));
   ok('profile shows the pixel avatar', await page.evaluate(() => { const i = document.querySelector('.avatar-img'); return !!i && i.complete && i.naturalWidth > 0; }));
   ok('selected campus leadership roles are listed', (await page.locator('.roles:not(.experience) li').count()) === 2 && await page.locator('.roles').getByText('Campus Ambassador').count() === 1 && await page.locator('.roles').getByText('JIIT Youth Club').count() === 1);
+  ok('six merged upstream open-source contributions are linked', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 6);
   ok('Pinnacle Labs internship is listed', (await page.locator('.experience li').count()) === 1 && (await page.locator('.experience').getByText('Web Development Intern').count()) === 1);
   ok('internship deliverables link to their GitHub repositories', (await page.locator('.experience a[href="https://github.com/kaustubhdua/weather-core-matrix"]').count()) === 1 && (await page.locator('.experience a[href="https://github.com/kaustubhdua/nord-studio-task-manager"]').count()) === 1);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
