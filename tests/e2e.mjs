@@ -100,9 +100,12 @@ async function open({ threed = false, ...opts } = {}) {
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
 
   ok('email link present', (await page.locator('a[href^="mailto:"]').count()) >= 1);
-  ok('resume download link present', (await page.locator('a[download][href$=".pdf"]').count()) >= 1);
-  const pdf = await page.request.get(new URL('Kaustubh-Dua-Resume.pdf', BASE).href);
-  ok('resume PDF is served', pdf.ok() && (pdf.headers()['content-type'] ?? '').includes('pdf'));
+  const resumeTrigger = page.getByRole('button', { name: 'Resume — coming soon' });
+  await resumeTrigger.click();
+  ok('resume action opens a coming-soon dialog', await page.getByRole('dialog', { name: 'Resume coming soon' }).isVisible());
+  ok('resume action does not expose a PDF download', (await page.locator('a[download][href$=".pdf"]').count()) === 0);
+  await page.keyboard.press('Escape');
+  ok('resume notice closes with Escape and restores focus', !(await page.getByRole('dialog').count()) || !(await page.getByRole('dialog').isVisible()) && await resumeTrigger.evaluate((el) => document.activeElement === el));
 
   const sound = page.locator('.sound-toggle');
   ok('ambient sound is off by default', (await sound.getAttribute('aria-pressed')) === 'false');
