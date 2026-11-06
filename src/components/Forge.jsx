@@ -69,7 +69,6 @@ export default function Forge({ onOpen }) {
         {shown.map((p, i) => (
           <ProjectCard key={p.id} project={p} onOpen={onOpen} delay={i * 70} />
         ))}
-
       </div>
 
       <Reveal className="explored">
