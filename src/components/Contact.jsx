@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaBookOpen, FaCopy, FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaBookOpen, FaCopy, FaEnvelope, FaClock, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
 import Sprite from './Sprite.jsx';
 import { profile, sections } from '../data/profile.js';
@@ -32,9 +32,9 @@ export default function Contact() {
           <a className="btn btn-secondary pixel" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">
             <FaLinkedinIn aria-hidden="true" /> LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <a className="btn btn-secondary pixel" href={profile.links.resume} download>
-            <FaFileArrowDown aria-hidden="true" /> Download CV<span className="sr-only"> (PDF)</span>
-          </a>
+          <button type="button" className="btn btn-secondary pixel" onClick={() => window.dispatchEvent(new Event('portfolio:resume-notice'))}>
+            <FaClock aria-hidden="true" /> Resume: coming soon
+          </button>
           <a className="btn btn-secondary pixel" href={profile.links.github} target="_blank" rel="noopener noreferrer">
             <FaGithub aria-hidden="true" /> GitHub<span className="sr-only"> (opens in a new tab)</span>
           </a>
