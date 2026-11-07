@@ -121,7 +121,7 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#chat-input').fill('/contact');
   await page.locator('.chat-form button[type="submit"]').click();
   ok('portfolio chat exposes email and professional links only', (await page.locator('.chat-log a[href*="wa.me"]').count()) === 0 && (await page.locator('.chat-log').getByText(/WhatsApp/i).count()) === 0);
-  await page.getByRole('button', { name: 'Close chat' }).click();
+  await page.locator('#chat-panel').getByRole('button', { name: 'Close chat' }).click();
 
   await page.keyboard.press('Control+k');
   await page.getByRole('combobox', { name: 'Type a command or search' }).fill('resume');
