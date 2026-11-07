@@ -30,6 +30,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
     let cancelled = false;
     let renderer = null;
     let bubbleTimer = 0;
+    let prepareTimer = 0;
     const root = document.documentElement;
     let cleanup = () => {};
     import('../lib/voxel/renderer.js')
@@ -75,18 +76,26 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           moveInput: renderer.moveInput,
           jumpInput: renderer.jumpInput,
           lookBy: renderer.lookBy,
-          select: () => {},
+          select: (index) => renderer.select(index),
           placeBlock: () => renderer.place(),
           tap: (x, y) => {
             const hit = renderer.pick(x, y, true);
-            if (!hit && renderer.mine(x, y)) blockSound('stone');
+            if (hit) {
+              mobSound(hit.name, hit.kind, hit.role);
+              clearTimeout(bubbleTimer);
+              setBubble({ ...hit, id: Date.now() });
+              bubbleTimer = setTimeout(() => setBubble(null), 3200);
+              return;
+            }
+            const ground = renderer.mine(x, y);
+            if (ground) blockSound(ground);
           },
         });
         const stopDive = onDive((v) => renderer.setDive(v));
         renderer.ready.then(() => {
           if (!cancelled) setMode('on');
         });
-        setTimeout(() => !cancelled && renderer.prepare(worldRef.current === 'nether' ? 'overworld' : 'nether'), 2500);
+        prepareTimer = setTimeout(() => !cancelled && renderer.prepare(worldRef.current === 'nether' ? 'overworld' : 'nether'), 2500);
 
         const free = (e) => !e.target.closest?.(SOLID_UI);
         let hovering = false;
@@ -139,6 +148,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         window.addEventListener('contextmenu', onContext);
         cleanup = () => {
           stopDive();
+          setExploreApi(null);
           setReactApi(null);
           window.removeEventListener('pointermove', onMove);
           window.removeEventListener('click', onClick);
@@ -154,6 +164,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
       });
     return () => {
       cancelled = true;
+      clearTimeout(prepareTimer);
       cleanup();
       renderer?.dispose();
       rendererRef.current = null;
