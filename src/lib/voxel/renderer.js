@@ -472,7 +472,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     resize();
     readScroll();
   };
-  const onContextLost = (e) => {
+  const onCanvasContextLost = (e) => {
     e.preventDefault();
     onContextLost?.();
   };
@@ -481,7 +481,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   window.addEventListener('pointermove', onPointer, { passive: true });
   const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(readScroll) : null;
   ro?.observe(document.body);
-  canvas.addEventListener('webglcontextlost', onContextLost);
+  canvas.addEventListener('webglcontextlost', onCanvasContextLost);
 
   const drawSlabs = (w, vp, kind, camPos, look) => {
     const planes = [];
@@ -1080,7 +1080,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
-      canvas.removeEventListener('webglcontextlost', onContextLost);
+      canvas.removeEventListener('webglcontextlost', onCanvasContextLost);
       ro?.disconnect();
       for (const w of Object.values(worlds)) clearTimeout(w.relightTimer);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
