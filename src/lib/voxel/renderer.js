@@ -537,7 +537,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     if (/^Digit[1-4]$/.test(e.code)) {
       hotbar = Number(e.code.slice(5)) - 1;
       canvas.dataset.hotbar = String(hotbar);
-      window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
+      window.dispatchEvent(new window.CustomEvent('portfolio:hotbar', { detail: hotbar }));
     }
   };
   const onKeyUp = (e) => {
@@ -1031,7 +1031,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       if (!Number.isFinite(index)) return;
       hotbar = Math.max(0, Math.min(HOTBAR.length - 1, Math.trunc(index)));
       canvas.dataset.hotbar = String(hotbar);
-      window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
+      window.dispatchEvent(new window.CustomEvent('portfolio:hotbar', { detail: hotbar }));
       dirty = true;
       schedule();
     },
