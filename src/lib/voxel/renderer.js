@@ -541,7 +541,11 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
   };
   const onKeyUp = (e) => {
-    if (keys.delete(e.code)) syncKeys();
+    if (keys.delete(e.code)) {
+      syncKeys();
+      dirty = true;
+      schedule();
+    }
   };
   // A tab switch, OS gesture or lost window focus must never leave movement held down.
   const clearInputs = () => {
@@ -569,6 +573,8 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementY));
     player.yaw += dx * 0.0022;
     player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy * 0.0022));
+    dirty = true;
+    schedule();
   };
   document.addEventListener('pointerlockchange', onLockChange);
   window.addEventListener('keydown', onKeyDown);
@@ -982,15 +988,21 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       touchMove.fx = fx;
       touchMove.fz = fz;
       syncKeys();
+      dirty = true;
+      schedule();
     },
     jumpInput(on) {
       touchMove.jump = on;
       syncKeys();
+      dirty = true;
+      schedule();
     },
     lookBy(dx, dy) {
       if (!player) return;
       player.yaw += dx;
       player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy));
+      dirty = true;
+      schedule();
     },
     /** Puts the selected block against the face under the crosshair. */
     place(clientX = window.innerWidth / 2, clientY = window.innerHeight / 2) {
