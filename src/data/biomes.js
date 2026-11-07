@@ -66,20 +66,20 @@ export const overworldBiomes = [
 
 /** Short true facts shown on the title screen, like Minecraft's yellow splash text. */
 export const splashes = [
-  'ECM, not ECE!',
-  'Prototype labels included!',
+  '6 upstream PRs merged!',
+  'NSoC Campus Ambassador!',
   '120-case benchmark!',
-  'Now with PatchPilot!',
-  'Bundled by esbuild!',
   'No fake skill bars!',
   'Verify everything!',
   'Failure paths tested!',
+  'Webhook retries matter!',
+  'Path safety tested!',
+  'Built at JIIT Noida!',
 ];
 
 /** Loading-screen tips, each taken from a project README. */
 export const tips = [
   'Saathi ships a 120-case synthetic benchmark for its Hindi and Hinglish router.',
-  'Smart Waste says plainly that its data is synthetic.',
   'NIRDHOOM keeps service keys on the server, never in the browser.',
   'PatchPilot never clones or executes the code it analyses.',
   'The JYC Website runs CodeQL and Playwright checks in CI.',
@@ -89,5 +89,7 @@ export const tips = [
   'AkashChalak clusters pollution hotspots from satellite data with DBSCAN.',
   'Adapt AI picks an Ollama model that fits your RAM and VRAM.',
   'RideForge finds driver routes with Dijkstra and expires driver offers after 45 seconds.',
+  'Lemma Platform has six merged upstream pull requests.',
+  'Nexus Spring of Code campus ambassador at JIIT Noida.',
   'GenomeGuard keeps a hash-chained audit log, so edits to past decisions are detectable.',
 ];

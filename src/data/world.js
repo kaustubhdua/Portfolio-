@@ -1,9 +1,7 @@
-/** Domains explored across the work, each tied to projects that show it. */
+/** Technical focus areas, each tied to projects with readable case studies. */
 export const domains = [
-  { id: 'optimisation', biome: 'basalt', title: 'Route Optimisation', text: 'Capacity-aware vehicle routing with OR-Tools, from synthetic waste bins to crop-residue dispatch.', projects: ['smartwaste', 'nirdhoom'] },
-  { id: 'voice', biome: 'crimson', title: 'Voice and Language', text: 'Hindi-first, voice-first assistance with deterministic routing, provenance and human escalation.', projects: ['saathi'] },
-  { id: 'local-ai', biome: 'wastes', title: 'Local AI', text: 'Hardware-aware model selection and on-device inference with Ollama.', projects: ['adaptai'] },
-  { id: 'geo', biome: 'crimson', title: 'Maps and Field Data', text: 'Field mapping, GPS telemetry and PostGIS-backed records for agricultural workflows.', projects: ['nirdhoom'] },
-  { id: 'community', biome: 'crimson', title: 'Community Platforms', text: 'A public home for events, clubs and archives, with CI, CodeQL and browser QA.', projects: ['jyc'] },
-  { id: 'trust', biome: 'soul', title: 'Security and Trust', text: 'Server-side secrets, consent gates, honest status labels and evidence-backed risk triage in PatchPilot.', projects: ['patchpilot', 'saathi', 'nirdhoom'] },
+  { id: 'product', biome: 'crimson', title: 'Full-Stack Product Engineering', text: 'Building usable workflows across React interfaces, APIs, persistence and operational tools.', projects: ['nirdhoom', 'saathi', 'jyc'] },
+  { id: 'optimisation', biome: 'basalt', title: 'Data & Optimisation', text: 'Modelling operational data and turning constraints into route and dispatch decisions.', projects: ['nirdhoom', 'smartwaste'] },
+  { id: 'ai', biome: 'wastes', title: 'Applied AI & Local Inference', text: 'Practical language, model-selection and decision-support systems with explicit capability boundaries.', projects: ['saathi', 'adaptai'] },
+  { id: 'trust', biome: 'soul', title: 'Reliability, Security & Trust', text: 'Evidence-backed analysis, consent-aware workflows, safe API boundaries and testable releases.', projects: ['patchpilot', 'saathi', 'nirdhoom'] },
 ];

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaBookOpen, FaCopy, FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
+import { FaBookOpen, FaCopy, FaEnvelope, FaClock, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
 import Sprite from './Sprite.jsx';
 import { profile, sections } from '../data/profile.js';
@@ -18,16 +18,13 @@ export default function Contact() {
     setTimeout(() => setCopied(''), 3000);
   };
   return (
-    <Section id="contact" {...meta} title="Ender Chest" lead="Open to internships and to conversations about projects and collaboration.">
+    <Section id="contact" {...meta} title="Contact" lead="Open to software engineering internships and thoughtful conversations about building useful software.">
       <Reveal className="panel chest">
         <Sprite name="ender" size={72} />
-        <p>I am looking for {profile.openTo.charAt(0).toLowerCase() + profile.openTo.slice(1)} Email or WhatsApp is the quickest way to reach me. LinkedIn works too, and my code lives on GitHub.</p>
+        <p>I am looking for {profile.openTo.charAt(0).toLowerCase() + profile.openTo.slice(1)} Email is the quickest way to reach me. You can also connect through LinkedIn or explore my work on GitHub.</p>
         <div className="chest-actions">
           <a className="btn btn-primary pixel" href={`mailto:${profile.links.email}`}>
             <FaEnvelope aria-hidden="true" /> Email
-          </a>
-          <a className="btn btn-secondary pixel btn-whatsapp" href={profile.links.whatsapp} target="_blank" rel="noopener noreferrer">
-            <FaWhatsapp aria-hidden="true" /> WhatsApp<span className="sr-only"> chat (opens in a new tab)</span>
           </a>
           <button type="button" className="btn btn-secondary pixel" onClick={copy}>
             <FaCopy aria-hidden="true" /> Copy address
@@ -35,9 +32,9 @@ export default function Contact() {
           <a className="btn btn-secondary pixel" href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">
             <FaLinkedinIn aria-hidden="true" /> LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <a className="btn btn-secondary pixel" href={profile.links.resume} download>
-            <FaFileArrowDown aria-hidden="true" /> Download CV<span className="sr-only"> (PDF)</span>
-          </a>
+          <button type="button" className="btn btn-secondary pixel" onClick={() => window.dispatchEvent(new window.Event('portfolio:resume-notice'))}>
+            <FaClock aria-hidden="true" /> Resume: coming soon
+          </button>
           <a className="btn btn-secondary pixel" href={profile.links.github} target="_blank" rel="noopener noreferrer">
             <FaGithub aria-hidden="true" /> GitHub<span className="sr-only"> (opens in a new tab)</span>
           </a>
@@ -51,7 +48,6 @@ export default function Contact() {
             </span>
           )}
         </div>
-        <p className="chest-wa">WhatsApp: <a href={profile.links.whatsapp} target="_blank" rel="noopener noreferrer">{profile.links.whatsappNumber}</a></p>
         <p className="chest-note" role="status">{copied}</p>
       </Reveal>
     </Section>

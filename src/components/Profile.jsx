@@ -8,13 +8,13 @@ const facts = [
   ['Institution', profile.institution],
   ['Year', `${profile.year}, Class of ${profile.graduation}`],
   ['Looking for', profile.openTo],
-  ['Focus', 'AI, data, systems and product engineering'],
+  ['Focus', 'Full-stack software engineering, applied AI and data'],
   ['Working with', profile.stack.join(', ')],
 ];
 
 export default function Profile() {
   return (
-    <Section id="profile" {...meta} title="Player Profile" lead="A student developer who likes real workflows, clear boundaries and honest status labels.">
+    <Section id="profile" {...meta} title="About" lead="Software engineering student at JIIT Noida, building full-stack products and applied AI/data tools.">
       <div className="profile-grid">
         <Reveal className="panel player-card">
           <div className="player-head">
@@ -30,7 +30,7 @@ export default function Profile() {
             </div>
             <div>
               <h3 className="player-name pixel">{profile.name}</h3>
-              <p className="player-class">ECM student</p>
+              <p className="player-class">Software Engineering · ECM</p>
             </div>
           </div>
           <dl className="facts">
@@ -51,41 +51,37 @@ export default function Profile() {
             <blockquote className="motto pixel">{profile.motto}</blockquote>
           </Reveal>
           <Reveal delay={110} className="panel roles">
-            <h3 className="pixel">Teams and clubs</h3>
+            <h3 className="pixel">Campus Leadership</h3>
             <ul>
               {profile.roles.map((r) => (
                 <li key={r.org}>
-                  <p className="role-org pixel">{r.org}</p>
+                  <p className="role-org pixel">{r.url ? <a href={r.url} target="_blank" rel="noopener noreferrer">{r.org}<span className="sr-only"> (opens in a new tab)</span></a> : r.org}</p>
                   <p className="role-title">{r.role}</p>
                   <p className="role-note">{r.note}</p>
                 </li>
               ))}
-            </ul>
-            <h3 className="pixel roles-sub">Volunteering</h3>
-            <ul>
-              {profile.volunteering.map((r) => (
-                <li key={r.org}>
-                  <p className="role-org pixel">{r.org} · {r.full}</p>
-                  <p className="role-title">{r.role}</p>
-                  <p className="role-note">{r.note}</p>
-                </li>
-              ))}
-            </ul>
-            <p className="roles-soon pixel">Events and impact: coming soon</p>
-          </Reveal>
-          <Reveal delay={140} className="panel quest">
-            <h3 className="pixel">Quest log</h3>
-            <ul>
-              <li>Exploring software engineering and problem-solving as an ECM student.</li>
-              <li>Saathi&rsquo;s next milestone: a measured, provider-backed voice slice.</li>
-              <li>NIRDHOOM&rsquo;s pilot gates: real-device GPS validation and offline sync testing.</li>
             </ul>
           </Reveal>
         </div>
       </div>
 
+      <Reveal delay={140} className="panel open-source-panel">
+        <h3 className="pixel">Open Source Contributions</h3>
+        <p className="role-note">Six merged pull requests to the upstream Lemma Platform repository. Selected changes span runtime compatibility, webhook correctness, path safety and SDK/parser reliability.</p>
+        <ul>
+          {profile.openSource.map((item) => (
+            <li key={item.number}>
+              <p className="role-org pixel">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">PR #{item.number} · {item.title}<span className="sr-only"> (opens in a new tab)</span></a>
+              </p>
+              <p className="role-note">{item.note}</p>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
       <Reveal className="workflow" aria-label="How I build">
-        <h3 className="sub-title pixel">The Hotbar · How I Build</h3>
+        <h3 className="sub-title pixel">Engineering Approach</h3>
         <ol className="hotbar-flow">
           {profile.workflow.map((w, i) => (
             <li key={w.step} className="slot-step">

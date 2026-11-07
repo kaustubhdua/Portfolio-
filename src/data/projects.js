@@ -36,6 +36,7 @@ export const projects = [
     stack: ['React 19', 'Vite', 'Supabase', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'Leaflet'],
     repo: 'https://github.com/kaustubhdua/nihdhoom',
     live: 'https://nihdhoom-9qiu.vercel.app/',
+    liveLabel: 'Hosted prototype',
     problem:
       'Clearing crop residue involves several parties: farmers, machine operators, dispatchers and residue buyers. NIRDHOOM models the whole path from a field request to verified lots a buyer can see.',
     features: [
@@ -160,6 +161,7 @@ export const projects = [
   },
   {
     id: 'smartwaste',
+    flagship: false,
     stage: 'Prototype',
     name: 'Smart Waste',
     tagline: 'Predict, prioritise and route waste collection',
@@ -173,7 +175,7 @@ export const projects = [
       'An end-to-end pipeline that predicts bin fill levels, scores collection priority from 0 to 100 and optimises truck routes with Google OR-Tools.',
     stack: ['Python', 'Random Forest', 'OR-Tools', 'Streamlit', 'Folium'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
-    live: 'https://smartwasteproject-glmvz89ttkxfktcssfdfuc.streamlit.app/',
+    demoNote: 'Hosted demo sleeps after inactivity',
     problem:
       'Collection trucks waste distance on bins that are not full yet. This prototype shows how predicted fill levels and a priority score can drive a capacity-aware routing plan.',
     features: [
@@ -199,23 +201,24 @@ export const projects = [
       'It is not evidence of a live municipal deployment.',
     ],
     status:
-      'Engineering prototype with a hosted dashboard. Model accuracy, route quality and savings are treated as experiments, so no results are claimed.',
+      'Engineering prototype with a Streamlit deployment that sleeps after inactivity. Model accuracy, route quality and savings remain experimental; no always-on demo is advertised and no results are claimed.',
   },
   {
     id: 'jyc',
+    flagship: true,
     stage: 'Deployment unverified',
     name: 'JYC Website',
     tagline: 'Public website for JIIT Youth Club',
     contribution: 'Multi-contributor club website. The case study covers the shared product and its quality workflow; the commit history shows individual contributions.',
-    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/JYC-Website/blob/main/README.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/JYC-Website/actions"},{"label":"Visual route matrix test","url":"https://github.com/kaustubhdua/JYC-Website/blob/main/scripts/visual-route-matrix.spec.js"}],
+    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/README.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/JYC-Website2/actions"},{"label":"Visual route matrix test","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/scripts/visual-route-matrix.spec.js"}],
     badges: ['CodeQL', 'Playwright QA', 'PWA shell'],
     biome: 'crimson',
     kind: 'Own repository',
     image: 'img/projects/jyc.png',
     summary:
-      'The public website for JIIT Youth Club (JYC) at the Sector 128 campus: events, clubs, gallery, archive, announcements and recruitment.',
+      'The official JIIT Youth Club 128 website: 23+ societies, events and fests, leadership, gallery, archive, announcements and recruitment.',
     stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
-    repo: 'https://github.com/kaustubhdua/JYC-Website',
+    repo: 'https://github.com/kaustubhdua/JYC-Website2',
     problem:
       'JYC coordinates major college events and fests and needs one public home for them. The site is deliberately not a student portal or social network.',
     features: [
@@ -242,6 +245,7 @@ export const projects = [
   },
   {
     id: 'adaptai',
+    flagship: false,
     stage: 'Team project',
     name: 'Adapt AI',
     tagline: 'Hardware-aware local AI assistant',
@@ -277,80 +281,29 @@ export const projects = [
 /** Forks and smaller prototypes. Shown separately and labelled honestly. */
 export const explored = [
   {
-    name: 'GitGlobe',
-    kind: 'Fork of ydabas-hue/GitGlobe',
-    text: 'An interactive 3D globe that places GitHub repositories by what they do, using embeddings, Three.js and a FastAPI search API.',
-    repo: 'https://github.com/kaustubhdua/GitGlobe',
-    live: 'https://gitglobe-yd-mj.vercel.app',
+    name: 'GenomeGuard',
+    kind: 'Research prototype · Python',
+    text: 'A genomic-data governance prototype with consent-style policy checks, disclosure-risk signals, output protection and a hash-chained audit trail. Research software, not for clinical use.',
+    repo: 'https://github.com/kaustubhdua/GenomeGuard',
   },
   {
-    name: 'SATARK',
-    kind: 'Fork of harshilgupta926/Satark',
-    text: 'A Streamlit workspace for triaging suspicious messages, links, images, QR codes and PDFs. A learning aid, not an antivirus.',
-    repo: 'https://github.com/kaustubhdua/Satark',
-    live: 'https://satark-32uppvjxwmderrchbhj7gj.streamlit.app/',
-  },
-  {
-    name: 'AkashChalak',
-    kind: 'Prototype',
-    text: 'The prototype built for the ISRO Bharatiya Antariksh Hackathon 2026: a satellite-assisted air-quality and hotspot decision-support tool for India.',
-    repo: 'https://github.com/kaustubhdua/Akash-Chalak',
-    live: null,
+    name: 'BharatSim',
+    kind: 'MVP · Android testing infrastructure',
+    text: 'A test-planning and execution workspace for Android apps under weak devices and networks, using ADB, Appium and a lease-based worker. Arbitrary-app support and network shaping remain unfinished.',
+    repo: 'https://github.com/kaustubhdua/Bharat-Sim',
+    live: 'https://bharat-sim-81g2.vercel.app',
+    liveLabel: 'Public preview · risk planning only',
   },
   {
     name: 'RideForge',
     kind: 'Portfolio MVP · C++17 · PostgreSQL',
-    text: 'A bike-taxi backend that grew out of a C++ shortest-path simulation: a C++17 HTTP API with PostgreSQL-backed quotes and bookings, driver offers that expire and redispatch, and a React web app. A portfolio MVP, not connected to real riders or payments.',
+    text: 'A bike-taxi backend with a C++17 HTTP API, persisted fare quotes and bookings, expiring driver offers and graph-based routing. Not connected to real riders or payments.',
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
-    live: null,
   },
   {
-    name: 'GenomeGuard',
-    kind: 'Research prototype · Python',
-    text: 'A governance layer for genomic data access: consent-style policy checks, disclosure-risk estimates, output protection, query-abuse monitoring and a hash-chained audit log. Attacks are evaluated on synthetic data and the limits are published. Research software, not for clinical use.',
-    repo: 'https://github.com/kaustubhdua/GenomeGuard',
-    live: 'https://genomeguard.onrender.com',
-  },
-  {
-    name: 'BharatSim',
-    kind: 'MVP · FastAPI · React · Android',
-    text: 'The Cheap Phone Test: plan risk-ranked test scenarios for Android apps under weak devices and networks, run them through a lease-based worker with ADB and Appium, and explain failures from logs. A source-built fixture app passes the full emulator path; arbitrary-app support and network shaping are not finished.',
-    repo: 'https://github.com/kaustubhdua/Bharat-Sim',
-    live: null,
-  },
-  {
-    name: 'CrickVision',
-    kind: 'Experimental prototype · Python',
-    text: 'A local-first computer-vision toolkit for cricket video. Today it runs a pretrained person detector with shot-cut detection and a Streamlit dashboard; team classification, field mapping and ball analysis are planned stages.',
-    repo: 'https://github.com/kaustubhdua/CrickVision-',
-    live: null,
-  },
-  {
-    name: 'Infracis',
-    kind: 'Team project · Next.js · not production-ready',
-    text: 'Evidence-first location due diligence for home buyers: search or pick a place, pull sourced map, weather and air-quality context, compare two locations, and get a report that separates facts, calculations, interpretations and unknowns. Built with a teammate; the repository states it is not production-ready yet.',
-    repo: 'https://github.com/kaustubhdua/infracis',
-    live: null,
-  },
-  {
-    name: 'JIIT Toppers',
-    kind: 'Foundation prototype · Next.js',
-    text: 'A student-first workspace idea for JIIT: academics, study resources, exam prep and campus info. Currently a UI scaffold with local attendance and SGPA estimators; there is no database, login or official JIIT data.',
-    repo: 'https://github.com/kaustubhdua/Jiit-toppers-',
-    live: null,
-  },
-  {
-    name: 'Weather Core Matrix',
-    kind: 'Small project · vanilla JS',
-    text: 'A lightweight weather dashboard: search a city and see current conditions. Plain HTML, CSS and JavaScript with no build step.',
-    repo: 'https://github.com/kaustubhdua/weather-core-matrix',
-    live: null,
-  },
-  {
-    name: 'Nord Studio Task Manager',
-    kind: 'Small project · vanilla JS',
-    text: 'A compact task manager with priorities, all/active/completed filters and a remaining-tasks counter. No framework or build step.',
-    repo: 'https://github.com/kaustubhdua/nord-studio-task-manager',
-    live: null,
+    name: 'AkashChalak',
+    kind: 'Hackathon prototype · ISRO Bharatiya Antariksh Hackathon',
+    text: 'A satellite-assisted air-quality and hotspot decision-support prototype for India, built around CPCB datasets and NASA FIRMS feeds.',
+    repo: 'https://github.com/kaustubhdua/AkashChalak',
   },
 ];

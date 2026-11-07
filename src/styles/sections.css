@@ -788,6 +788,13 @@
 .roles ul { display: grid; gap: 1rem; }
 .roles .roles-sub { margin: 1.4rem 0 0.9rem; }
 .roles li { padding-left: 0.9rem; border-left: 3px solid var(--gold, #ffb347); }
+.open-source-panel ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+.open-source-panel li { min-width: 0; padding-left: 0.9rem; border-left: 3px solid var(--gold, #ffb347); }
+.open-source-panel .role-org { font-size: 0.72rem; line-height: 1.4; color: var(--text) !important; }
+.open-source-panel .role-note { margin-top: 0.25rem; font-size: 0.92rem; color: var(--muted); }
+@media (max-width: 680px) {
+  .open-source-panel ul { grid-template-columns: 1fr; }
+}
 .role-org { font-size: 0.72rem; line-height: 1.4; color: var(--text) !important; }
 .role-title { margin-top: 0.2rem; font-weight: 600; color: var(--gold, #ffb347); }
 .role-note { margin-top: 0.25rem; font-size: 0.92rem; color: var(--muted); }
@@ -831,3 +838,46 @@
 }
 .demo-soon { margin: 0 0 0 auto; align-self: center; font-size: 0.58rem; }
 [data-theme='overworld'] .roles-soon, [data-theme='overworld'] .demo-soon { color: #5a3a00; }
+
+
+/* ----------------------------------------------------- resume notice */
+.resume-notice {
+  width: min( min(92vw, 28rem), calc(100vw - 2rem));
+  max-width: 28rem;
+  padding: clamp(1.4rem, 5vw, 2rem);
+  color: var(--text);
+  background: var(--panel, var(--charcoal));
+  border: 2px solid var(--edge);
+  box-shadow: 0 1.25rem 4rem rgba(0, 0, 0, 0.55), inset 0 0 0 1px var(--basalt-2);
+}
+.resume-notice::backdrop {
+  background: rgba(7, 5, 12, 0.76);
+  backdrop-filter: blur(7px);
+}
+.resume-notice-kicker {
+  margin: 0 0 0.65rem;
+  color: var(--amber);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.resume-notice h2 {
+  margin: 0 0 0.85rem;
+  color: var(--text);
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  line-height: 1.4;
+}
+.resume-notice p:not(.resume-notice-kicker) {
+  margin: 0 0 1.35rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.resume-notice .btn { min-height: 44px; }
+.resume-notice:focus { outline: none; }
+.resume-notice button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (max-width: 420px) {
+  .resume-notice { margin: auto; }
+}

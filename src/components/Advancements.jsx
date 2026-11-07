@@ -10,7 +10,7 @@ export default function Advancements() {
   const [ref, seen] = useInView({ threshold: 0.25 });
 
   return (
-    <Section id="advancements" {...meta} title="Advancements" lead="Projects, certificates and hackathons, each described as exactly what it was. Nothing here is padded.">
+    <Section id="advancements" {...meta} title="Experience & Recognition" lead="Open-source contributions, campus leadership and selected technical milestones—labelled accurately.">
       <ul ref={ref} className={`adv-grid${seen ? ' unlocked' : ''}`}>
         {advancements.map((a, i) => (
           <li key={a.id} className="adv" style={{ '--i': i }}>

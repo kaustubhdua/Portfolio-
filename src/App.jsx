@@ -48,7 +48,7 @@ export default function App() {
   const ids = useMemo(() => sections.map((s) => s.id), []);
   const active = useActiveSection(ids);
   // 'title' (menu), then 'load' (world-loading screen), then false. Skipped when seen this session or with reduced motion.
-  const [intro, setIntro] = useState(() => (!introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'title' : false));
+  const [intro, setIntro] = useState(() => (new window.URLSearchParams(window.location.search).get('immersive') === '1' && !introAlreadySeen() && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'title' : false));
   const afterIntro = useRef('play');
   const [openId, setOpenId] = useState(null);
   const [soundOn, setSoundOn] = useState(false);
@@ -294,11 +294,11 @@ export default function App() {
         <Hero ready={!intro} onNavigate={navigate} theme={theme} quick={quick} onQuick={toggleQuick} canExplore={canExplore} onExplore={enterExplore} />
         <Stats />
         <PortalRule />
+        <Forge onOpen={setOpenId} />
+        <PortalRule />
         <Profile />
         <PortalRule />
         <Inventory />
-        <PortalRule />
-        <Forge onOpen={setOpenId} />
         <PortalRule />
         <Advancements />
         <PortalRule />

@@ -10,7 +10,7 @@ const byId = Object.fromEntries(projects.map((p) => [p.id, p]));
 export default function WorldMap({ onOpen }) {
   const world = useWorld();
   return (
-    <Section id="world" {...meta} title="World Map" lead="The regions I have explored so far, and the projects that mark them.">
+    <Section id="world" {...meta} title="Technical Focus" lead="The engineering areas I work across, with selected projects that demonstrate each one.">
       <ul className="regions">
         {domains.map((d, i) => (
           <Reveal as="li" key={d.id} delay={(i % 3) * 70} className={`panel region biome-${d.biome}`}>
