@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # No lockfile is committed yet. Once `npm install` has produced one, switch to `npm ci`.
+      # The generated lockfile is uploaded as an artifact until it can be committed and adopted with npm ci.
       - name: Install dependencies (verbose diagnostics)
         run: npm install --no-audit --no-fund --loglevel verbose
       - name: Export npm-generated lockfile for reproducible install migration
@@ -57,7 +57,6 @@ jobs:
 
   links:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
