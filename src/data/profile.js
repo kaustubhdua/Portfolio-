@@ -30,8 +30,8 @@ export const profile = {
     {
       org: 'Nexus Spring of Code (NSoC)',
       full: 'Open-source program',
-      role: 'Campus Ambassador · 2026–Present',
-      note: 'Representing the program at JIIT Noida and helping students discover open-source contribution opportunities.',
+      role: 'Campus Ambassador · Winter Edition 2026 · 15–30 Oct',
+      note: 'Selected for the Outreach & Relations team of Nexus Spring of Code Winter Edition 2026. The offer letter lists a remote term from 15–30 October 2026; this entry does not imply an extension beyond that period.',
       url: 'https://www.nsoc.in/',
     },
     {
