@@ -141,7 +141,7 @@ export default function ExploreHud({ onExit }) {
       <button type="button" className="explore-exit pixel" onClick={onExit}>
         Leave world {!touch && <span aria-hidden="true">Esc</span>}
       </button>
-      {!touch && <div className="crosshair" aria-hidden="true" />}
+      <div className="crosshair" aria-hidden="true" />
       {hint && (
         <p className="explore-hint pixel" role="status">
           {touch ? 'Left thumb moves · drag the right side to look · tap to dig' : 'WASD to walk · Space to jump · Shift to sprint · click to dig · right-click to place'}
