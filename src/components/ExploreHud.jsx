@@ -77,13 +77,16 @@ export default function ExploreHud({ onExit }) {
     };
     el.addEventListener('pointerdown', down);
     el.addEventListener('pointermove', move);
+    const cancel = (e) => {
+      if (e.pointerId === id) id = null;
+    };
     el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
+    el.addEventListener('pointercancel', cancel);
     return () => {
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', up);
+      el.removeEventListener('pointercancel', cancel);
       api?.moveInput(0, 0);
     };
   }, [touch, api]);
