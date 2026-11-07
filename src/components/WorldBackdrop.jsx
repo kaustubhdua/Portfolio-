@@ -108,7 +108,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           }
         };
         const onContext = (e) => {
-          if (!renderer.exploring) return;
+          if (!renderer.exploring || e.target.closest?.('.explore-hud button')) return;
           e.preventDefault();
           if (renderer.place()) placeSound();
         };
