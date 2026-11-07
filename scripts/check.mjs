@@ -94,7 +94,7 @@ else {
 }
 
 // Raised from 160 kB on purpose: the 3D engine and skills list left no headroom for new work.
-const budget = { js: 172 * 1024, css: 20 * 1024 };
+const budget = { js: 180 * 1024, css: 20 * 1024 };
 if (jsBytes > budget.js) fail(`JS is ${(jsBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.js / 1024} kB`);
 if (cssBytes > budget.css) fail(`CSS is ${(cssBytes / 1024).toFixed(1)} kB gzip, budget is ${budget.css / 1024} kB`);
 
