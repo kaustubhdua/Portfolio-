@@ -12,7 +12,8 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 - **Progressive experience:** the portfolio content loads directly on normal visits; the immersive title-screen experience is opt-in with `?immersive=1`.
 - **Responsive UI:** project case studies, profile, experience, skills, focus areas and contact content adapt to desktop and mobile layouts.
 - **Accessibility:** keyboard navigation, command palette (`Ctrl+K`), semantic content, reduced-motion handling and a non-3D fallback.
-- **Honest project evidence:** flagship projects are curated, team work is labelled, demo availability is stated accurately, and job simulations or hackathon participation are not presented as employment or awards.
+- **Honest experience evidence:** campus roles, upstream contributions, hackathon participation, formal coursework and job simulations are grouped separately; participation is never presented as a certification, employment or an award.
+- **Honest project evidence:** flagship projects are curated, team work is labelled and demo availability is stated accurately.
 - **Resume availability:** the resume entry points currently show a coming-soon notice; no downloadable PDF is publicly exposed.
 
 ## Selected work featured on the site
@@ -30,12 +31,12 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 ## Additional engineering work
 
 - [CrickVision](https://github.com/kaustubhdua/CrickVision-) — experimental local-first cricket video computer-vision toolkit; cricket-specific accuracy is not yet validated.
-- [CyberSentinel](https://github.com/kaustubhdua/jai-hack) — offline multi-agent network-flow intrusion analysis with simulated defense decisions.
+- [CyberSentinel](https://github.com/kaustubhdua/jai-hack) — agentic cybersecurity prototype explored during JAI 2026 at JIIT (30–31 October); participation is not presented as a win.
 - [Infracis](https://github.com/kaustubhdua/infracis) — evidence-first location due-diligence and comparison MVP.
 - [RideForge](https://github.com/kaustubhdua/Smart_bike_taxi_platform) — C++17 bike-taxi backend prototype.
-- [AkashChalak](https://github.com/kaustubhdua/AkashChalak) — satellite-assisted India air-quality and hotspot decision-support prototype.
+- [AkashChalak](https://github.com/kaustubhdua/AkashChalak) — satellite-assisted air-quality and potential HCHO hotspot decision-support prototype explored during JIIT’s SIH 2026 internal round (24–25 August); not presented as a national finalist or winner.
 
-The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), the NSoC Campus Ambassador role.
+The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), and the NSoC Winter Edition 2026 Campus Ambassador selection for the Outreach & Relations team (remote term: 15–30 October 2026). Hackathon participation (JAI 2026, SIH 2026 internal round, Bharatiya Antariksh Hackathon and OSDHACK’26) appears in its own section, separate from CS50 SQL coursework.
 
 ## Tech stack
 
