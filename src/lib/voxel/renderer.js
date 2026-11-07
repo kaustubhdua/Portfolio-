@@ -468,18 +468,20 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     dirty = true;
     schedule();
   };
-  window.addEventListener('scroll', readScroll, { passive: true });
-  window.addEventListener('resize', () => {
+  const onResize = () => {
     resize();
     readScroll();
-  });
+  };
+  const onContextLost = (e) => {
+    e.preventDefault();
+    onContextLost?.();
+  };
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', onResize, { passive: true });
   window.addEventListener('pointermove', onPointer, { passive: true });
   const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(readScroll) : null;
   ro?.observe(document.body);
-  canvas.addEventListener('webglcontextlost', (e) => {
-    e.preventDefault();
-    onContextLost?.();
-  });
+  canvas.addEventListener('webglcontextlost', onContextLost);
 
   const drawSlabs = (w, vp, kind, camPos, look) => {
     const planes = [];
@@ -1070,6 +1072,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       cancelAnimationFrame(raf);
       clearTimeout(building);
       window.removeEventListener('scroll', readScroll);
+      window.removeEventListener('resize', onResize);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', clearInputs);
@@ -1077,7 +1080,9 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
+      canvas.removeEventListener('webglcontextlost', onContextLost);
       ro?.disconnect();
+      for (const w of Object.values(worlds)) clearTimeout(w.relightTimer);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     },
   };
