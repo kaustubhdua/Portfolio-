@@ -20,6 +20,9 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 - [NIRDHOOM](https://github.com/kaustubhdua/nihdhoom) — field-first crop-residue coordination prototype.
 - [Saathi](https://github.com/kaustubhdua/Saathi) — Hindi/Hinglish assistant with deterministic intent routing and source provenance.
 - [PatchPilot](https://github.com/kaustubhdua/PatchPilot) — evidence-backed pull-request diff triage; it does not execute repository code.
+- [SATARK Sentinel](https://github.com/kaustubhdua/Satark) — evidence-led cybersecurity investigation prototype with FIRSTLIGHT, deterministic threat triage and optional local Ollama assistance; response actions are simulated.
+- [Adapt AI](https://github.com/kaustubhdua/adapt-ai) — team-built, hardware-aware local AI assistant that recommends Ollama models based on available RAM/VRAM. I contributed as part of the team.
+- [Smart Waste Management](https://github.com/kaustubhdua/smart_waste_project) — synthetic-data prototype combining fill-level prediction, collection prioritisation and OR-Tools route optimisation.
 - [JIIT Youth Club Website 2](https://github.com/kaustubhdua/JYC-Website2) — campus-club website for societies, events, gallery and recruitment.
 
 The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), the NSoC Campus Ambassador role.
