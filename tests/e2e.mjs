@@ -361,6 +361,10 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const p1 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
   const [x1, , z1] = p1.split(',').map(Number);
   ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
+  await page.keyboard.press('Digit3');
+  ok('number keys select the matching block and update the hotbar', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2' && document.querySelectorAll('.hotbar-slot')[2].getAttribute('aria-pressed') === 'true'));
+  await page.getByRole('button', { name: 'Lamp (4)' }).click();
+  ok('hotbar buttons update the selected block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
