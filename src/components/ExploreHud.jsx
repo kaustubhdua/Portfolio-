@@ -27,6 +27,8 @@ export default function ExploreHud({ onExit }) {
       if (e.code === 'Escape') onExit();
       if (/^Digit[1-4]$/.test(e.code)) setSlot(Number(e.code.slice(5)) - 1);
     };
+    const onHotbar = (e) => setSlot(Math.max(0, Math.min(3, Number(e.detail) || 0)));
+    window.addEventListener('portfolio:hotbar', onHotbar);
     // Esc releases the mouse capture; treat that as "leave"
     let locked = false;
     const onLock = () => {
@@ -38,6 +40,7 @@ export default function ExploreHud({ onExit }) {
     return () => {
       clearTimeout(t);
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('portfolio:hotbar', onHotbar);
       document.removeEventListener('pointerlockchange', onLock);
     };
   }, [onExit]);
@@ -159,7 +162,17 @@ export default function ExploreHud({ onExit }) {
           <div className="stick" ref={stickRef} aria-label="Move joystick" role="presentation">
             <div className="stick-knob" ref={knobRef} />
           </div>
-          <button type="button" className="ex-btn ex-jump pixel" onPointerDown={() => api?.jumpInput(true)} onPointerUp={() => api?.jumpInput(false)} onPointerCancel={() => api?.jumpInput(false)}>
+          <button
+            type="button"
+            className="ex-btn ex-jump pixel"
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              api?.jumpInput(true);
+            }}
+            onPointerUp={() => api?.jumpInput(false)}
+            onPointerCancel={() => api?.jumpInput(false)}
+            onLostPointerCapture={() => api?.jumpInput(false)}
+          >
             Jump
           </button>
           <button
