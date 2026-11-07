@@ -453,12 +453,6 @@ export const projects = [
 /** Forks and smaller prototypes. Shown separately and labelled honestly. */
 export const explored = [
   {
-    name: 'GitGlobe',
-    kind: 'Shipped 3D discovery platform · WebGL + ML',
-    text: 'An interactive globe that spatially organises nearly 199k open-source repositories by semantic capability, with search, neighbourhood exploration, approachability signals and a popularity-blind quality model.',
-    repo: 'https://github.com/kaustubhdua/GitGlobe',
-  },
-  {
     name: 'CrickVision',
     kind: 'Experimental computer-vision toolkit · Python',
     text: 'A local-first cricket video toolkit with person detection, shot-boundary heuristics, optional tracking, annotation sampling, provenance manifests and evaluation utilities. Cricket-specific accuracy and ball tracking are not yet validated.',
