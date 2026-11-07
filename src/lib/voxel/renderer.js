@@ -536,6 +536,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     }
     if (/^Digit[1-4]$/.test(e.code)) {
       hotbar = Number(e.code.slice(5)) - 1;
+      canvas.dataset.hotbar = String(hotbar);
       window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
     }
   };
@@ -576,6 +577,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   const HOTBAR = [B.PLANKS, B.COBBLE, B.GLASS, B.LAMP];
   let hotbar = 0;
+  canvas.dataset.hotbar = '0';
 
   let pickCam = null;
   let simTime = 0;
@@ -1016,6 +1018,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     select(index) {
       if (!Number.isFinite(index)) return;
       hotbar = Math.max(0, Math.min(HOTBAR.length - 1, Math.trunc(index)));
+      canvas.dataset.hotbar = String(hotbar);
       window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
       dirty = true;
       schedule();
