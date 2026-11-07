@@ -468,18 +468,20 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     dirty = true;
     schedule();
   };
-  window.addEventListener('scroll', readScroll, { passive: true });
-  window.addEventListener('resize', () => {
+  const onResize = () => {
     resize();
     readScroll();
-  });
+  };
+  const onCanvasContextLost = (e) => {
+    e.preventDefault();
+    onContextLost?.();
+  };
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', onResize, { passive: true });
   window.addEventListener('pointermove', onPointer, { passive: true });
   const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(readScroll) : null;
   ro?.observe(document.body);
-  canvas.addEventListener('webglcontextlost', (e) => {
-    e.preventDefault();
-    onContextLost?.();
-  });
+  canvas.addEventListener('webglcontextlost', onCanvasContextLost);
 
   const drawSlabs = (w, vp, kind, camPos, look) => {
     const planes = [];
@@ -534,10 +536,26 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       syncKeys();
       schedule();
     }
-    if (/^Digit[1-4]$/.test(e.code)) hotbar = Number(e.code.slice(5)) - 1;
+    if (/^Digit[1-4]$/.test(e.code)) {
+      hotbar = Number(e.code.slice(5)) - 1;
+      canvas.dataset.hotbar = String(hotbar);
+      window.dispatchEvent(new window.CustomEvent('portfolio:hotbar', { detail: hotbar }));
+    }
   };
   const onKeyUp = (e) => {
-    if (keys.delete(e.code)) syncKeys();
+    if (keys.delete(e.code)) {
+      syncKeys();
+      dirty = true;
+      schedule();
+    }
+  };
+  // A tab switch, OS gesture or lost window focus must never leave movement held down.
+  const clearInputs = () => {
+    keys.clear();
+    touchMove.fx = touchMove.fz = 0;
+    touchMove.jump = false;
+    syncKeys();
+    schedule();
   };
   // Chromium reports a huge, bogus pair of mouse deltas (the cursor "jumping" to the lock point and
   // back, hundreds of ms apart) around pointer lock, which used to spin a new player round to face a
@@ -557,13 +575,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementY));
     player.yaw += dx * 0.0022;
     player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy * 0.0022));
+    dirty = true;
+    schedule();
   };
   document.addEventListener('pointerlockchange', onLockChange);
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('blur', clearInputs);
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   const HOTBAR = [B.PLANKS, B.COBBLE, B.GLASS, B.LAMP];
   let hotbar = 0;
+  canvas.dataset.hotbar = '0';
 
   let pickCam = null;
   let simTime = 0;
@@ -840,6 +862,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   // In reduced-motion mode frames only happen when something changed.
   const onVisibility = () => {
     last = performance.now();
+    if (document.hidden) clearInputs();
     schedule();
   };
   document.addEventListener('visibilitychange', onVisibility);
@@ -967,15 +990,21 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       touchMove.fx = fx;
       touchMove.fz = fz;
       syncKeys();
+      dirty = true;
+      schedule();
     },
     jumpInput(on) {
       touchMove.jump = on;
       syncKeys();
+      dirty = true;
+      schedule();
     },
     lookBy(dx, dy) {
       if (!player) return;
       player.yaw += dx;
       player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy));
+      dirty = true;
+      schedule();
     },
     /** Puts the selected block against the face under the crosshair. */
     place(clientX = window.innerWidth / 2, clientY = window.innerHeight / 2) {
@@ -999,6 +1028,14 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
         if (!prev || prev[0] !== c[0] || prev[1] !== c[1] || prev[2] !== c[2]) prev = c;
       }
       return false;
+    },
+    select(index) {
+      if (!Number.isFinite(index)) return;
+      hotbar = Math.max(0, Math.min(HOTBAR.length - 1, Math.trunc(index)));
+      canvas.dataset.hotbar = String(hotbar);
+      window.dispatchEvent(new window.CustomEvent('portfolio:hotbar', { detail: hotbar }));
+      dirty = true;
+      schedule();
     },
     get hotbar() {
       return hotbar;
@@ -1035,13 +1072,17 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       cancelAnimationFrame(raf);
       clearTimeout(building);
       window.removeEventListener('scroll', readScroll);
+      window.removeEventListener('resize', onResize);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', clearInputs);
       window.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
       document.removeEventListener('visibilitychange', onVisibility);
+      canvas.removeEventListener('webglcontextlost', onCanvasContextLost);
       ro?.disconnect();
+      for (const w of Object.values(worlds)) clearTimeout(w.relightTimer);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     },
   };

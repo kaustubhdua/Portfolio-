@@ -188,6 +188,7 @@ html[data-explore='on'] #root > *:not(.world-canvas):not(.explore-hud):not(.fall
 @keyframes explore-fade { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
 .hotbar {
   position: absolute;
+  z-index: 2;
   left: 50%;
   bottom: max(0.8rem, env(safe-area-inset-bottom));
   translate: -50% 0;

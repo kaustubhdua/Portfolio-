@@ -121,7 +121,7 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#chat-input').fill('/contact');
   await page.locator('.chat-form button[type="submit"]').click();
   ok('portfolio chat exposes email and professional links only', (await page.locator('.chat-log a[href*="wa.me"]').count()) === 0 && (await page.locator('.chat-log').getByText(/WhatsApp/i).count()) === 0);
-  await page.getByRole('button', { name: 'Close chat' }).click();
+  await page.locator('#chat-panel').getByRole('button', { name: 'Close chat' }).click();
 
   await page.keyboard.press('Control+k');
   await page.getByRole('combobox', { name: 'Type a command or search' }).fill('resume');
@@ -361,6 +361,10 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const p1 = (await canvas.getAttribute('data-pos')) ?? '0,0,0';
   const [x1, , z1] = p1.split(',').map(Number);
   ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
+  await page.keyboard.press('Digit3');
+  ok('number keys select the matching block and update the hotbar', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2' && document.querySelectorAll('.hotbar-slot')[2].getAttribute('aria-pressed') === 'true'));
+  await page.getByRole('button', { name: 'Lamp (4)' }).click();
+  ok('hotbar buttons update the selected block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
