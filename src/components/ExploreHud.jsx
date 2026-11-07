@@ -83,7 +83,7 @@ export default function ExploreHud({ onExit }) {
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', cancel);
+      el.removeEventListener('pointercancel', up);
       api?.moveInput(0, 0);
     };
   }, [touch, api]);
