@@ -1,7 +1,8 @@
-/** Selected milestones only; participation, job simulations and roles are labelled accurately. */
+/** Milestones are explicitly grouped so hackathon participation is never conflated with certifications. */
 export const advancements = [
   {
     id: 'nsoc',
+    group: 'leadership',
     frame: 'goal',
     category: 'Campus Leadership · Open Source',
     title: 'NSoC Campus Ambassador',
@@ -10,6 +11,7 @@ export const advancements = [
   },
   {
     id: 'jai2026',
+    group: 'participation',
     frame: 'challenge',
     category: 'Hackathon · JAI 2026 · JIIT Noida',
     title: 'Jaypee Agentic AI Hackathon · CyberSentinel',
@@ -18,6 +20,7 @@ export const advancements = [
   },
   {
     id: 'sih2026',
+    group: 'participation',
     frame: 'challenge',
     category: 'Hackathon · Smart India Hackathon · 2026',
     title: 'SIH 2026 Internal Round · AkashChalak',
@@ -26,6 +29,7 @@ export const advancements = [
   },
   {
     id: 'opensource',
+    group: 'opensource',
     frame: 'goal',
     category: 'Open Source · Upstream Contributions',
     title: 'Lemma Platform · 6 Merged PRs',
@@ -34,6 +38,7 @@ export const advancements = [
   },
   {
     id: 'jpmorgan',
+    group: 'programs',
     frame: 'goal',
     category: 'Job Simulation · Forage',
     title: 'JPMorgan Chase Software Engineering',
@@ -42,6 +47,7 @@ export const advancements = [
   },
   {
     id: 'cs50sql',
+    group: 'certifications',
     frame: 'task',
     category: 'Certificate · Harvard',
     title: 'CS50 Introduction to Databases with SQL',
@@ -50,6 +56,7 @@ export const advancements = [
   },
   {
     id: 'isro',
+    group: 'participation',
     frame: 'challenge',
     category: 'Hackathon · ISRO · 2026',
     title: 'Bharatiya Antariksh Hackathon',
@@ -58,10 +65,11 @@ export const advancements = [
   },
   {
     id: 'osdhack',
+    group: 'participation',
     frame: 'task',
     category: 'Hackathon · OSDC · Team',
     title: 'OSDHACK’26 · Adapt AI',
-    text: 'Received a Certificate of Merit for participation. Collaborated with Pulkit Sukhija, Aryan Sharma and Aishni Rathore on a local AI assistant that recommends Ollama models based on available RAM and VRAM.',
+    text: 'Received a Certificate of Merit recognising participation; this is listed under hackathon participation, not as a professional certification. Collaborated with Pulkit Sukhija, Aryan Sharma and Aishni Rathore on a local AI assistant that recommends Ollama models based on available RAM and VRAM.',
     sprite: 'chip',
   },
 ];
