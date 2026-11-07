@@ -21,9 +21,20 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 - [Saathi](https://github.com/kaustubhdua/Saathi) — Hindi/Hinglish assistant with deterministic intent routing and source provenance.
 - [PatchPilot](https://github.com/kaustubhdua/PatchPilot) — evidence-backed pull-request diff triage; it does not execute repository code.
 - [SATARK Sentinel](https://github.com/kaustubhdua/Satark) — evidence-led cybersecurity investigation prototype with FIRSTLIGHT, deterministic threat triage and optional local Ollama assistance; response actions are simulated.
+- [GenomeGuard](https://github.com/kaustubhdua/GenomeGuard) — genomic-data governance research prototype with consent-inspired policy checks, disclosure-risk assessment and auditable decisions; not for clinical or production use.
+- [BharatSim](https://github.com/kaustubhdua/Bharat-Sim) — controlled-beta Android resilience testing workspace with risk planning, APK intake validation and a lease-based ADB/Appium worker; production execution remains gated.
 - [Adapt AI](https://github.com/kaustubhdua/adapt-ai) — team-built, hardware-aware local AI assistant that recommends Ollama models based on available RAM/VRAM. I contributed as part of the team.
 - [Smart Waste Management](https://github.com/kaustubhdua/smart_waste_project) — synthetic-data prototype combining fill-level prediction, collection prioritisation and OR-Tools route optimisation.
 - [JIIT Youth Club Website 2](https://github.com/kaustubhdua/JYC-Website2) — campus-club website for societies, events, gallery and recruitment.
+
+## Additional engineering work
+
+- [GitGlobe](https://github.com/kaustubhdua/GitGlobe) — shipped 3D semantic discovery globe for open-source repositories.
+- [CrickVision](https://github.com/kaustubhdua/CrickVision-) — experimental local-first cricket video computer-vision toolkit; cricket-specific accuracy is not yet validated.
+- [CyberSentinel](https://github.com/kaustubhdua/jai-hack) — offline multi-agent network-flow intrusion analysis with simulated defense decisions.
+- [Infracis](https://github.com/kaustubhdua/infracis) — evidence-first location due-diligence and comparison MVP.
+- [RideForge](https://github.com/kaustubhdua/Smart_bike_taxi_platform) — C++17 bike-taxi backend prototype.
+- [AkashChalak](https://github.com/kaustubhdua/AkashChalak) — satellite-assisted India air-quality and hotspot decision-support prototype.
 
 The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), the NSoC Campus Ambassador role.
 
