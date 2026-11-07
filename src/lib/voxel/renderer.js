@@ -534,10 +534,21 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       syncKeys();
       schedule();
     }
-    if (/^Digit[1-4]$/.test(e.code)) hotbar = Number(e.code.slice(5)) - 1;
+    if (/^Digit[1-4]$/.test(e.code)) {
+      hotbar = Number(e.code.slice(5)) - 1;
+      window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
+    }
   };
   const onKeyUp = (e) => {
     if (keys.delete(e.code)) syncKeys();
+  };
+  // A tab switch, OS gesture or lost window focus must never leave movement held down.
+  const clearInputs = () => {
+    keys.clear();
+    touchMove.fx = touchMove.fz = 0;
+    touchMove.jump = false;
+    syncKeys();
+    schedule();
   };
   // Chromium reports a huge, bogus pair of mouse deltas (the cursor "jumping" to the lock point and
   // back, hundreds of ms apart) around pointer lock, which used to spin a new player round to face a
@@ -561,6 +572,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   document.addEventListener('pointerlockchange', onLockChange);
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('blur', clearInputs);
   window.addEventListener('mousemove', onMouseMove, { passive: true });
   const HOTBAR = [B.PLANKS, B.COBBLE, B.GLASS, B.LAMP];
   let hotbar = 0;
@@ -840,6 +852,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   // In reduced-motion mode frames only happen when something changed.
   const onVisibility = () => {
     last = performance.now();
+    if (document.hidden) clearInputs();
     schedule();
   };
   document.addEventListener('visibilitychange', onVisibility);
@@ -1000,6 +1013,13 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       }
       return false;
     },
+    select(index) {
+      if (!Number.isFinite(index)) return;
+      hotbar = Math.max(0, Math.min(HOTBAR.length - 1, Math.trunc(index)));
+      window.dispatchEvent(new CustomEvent('portfolio:hotbar', { detail: hotbar }));
+      dirty = true;
+      schedule();
+    },
     get hotbar() {
       return hotbar;
     },
@@ -1037,6 +1057,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       window.removeEventListener('scroll', readScroll);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', clearInputs);
       window.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('pointerlockchange', onLockChange);
       window.removeEventListener('pointermove', onPointer);
