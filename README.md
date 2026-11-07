@@ -29,7 +29,6 @@ A recruiter-facing portfolio built as an interactive voxel world. It combines a 
 
 ## Additional engineering work
 
-- [GitGlobe](https://github.com/kaustubhdua/GitGlobe) — shipped 3D semantic discovery globe for open-source repositories.
 - [CrickVision](https://github.com/kaustubhdua/CrickVision-) — experimental local-first cricket video computer-vision toolkit; cricket-specific accuracy is not yet validated.
 - [CyberSentinel](https://github.com/kaustubhdua/jai-hack) — offline multi-agent network-flow intrusion analysis with simulated defense decisions.
 - [Infracis](https://github.com/kaustubhdua/infracis) — evidence-first location due-diligence and comparison MVP.
