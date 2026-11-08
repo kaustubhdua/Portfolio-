@@ -18,6 +18,7 @@ for (const p of projects) {
   for (const item of p.evidence ?? []) add(`${p.name} evidence: ${item.label}`, item.url);
 }
 for (const [k, v] of Object.entries(profile.links)) add(`profile ${k}`, v);
+add('upstream contribution archive', profile.openSourceArchive);
 for (const role of profile.roles ?? []) add(`role: ${role.org}`, role.url);
 for (const item of profile.openSource ?? []) add(`upstream PR #${item.number}`, item.url);
 for (const item of advancements) {
