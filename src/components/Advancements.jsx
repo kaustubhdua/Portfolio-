@@ -7,18 +7,16 @@ import { useInView } from '../hooks/useInView.js';
 const meta = sections.find((s) => s.id === 'advancements');
 
 const groups = [
-  { id: 'leadership', title: 'Leadership & Campus Roles', description: 'Organising, community-building and student leadership.' },
-  { id: 'opensource', title: 'Open-source Contributions', description: 'Merged work in upstream projects, with contribution details.' },
-  { id: 'participation', title: 'Hackathons & Technical Participation', description: 'Events and team projects. Participation is not presented as a certification, finalist position or award.' },
-  { id: 'certifications', title: 'Certifications & Coursework', description: 'Formal course completion and credentials.' },
-  { id: 'programs', title: 'Technical Programs & Simulations', description: 'Structured industry learning experiences; these are not employment.' },
+  { id: 'experience', title: 'Professional Experience', description: 'Internship work backed by public project repositories.' },
+  { id: 'programs', title: 'Technical Programs', description: 'Structured industry learning; simulations are not employment.' },
+  { id: 'certifications', title: 'Coursework', description: 'Selected technical coursework with a completed final project.' },
 ];
 
 export default function Advancements() {
   const [ref, seen] = useInView({ threshold: 0.12 });
 
   return (
-    <Section id="advancements" {...meta} title="Experience, Contributions & Learning" lead="A clear record of leadership, upstream engineering, event participation and formal learning—with each type kept distinct.">
+    <Section id="advancements" {...meta} title="Experience & Learning" lead="A concise record of internship work and structured technical learning—not a list of every event, badge or course.">
       <div ref={ref} className={`adv-groups${seen ? ' unlocked' : ''}`}>
         {groups.map((group) => {
           const items = advancements.filter((item) => item.group === group.id);
@@ -37,6 +35,15 @@ export default function Advancements() {
                       <p className="adv-cat pixel">{a.category}</p>
                       <h4 className="adv-title pixel">{a.title}</h4>
                       <p className="adv-text">{a.text}</p>
+                      {a.links?.length > 0 && (
+                        <ul className="adv-links" aria-label="Project evidence">
+                          {a.links.map((link) => (
+                            <li key={link.url}>
+                              <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}<span className="sr-only"> (opens in a new tab)</span></a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </li>
                 ))}
