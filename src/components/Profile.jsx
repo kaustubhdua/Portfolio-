@@ -85,7 +85,7 @@ export default function Profile() {
             </li>
           ))}
         </ul>
-        <a className="btn btn-secondary btn-sm pixel" href="https://github.com/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua" target="_blank" rel="noopener noreferrer">
+        <a className="btn btn-secondary btn-sm pixel" href={profile.openSourceArchive} target="_blank" rel="noopener noreferrer">
           View all merged PRs<span className="sr-only"> (opens in a new tab)</span>
         </a>
       </Reveal>
