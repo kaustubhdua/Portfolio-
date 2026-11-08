@@ -80,6 +80,9 @@ export default function Forge({ onOpen }) {
         <a className="btn btn-secondary btn-sm pixel" href={profile.links.github + '?tab=repositories'} target="_blank" rel="noopener noreferrer">
           Browse all repositories<span className="sr-only"> (opens in a new tab)</span>
         </a>
+        <a className="btn btn-quiet btn-sm pixel" href="https://github.com/kaustubhdua/Portfolio-/blob/main/docs/PROJECT_TECHNOLOGY_AUDIT.md" target="_blank" rel="noopener noreferrer">
+          Full technology audit<span className="sr-only"> (opens in a new tab)</span>
+        </a>
       </Reveal>
     </Section>
   );
