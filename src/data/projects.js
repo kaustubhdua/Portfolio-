@@ -258,6 +258,8 @@ export const projects = [
       'Admin workspace for driver approval, ride search and support-report triage',
       'Graph-based shortest-path routing with deterministic tie handling and edge-case tests',
       'Authenticated server-sent ride updates with reconnect and polling recovery',
+      'Strict HS256 access-token verification with canonical base64url, role/subject checks and a bounded 15-minute lifetime',
+      'PBKDF2-HMAC-SHA-256 password records with exact-format and bounded-iteration verification',
     ],
     architecture: [
       { title: 'API', text: 'C++17 Boost.Beast service with bounded PostgreSQL connection pooling, request limits and readiness checks.' },
@@ -267,6 +269,7 @@ export const projects = [
     decisions: [
       'Booking and quote consumption are transactional and idempotent.',
       'Driver offers have explicit expiry and redispatch rather than relying on a browser timer.',
+      'Authentication rejects malformed or non-canonical token segments, unsupported roles, missing issued-at claims and overlong token lifetimes.',
       'Route and dispatch edge cases are tested; benchmark claims are not made without reproducible samples.',
     ],
     limits: [
@@ -368,6 +371,7 @@ projects.push(
       'ADB smoke worker and fixture-based Android emulator CI journey',
       'Line-addressable logcat signals for crashes, ANRs, OOM, network and storage',
       'Evidence synthesis across worker steps, condition readback and diagnostic markers',
+      'Single-active-job worker identity: duplicate polls cannot clear a live assignment or claim a second run',
     ],
     architecture: [
       { title: 'Planner and API', text: 'FastAPI provides risk planning, APK validation, run lifecycle and worker protocol endpoints.' },
@@ -378,6 +382,7 @@ projects.push(
     decisions: [
       'A test plan is never labelled as an executed test; the UI distinguishes planned, queued, running and completed evidence.',
       'Workers use expiring leases, heartbeat and stale-token rejection to make retries and crashes explicit.',
+      'A worker-row reservation serializes concurrent claims for one worker ID; a live lease remains busy until terminal result or expiry.',
       'APK-derived inputs are bounded and validated before they reach shell-facing operations.',
       'The emulator network fixture preserves TLS through an allowlisted CONNECT proxy instead of trusting a public speed-test endpoint.',
     ],
@@ -426,6 +431,7 @@ projects.push(
       'Session-based hash-chained review events and JSON report export',
       'Local deterministic suspicious-content checks with optional self-hosted Ollama assistance',
       'Native Linux sensor for bounded authentication-log collection and explicit-path file-integrity snapshots',
+      'Public URL evidence fetch with DNS-pinned connections, redirect revalidation, bounded response size and explicit hidden/embedded HTML filtering',
     ],
     architecture: [
       { title: 'Investigation engine', text: 'Deterministic rules correlate supported observations and evidence references; model output is kept separate from verified signals.' },
@@ -437,6 +443,7 @@ projects.push(
       'Observations, AI interpretation, uncertainty and response decisions are separate concepts.',
       'Synthetic incident artifacts make the main investigation demo repeatable without real incident data.',
       'The default local path avoids sending submitted content to external threat-intelligence APIs.',
+      'URL extraction removes common hidden containers and inline hidden states but does not execute JavaScript or compute external CSS visibility; fetched text remains untrusted evidence.',
       'Response controls are simulation-only unless a separately validated target-bound adapter is configured.',
     ],
     limits: [
