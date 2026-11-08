@@ -64,12 +64,20 @@ try {
     }
 
     await card.click();
-    const dialog = page.getByRole('dialog');
-    await dialog.waitFor({ state: 'visible', timeout: 10_000 });
+    const dialog = page.locator('dialog.dialog');
+    await page.waitForFunction(
+      () => globalThis.document.querySelector('dialog.dialog')?.open === true,
+      null,
+      { timeout: 10_000 },
+    );
     const dialogText = await dialog.innerText();
     assert.ok(dialogText.toLowerCase().includes(name.toLowerCase()), `Case study opens for ${name}`);
     await page.keyboard.press('Escape');
-    await dialog.waitFor({ state: 'hidden', timeout: 10_000 });
+    await page.waitForFunction(
+      () => !globalThis.document.querySelector('dialog.dialog')?.open,
+      null,
+      { timeout: 10_000 },
+    );
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
