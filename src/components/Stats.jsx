@@ -19,7 +19,7 @@ const stats = [
 ];
 
 export default function Stats() {
-  const [ref, seen] = useInView({ threshold: 0.4 });
+  const [ref] = useInView({ threshold: 0.4 });
   const [paused, setPaused] = useState(false);
 
   return (
