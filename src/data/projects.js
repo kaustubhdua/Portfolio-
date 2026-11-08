@@ -161,7 +161,7 @@ export const projects = [
   },
   {
     id: 'satark',
-    flagship: true,
+    flagship: false,
     stage: 'Prototype',
     name: 'SATARK Sentinel',
     tagline: 'Evidence-led cyber incident investigation',
@@ -218,7 +218,7 @@ export const projects = [
   },
   {
     id: 'genomeguard',
-    flagship: true,
+    flagship: false,
     stage: 'Research prototype',
     name: 'GenomeGuard',
     tagline: 'Privacy-aware governance for genomic research data',
@@ -276,7 +276,7 @@ export const projects = [
   },
   {
     id: 'bharatsim',
-    flagship: true,
+    flagship: false,
     stage: 'Controlled-beta MVP',
     name: 'BharatSim',
     tagline: 'Evidence-led Android resilience testing',
@@ -333,7 +333,7 @@ export const projects = [
   },
   {
     id: 'smartwaste',
-    flagship: true,
+    flagship: false,
     stage: 'Prototype',
     name: 'Smart Waste',
     tagline: 'Predict, prioritise and route waste collection',
@@ -377,7 +377,7 @@ export const projects = [
   },
   {
     id: 'jiit-toppers',
-    flagship: true,
+    flagship: false,
     stage: 'Prototype · production gates open',
     name: 'JIIT Toppers',
     tagline: 'Student-first academic workspace for JIIT',
@@ -468,7 +468,7 @@ export const projects = [
   },
   {
     id: 'adaptai',
-    flagship: true,
+    flagship: false,
     stage: 'Team project',
     name: 'Adapt AI',
     tagline: 'Hardware-aware local AI assistant',
