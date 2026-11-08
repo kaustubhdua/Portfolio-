@@ -32,7 +32,8 @@ export function ProjectCard({ project, onOpen, delay }) {
         <ul className="badges" aria-label="Project highlights">
           {project.badges.slice(0, 2).map((b) => <li key={b}>{b}</li>)}
         </ul>
-        <ul className="chips" aria-label={`Primary technologies: ${stackGroups.map((group) => group.title).join(", ")}`}>
+        <p className="card-kind pixel">STACK / {stackGroups.map((group) => group.title).join(' · ')}</p>
+        <ul className="chips" aria-label={`Primary technologies grouped by ${stackGroups.map((group) => group.title).join(", ")}`}>
           {project.stack.slice(0, 3).map((t) => <li key={t}>{t}</li>)}
           {extra > 0 && <li className="chip-more">+{extra}</li>}
         </ul>
