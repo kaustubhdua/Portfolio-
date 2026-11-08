@@ -459,6 +459,23 @@
   color: var(--muted);
 }
 
+.case-workflow {
+  margin: 0.8rem 0 1.1rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 2px solid var(--accent, var(--gold));
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.case-workflow .pixel {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--gold);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+}
+
 .card-workflow {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
