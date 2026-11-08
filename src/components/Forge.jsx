@@ -5,7 +5,10 @@ import { useWorld } from '../hooks/useTheme.js';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
-const featuredProjects = projects.filter((project) => project.flagship);
+const featuredProjects = projects
+  .filter((project) => project.flagship)
+  // Put the projects with a currently advertised demo first; stable sort preserves the curated order within each group.
+  .sort((a, b) => Number(Boolean(b.live)) - Number(Boolean(a.live)));
 const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight' };
 
 export function ProjectCard({ project, onOpen, delay }) {
