@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FaGithub, FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { Section, Reveal } from './ui.jsx';
 import { biomeName, projectImage, projects, explored } from '../data/projects.js';
 import { useWorld } from '../hooks/useTheme.js';
@@ -38,12 +37,12 @@ export function ProjectCard({ project, onOpen, delay }) {
           Case study
         </button>
         <a className="icon-btn icon-btn-sm" href={project.repo} target="_blank" rel="noopener noreferrer" aria-label={`${project.name} on GitHub (opens in a new tab)`}>
-          <FaGithub aria-hidden="true" />
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.24-1.62-1.24-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15 1 .1.98 1.9 3.05 1.35.1-.72.39-1.2.7-1.48-2.48-.28-5.09-1.24-5.09-5.53 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.06 1.15a10.6 10.6 0 0 1 5.57 0c2.12-1.45 3.06-1.15 3.06-1.15.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.3-2.62 5.25-5.11 5.52.4.35.75 1.03.75 2.08v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
         </a>
         {!project.live && <span className="demo-soon pixel">{project.demoNote || 'Demo: coming soon'}</span>}
         {project.live && (
           <a className="icon-btn icon-btn-sm" href={project.live} target="_blank" rel="noopener noreferrer" aria-label={`${project.name} ${project.liveLabel ?? 'live demo'} (opens in a new tab)`}>
-            <FaArrowUpRightFromSquare aria-hidden="true" />
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M14 3h7v7M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
           </a>
         )}
       </div>

@@ -460,8 +460,8 @@ export const explored = [
   },
   {
     name: 'CyberSentinel',
-    kind: 'Agentic cybersecurity prototype · JAI Summit 2026',
-    text: 'An offline five-agent network-flow intrusion analysis prototype combining supervised classification, anomaly detection, evidence fusion, chronological correlation and simulated policy decisions. It does not capture live packets or change host firewalls.',
+    kind: 'Agentic cybersecurity prototype · JAI 2026 · 30–31 October',
+    text: 'Built during the Jaypee Agentic AI Hackathon at JIIT Sector 128. The prototype explores agent-based cybersecurity analysis, network-flow preprocessing, anomaly detection and threat analysis in a working application. The LinkedIn post links the project/code and a demo; the shortened links are retained as source evidence, not independently verified deployment claims.',
     repo: 'https://github.com/kaustubhdua/jai-hack',
   },
   {
@@ -478,8 +478,8 @@ export const explored = [
   },
   {
     name: 'AkashChalak',
-    kind: 'Hackathon prototype · ISRO Bharatiya Antariksh Hackathon',
-    text: 'A satellite-assisted air-quality and hotspot decision-support prototype for India, built around CPCB datasets and NASA FIRMS feeds.',
+    kind: 'Hackathon prototype · SIH 2026 internal round',
+    text: 'A satellite-assisted air-quality and potential HCHO hotspot decision-support prototype explored by Team AkashChalak during JIIT Noida’s Smart India Hackathon 2026 internal round on 24–25 August. The concept combines CPCB observations, NASA FIRMS fire data, spatial interpolation and wind-aware visualisation; it is not presented as an official SIH finalist or winner.',
     repo: 'https://github.com/kaustubhdua/AkashChalak',
   },
 ];
