@@ -56,6 +56,10 @@ This index translates the public repository documentation into recruiter-facing 
 - **Status boundary:** portfolio MVP in progress. Passing CI on a tested revision is not proof of a live commercial service or production deployment.
 - **Best recruiter angle:** systems programming, transactional data, distributed workflow thinking, algorithmic routing and broad test automation.
 
+## Complete technology inventory
+
+The five featured case studies below show their full direct stack in the portfolio UI. For the wider project collection, see the [source-backed 16-project technology audit](PROJECT_TECHNOLOGY_AUDIT.md). That ledger separates runtime dependencies, build/test tooling, optional integrations and external providers; it also covers JIIT Youth Club and the Portfolio application itself.
+
 ## Display guidance
 
 1. Lead with the five projects above; they demonstrate different engineering problems rather than five variants of the same app.
