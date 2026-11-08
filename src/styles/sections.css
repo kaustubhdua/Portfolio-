@@ -476,13 +476,6 @@
   letter-spacing: 0.1em;
 }
 
-.card-workflow .pixel {
-  color: var(--gold);
-  font-size: 0.56rem;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  padding-top: 0.08rem;
-}
 
 .card-body .chips {
   margin-top: auto;
