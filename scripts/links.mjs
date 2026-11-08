@@ -1,20 +1,39 @@
 /**
- * Checks every external link in the site data and prints the ones that fail.
- * Needs network access, so it is not part of `npm run verify`:  npm run check:links
+ * Checks every authored external destination in project, profile and blog data.
+ * Needs network access, so it is not part of `npm run verify`: npm run check:links
  */
+import { readdir, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { projects } from '../src/data/projects.js';
 import { profile } from '../src/data/profile.js';
+import { advancements } from '../src/data/advancements.js';
 
 const urls = new Map();
 const add = (label, url) => {
-  if (url && /^https?:/.test(url)) urls.set(url, [...(urls.get(url) ?? []), label]);
+  if (url && /^https?:\/\//i.test(url)) urls.set(url, [...(urls.get(url) ?? []), label]);
 };
+
 for (const p of projects) {
   add(`${p.name} repo`, p.repo);
   add(`${p.name} live`, p.live);
   for (const item of p.evidence ?? []) add(`${p.name} evidence: ${item.label}`, item.url);
 }
 for (const [k, v] of Object.entries(profile.links)) add(`profile ${k}`, v);
+for (const role of profile.roles ?? []) add(`role: ${role.org}`, role.url);
+for (const item of profile.openSource ?? []) add(`upstream PR #${item.number}`, item.url);
+for (const item of advancements) {
+  for (const link of item.links ?? []) add(`${item.title}: ${link.label}`, link.url);
+}
+
+// Blog articles are authored content too, so verify their Markdown destinations.
+const blogDir = new URL('../content/blog/', import.meta.url);
+for (const file of await readdir(blogDir)) {
+  if (!file.endsWith('.md')) continue;
+  const markdown = await readFile(new URL(file, blogDir), 'utf8');
+  for (const match of markdown.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)) {
+    add(`blog ${file}: ${match[1]}`, match[2]);
+  }
+}
 
 let failed = 0;
 let uncertain = 0;
