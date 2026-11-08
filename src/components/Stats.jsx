@@ -7,7 +7,7 @@ import { profile } from '../data/profile.js';
 import { skillGroups } from '../data/skills.js';
 import { useInView } from '../hooks/useInView.js';
 
-const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'ollama', 'github', 'playwright', 'docker']);
+const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'webgl', 'github', 'playwright', 'docker']);
 const items = skillGroups.flatMap((group) => group.items).filter((item) => featuredSkillIds.has(item.id));
 
 // Keep the figures static: the final value is visible to crawlers, assistive technology and visitors
@@ -35,7 +35,7 @@ export default function Stats() {
         </ul>
 
         <div className={`marquee${paused ? ' is-paused' : ''}`}>
-          <ul className="marquee-track" aria-label="Core technologies used in selected projects">
+          <ul className="marquee-track" aria-label="Core technologies used in selected work and this portfolio">
             {[...items, ...items].map((item, i) => (
               <li key={`${item.id}-${i}`} aria-hidden={i >= items.length ? 'true' : undefined}>
                 <TechIcon item={item} size={20} />
