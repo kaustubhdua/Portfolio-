@@ -21,6 +21,7 @@ export const projectImage = (project, world) =>
 export const projects = [
 {
     id: 'nirdhoom',
+    workflow: 'Field request → machine slot → dispatch → verified lot',
     flagship: true,
     stage: 'Prototype',
     name: 'NIRDHOOM',
@@ -72,6 +73,7 @@ export const projects = [
   },
 {
     id: 'saathi',
+    workflow: 'Intent → sourced tool → local voice → human escalation',
     flagship: true,
     stage: 'MVP',
     name: 'Saathi',
@@ -120,6 +122,7 @@ export const projects = [
   },
 {
     id: 'patchpilot',
+    workflow: 'Unified diff → integrity checks → evidence → review',
     flagship: true,
     stage: 'Early-stage',
     name: 'PatchPilot',
@@ -164,6 +167,7 @@ export const projects = [
   },
 {
     id: 'smartwaste',
+    workflow: 'Telemetry → priority → approved jobs → optimized routes',
     flagship: true,
     stage: 'Prototype',
     name: 'Smart Waste',
@@ -213,6 +217,7 @@ export const projects = [
   },
 {
     id: 'rideforge',
+    workflow: 'Quote → booking → driver offer → redispatch → trip',
     flagship: true,
     stage: 'Portfolio MVP',
     name: 'RideForge',
