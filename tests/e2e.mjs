@@ -362,7 +362,7 @@ for (const [label, viewport] of [
   await pp.getByRole('button', { name: 'All projects' }).click();
   const mobileFeaturedProject = featuredProjects[0];
   await pp.getByRole('button', { name: `Case study: ${mobileFeaturedProject.name}` }).click();
-  ok('phone: a featured project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()) === mobileFeaturedProject.name);
+  ok('phone: a featured project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()).trim() === mobileFeaturedProject.name.trim());
   await pp.locator('.dialog-close').click();
   await phone.close();
 
