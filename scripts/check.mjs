@@ -16,10 +16,10 @@ const { advancements } = await import(pathToFileURL(path.resolve('src/data/advan
 const { skillGroups } = await import(pathToFileURL(path.resolve('src/data/skills.js')).href);
 
 const problems = [];
+const fail = (msg) => problems.push(msg);
 const coreSkills = skillGroups.flatMap((group) => group.items);
 if (coreSkills.length !== 15) fail(`Expected 15 curated core skills, found ${coreSkills.length}`);
 if (new Set(coreSkills.map((skill) => skill.id)).size !== coreSkills.length) fail('Skill inventory contains duplicate IDs');
-const fail = (msg) => problems.push(msg);
 
 const allowedAdvancementGroups = new Set(['certifications', 'programs']);
 for (const item of advancements) {
