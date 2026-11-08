@@ -56,6 +56,7 @@ async function open({ threed = false, ...opts } = {}) {
   ok('portfolio content is visible immediately on first visit', await page.locator('.hero-name').isVisible() && await page.locator('.hero-role').isVisible());
   ok('standard entry has no blocking title screen', (await page.locator('.title-screen').count()) === 0);
   ok('hero provides direct About and Projects navigation', (await page.locator('a[href="#profile"]').count()) >= 1 && (await page.locator('a[href="#forge"]').count()) >= 1);
+  ok('four recruiter-priority case studies are curated', featuredCount === 4 && featuredProjects.map((project) => project.id).join(',') === 'nirdhoom,saathi,patchpilot,jyc');
 
   await page.keyboard.press('Escape');
   await page.waitForSelector('.loader', { state: 'detached', timeout: 3000 });
@@ -381,6 +382,45 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await page.waitForFunction(() => document.querySelector('canvas.world-canvas')?.dataset.world === 'overworld', null, { timeout: 20000 }).catch(() => {});
   ok('3D world switches to the village after the portal trip', (await canvas.getAttribute('data-world')) === 'overworld', String(await canvas.getAttribute('data-world')));
   await ctx.close();
+}
+
+// Mobile free-roam: verify the touch HUD and joystick movement on a coarse-pointer device.
+{
+  const touchCtx = await glBrowser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await touchCtx.newPage();
+  page.on('console', (m) => {
+    if (['error', 'warning'].includes(m.type()) && !GL_NOISE.test(m.text())) errors.push(m.text());
+  });
+  page.on('pageerror', (e) => errors.push(`pageerror ${e.message}`));
+  await page.addInitScript(() => sessionStorage.setItem('nether-intro-seen', '1'));
+  await page.goto(BASE);
+  await page.waitForFunction(() => document.documentElement.dataset.threed === 'on', null, { timeout: 60000 });
+  await page.waitForFunction(() => document.querySelector('canvas.world-canvas')?.dataset.state === 'ready', null, { timeout: 60000 });
+  await page.locator('.explore-btn').click();
+  await page.waitForSelector('.explore-hud[data-touch="yes"]', { timeout: 8000 });
+  ok('phone free-roam exposes touch controls instead of desktop-only hints',
+    await page.locator('.stick').isVisible() && await page.locator('.look-area').count() === 1 &&
+    await page.locator('.ex-jump').isVisible() && await page.locator('.ex-place').isVisible());
+  const stick = await page.locator('.stick').boundingBox();
+  const before = (await page.locator('canvas.world-canvas').getAttribute('data-pos')) ?? '0,0,0';
+  if (stick) {
+    await page.mouse.move(stick.x + stick.width / 2, stick.y + stick.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(stick.x + stick.width / 2, stick.y + stick.height / 2 - 30, { steps: 5 });
+    await page.waitForTimeout(1200);
+    await page.mouse.up();
+  }
+  const after = (await page.locator('canvas.world-canvas').getAttribute('data-pos')) ?? before;
+  ok('phone joystick sends movement input to the 3D player', before !== after, `${before} -> ${after}`);
+  await page.locator('.explore-exit').click();
+  ok('phone can leave free-roam without a hardware Escape key',
+    await page.evaluate(() => document.documentElement.dataset.explore !== 'on'));
+  await touchCtx.close();
 }
 
 // Reduced motion still gets the 3D world, but it only redraws when the scroll position changes.
