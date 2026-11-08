@@ -57,23 +57,23 @@ export default function ProjectDialog({ project, onClose }) {
           <p>{project.contribution ?? 'Individual contribution is not yet documented; review the repository history before attributing implementation work.'}</p>
 
           <h3 className="pixel case-h">What it does</h3>
-          <ul className="bullets">{project.features.slice(0, 4).map((f) => <li key={f}>{f}</li>)}</ul>
+          <ul className="bullets">{project.features.map((f) => <li key={f}>{f}</li>)}</ul>
 
           <h3 className="pixel case-h">System design</h3>
           <dl className="arch">
-            {project.architecture.slice(0, 3).map((a) => (
+            {project.architecture.map((a) => (
               <div key={a.title}><dt className="pixel">{a.title}</dt><dd>{a.text}</dd></div>
             ))}
           </dl>
 
           <h3 className="pixel case-h">Key engineering decisions</h3>
-          <ul className="bullets">{project.decisions.slice(0, 3).map((d) => <li key={d}>{d}</li>)}</ul>
+          <ul className="bullets">{project.decisions.map((d) => <li key={d}>{d}</li>)}</ul>
 
           {project.evidence?.length > 0 && (
             <>
               <h3 className="pixel case-h">Evidence & source trail</h3>
               <ul className="bullets">
-                {project.evidence.slice(0, 3).map((item) => (
+                {project.evidence.map((item) => (
                   <li key={item.url}>
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
                       {item.label}<span className="sr-only"> (opens in a new tab)</span>
@@ -84,8 +84,15 @@ export default function ProjectDialog({ project, onClose }) {
             </>
           )}
 
+          {project.research?.length > 0 && (
+            <>
+              <h3 className="pixel case-h">Research-backed design</h3>
+              <ul className="bullets">{project.research.map((item) => <li key={item}>{item}</li>)}</ul>
+            </>
+          )}
+
           <h3 className="pixel case-h">Current boundaries</h3>
-          <ul className="bullets">{project.limits.slice(0, 2).map((l) => <li key={l}>{l}</li>)}</ul>
+          <ul className="bullets">{project.limits.map((l) => <li key={l}>{l}</li>)}</ul>
           <p className="status"><strong className="pixel">Current status</strong> {project.status}</p>
 
           <h3 className="pixel case-h">Core stack</h3>
