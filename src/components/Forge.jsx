@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section, Reveal } from './ui.jsx';
-import { biomeName, biomes, projectImage, projects } from '../data/projects.js';
+import { biomeName, biomes, getProjectStackGroups, projectImage, projects } from '../data/projects.js';
 import { profile, sections } from '../data/profile.js';
 import { useWorld } from '../hooks/useTheme.js';
 
@@ -13,6 +13,7 @@ const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8:
 
 export function ProjectCard({ project, onOpen, delay }) {
   const world = useWorld();
+  const stackGroups = getProjectStackGroups(project.stack);
   const extra = project.stack.length - 3;
   return (
     <Reveal as="article" delay={delay} className={`card biome-${project.biome}`}>
@@ -31,7 +32,7 @@ export function ProjectCard({ project, onOpen, delay }) {
         <ul className="badges" aria-label="Project highlights">
           {project.badges.slice(0, 2).map((b) => <li key={b}>{b}</li>)}
         </ul>
-        <ul className="chips" aria-label="Core technologies">
+        <ul className="chips" aria-label={`Primary technologies: ${stackGroups.map((group) => group.title).join(", ")}`}>
           {project.stack.slice(0, 3).map((t) => <li key={t}>{t}</li>)}
           {extra > 0 && <li className="chip-more">+{extra}</li>}
         </ul>
