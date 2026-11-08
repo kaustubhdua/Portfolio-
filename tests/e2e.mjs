@@ -225,6 +225,29 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
+// Common Android portrait and phone-landscape viewports, including touch hit areas.
+for (const [label, viewport] of [
+  ['412x915 portrait', { width: 412, height: 915 }],
+  ['915x412 landscape', { width: 915, height: 412 }],
+]) {
+  const [ctx, page] = await open({ viewport, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  await page.waitForSelector('#root > *');
+  const m = await page.evaluate(() => {
+    const d = document.documentElement;
+    const nav = document.querySelector('.nav-list');
+    const small = [...document.querySelectorAll('a,button')]
+      .filter((e) => {
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.height < 40 && getComputedStyle(e).display !== 'inline' && !e.classList.contains('skip-link');
+      });
+    return { over: d.scrollWidth - d.clientWidth, navFits: nav.scrollWidth <= nav.parentElement.clientWidth + 1, small: small.length };
+  });
+  ok(`${label}: no horizontal overflow`, m.over <= 0, `over=${m.over}`);
+  ok(`${label}: navigation fits`, m.navFits);
+  ok(`${label}: touch targets are at least 40px`, m.small === 0, `small targets=${m.small}`);
+  await ctx.close();
+}
+
 // Contact links and the blog: professional routes, posts and RSS render and link back.
 {
   const [ctx, page] = await open();
