@@ -338,16 +338,20 @@ export const projects = [
     name: 'Smart Waste',
     tagline: 'Predict, prioritise and route waste collection',
     contribution: "Engineering prototype on synthetic data. The case study describes the repository's pipeline; the commit history shows individual contributions.",
-    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/smart_waste_project/blob/main/README.md"},{"label":"Repository and source","url":"https://github.com/kaustubhdua/smart_waste_project"}],
+    evidence: [
+      { label: 'Project README and current release boundary', url: 'https://github.com/kaustubhdua/smart_waste_project/blob/main/README.md' },
+      { label: 'Release checklist', url: 'https://github.com/kaustubhdua/smart_waste_project/blob/main/docs/RELEASE_CHECKLIST.md' },
+      { label: 'CI and browser QA', url: 'https://github.com/kaustubhdua/smart_waste_project/actions' },
+    ],
     badges: ['Telemetry provenance', 'PostGIS + OR-Tools', 'Synthetic demo data'],
     biome: 'basalt',
     kind: 'Engineering prototype',
     image: 'img/projects/smartwaste.png',
     summary:
       'A full-stack waste-operations prototype connecting device telemetry, authenticated operator and driver workflows, collection prioritisation and capacity-aware route dispatch.',
-    stack: ['Python', 'Random Forest', 'OR-Tools', 'Streamlit', 'Folium'],
+    stack: ['Python', 'FastAPI', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'React', 'Random Forest'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
-    demoNote: 'Hosted demo sleeps after inactivity',
+    demoNote: 'No verified public demo',
     problem:
       'Collection trucks waste distance on bins that are not full yet. This prototype shows how predicted fill levels and a priority score can drive a capacity-aware routing plan.',
     features: [
