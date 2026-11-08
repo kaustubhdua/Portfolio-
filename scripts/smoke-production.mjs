@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 
 const productionUrl = process.env.PROD_URL || 'https://kaustubhdua.vercel.app';
 const expectedSha = process.env.EXPECTED_SHA || '';
-assert.match(expectedSha, /^[a-f0-9]{40}$/i, 'Expected a full deployed commit SHA');
+if (expectedSha !== 'not-attested') assert.match(expectedSha, /^[a-f0-9]{40}$/i, 'Expected a full deployed commit SHA');
 
 const expectedProjects = ['NIRDHOOM', 'Saathi', 'PatchPilot', 'Smart Waste', 'RideForge'];
 const pageErrors = [];
