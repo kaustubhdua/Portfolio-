@@ -17,14 +17,14 @@ const { advancements } = await import(pathToFileURL(path.resolve('src/data/advan
 const problems = [];
 const fail = (msg) => problems.push(msg);
 
-const allowedAdvancementGroups = new Set(['leadership', 'opensource', 'participation', 'certifications', 'programs']);
+const allowedAdvancementGroups = new Set(['certifications', 'programs']);
 for (const item of advancements) {
   if (!allowedAdvancementGroups.has(item.group)) fail(`Advancement "${item.id}" has no valid group`);
 }
 for (const item of advancements.filter((entry) => /hackathon|participat|certificate of merit/i.test(`${entry.category} ${entry.text}`))) {
   if (item.group === 'certifications') fail(`Participation item "${item.id}" must not be listed as a certification`);
 }
-for (const requiredGroup of allowedAdvancementGroups) {
+for (const requiredGroup of ['certifications', 'programs']) {
   if (!advancements.some((item) => item.group === requiredGroup)) fail(`Experience section is missing group: ${requiredGroup}`);
 }
 
