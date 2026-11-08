@@ -106,6 +106,7 @@ export default function ProjectDialog({ project, onClose }) {
               </div>
             ))}
           </dl>
+          <p className="case-note">This inventory includes application technologies and supporting tools. Optional integrations and external providers are distinguished in the <a href="https://github.com/kaustubhdua/Portfolio-/blob/main/docs/PROJECT_TECHNOLOGY_AUDIT.md" target="_blank" rel="noopener noreferrer">full project technology audit<span className="sr-only"> (opens in a new tab)</span></a>.</p>
         </div>
       </div>
     </dialog>
