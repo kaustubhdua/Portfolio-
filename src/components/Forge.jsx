@@ -28,7 +28,6 @@ export function ProjectCard({ project, onOpen, delay }) {
         <h3 className="card-title pixel">{project.name}</h3>
         <p className="card-tagline">{project.tagline}</p>
         <p className="card-summary">{project.summary}</p>
-        {project.workflow && <p className="card-workflow"><span className="pixel">FLOW</span><span>{project.workflow}</span></p>}
         <ul className="badges" aria-label="Project highlights">
           {project.badges.slice(0, 2).map((b) => <li key={b}>{b}</li>)}
         </ul>
