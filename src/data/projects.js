@@ -1,11 +1,9 @@
 const STACK_GROUPS = [
   { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript', 'SQL'] },
-  { id: 'frontend', title: 'Frontend', items: ['React 19', 'React DOM', 'Next.js 15', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'lucide-react', 'Hugeicons', 'canvas-confetti'] },
-  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'python-dotenv', 'python-multipart'] },
-  { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib'] },
-  { id: 'tools', title: 'Tools & Quality', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', '@playwright/test', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Sharp', 'Oxlint', 'Hatchling', 'Node.js', 'CodeQL', 'npm audit', 'ESLint'] },
-  { id: 'design', title: 'Experience & Design', items: ['React Router', 'GSAP', 'React Icons', 'Sharp', 'OGL/WebGL'] },
-  { id: 'security', title: 'Security & Testing', items: ['PyJWT', 'OpenCV', 'PDF.js', 'jsQR', 'ReportLab', 'Android ADB', 'Android Emulator', 'Appium', 'PostgreSQL 17'] },
+  { id: 'frontend', title: 'Frontend', items: ['React 19', 'React DOM', 'Next.js 15', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'React Router', 'Leaflet', 'Three.js', 'OGL/WebGL', 'GSAP', 'Motion', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'lucide-react', 'React Icons', 'Hugeicons', 'canvas-confetti', 'PDF.js', 'jsQR'] },
+  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'python-dotenv', 'python-multipart', 'PyJWT'] },
+  { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL 17', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib', 'OpenCV'] },
+  { id: 'tools', title: 'Tools & Quality', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', '@playwright/test', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'Sharp', 'Oxlint', 'Hatchling', 'Node.js', 'CodeQL', 'npm audit', 'ESLint', 'ReportLab', 'Android ADB', 'Android Emulator', 'Appium'] },
 ];
 
 /** Group project technologies by evidence-backed role; keep the core skills list intentionally curated. */
