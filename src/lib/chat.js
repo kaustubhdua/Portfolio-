@@ -5,7 +5,7 @@
  * is a list of parts: plain strings or { href, label } links.
  */
 import { profile } from '../data/profile.js';
-import { projects, explored } from '../data/projects.js';
+import { projects } from '../data/projects.js';
 import { skillGroups } from '../data/skills.js';
 import { advancements } from '../data/advancements.js';
 
@@ -76,7 +76,7 @@ const commands = {
   projects: () => [
     ...projects.map((p) => [`${p.name}: ${p.tagline}`]),
     ['Type /project <name> for details.'],
-    [`Also on GitHub: ${explored.map((e) => e.name).join(', ')}.`],
+    ['Smaller experiments and work in progress are on GitHub: ', link(profile.links.github + '?tab=repositories', 'browse all repositories')],
   ],
   skills: () => [...skillGroups.map((g) => [`${g.title}: ${g.items.map((i) => i.name).join(', ')}`]), ['Type /skill <name> to see where I used one.']],
   advancements: () => advancements.map((a) => [`${a.title}: ${a.text}`]),
