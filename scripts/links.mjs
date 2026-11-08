@@ -3,7 +3,6 @@
  * Needs network access, so it is not part of `npm run verify`: npm run check:links
  */
 import { readdir, readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 import { projects } from '../src/data/projects.js';
 import { profile } from '../src/data/profile.js';
 import { advancements } from '../src/data/advancements.js';
