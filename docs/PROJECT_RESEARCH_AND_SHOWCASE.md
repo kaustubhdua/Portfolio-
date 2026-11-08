@@ -20,7 +20,7 @@ This index translates the public repository documentation into recruiter-facing 
 **Core story:** source-backed assistance with deterministic control and local-first speech options.
 
 - **Problem:** people need to reach information and services through familiar languages and voice, while factual answers and consent must remain dependable.
-- **Engineering:** FastAPI backend and React/Next.js interfaces; deterministic Hindi/Hinglish intent routing; Open-Meteo and configurable government mandi adapters; local Vosk STT and eSpeak NG TTS defaults; optional Sarvam integrations; Tesseract OCR; Exotel AgentStream WebSocket path; rate limits, correlation IDs and capability-aware readiness.
+- **Engineering:** FastAPI/Python backend and React/Next.js interfaces; deterministic Hindi/Hinglish intent routing; Open-Meteo and configurable government mandi adapters; local Ollama tool selection, Vosk STT and eSpeak NG TTS defaults; optional Sarvam integrations; Tesseract OCR; Exotel AgentStream WebSocket path; rate limits, correlation IDs and capability-aware readiness.
 - **Distinctive design decisions:** the LLM is not the source of truth; provider adapters are replaceable; results carry provenance and retrieval time; demo data is labelled; memory and outbound calls require explicit consent.
 - **Evidence to open:** [README](https://github.com/kaustubhdua/Saathi/blob/main/README.md) · [evaluation](https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md) · [voice runtime](https://github.com/kaustubhdua/Saathi/blob/main/docs/VOICE_RUNTIME.md) · [open-source-first architecture](https://github.com/kaustubhdua/Saathi/blob/main/docs/OPEN_SOURCE_FIRST.md)
 - **Status boundary:** MVP/prototype. The 120-case synthetic intent suite is not real-world speech accuracy. Durable household persistence, live provider validation, low-latency phone transport and real Hindi/Hinglish/Haryanvi latency/accuracy benchmarks remain release gates.
@@ -59,12 +59,14 @@ This index translates the public repository documentation into recruiter-facing 
 ## Display guidance
 
 1. Lead with the five projects above; they demonstrate different engineering problems rather than five variants of the same app.
-2. Each case-study preview should expose one differentiator and one maturity label before opening the full dialog.
-3. Keep the detail order: problem → contribution → implemented workflow → architecture/decisions → evidence links → limitations → stack.
-4. Show repository and working demo separately. Do not show a demo CTA when a URL is absent or unverified.
-5. Prefer a small number of concrete workflow diagrams/screenshots over generic AI art. Label authored illustrations as illustrations, not product screenshots.
-6. Attribute multi-contributor work carefully. Do not imply sole authorship where the repository is a team project.
-7. Never publish synthetic benchmark results, seeded data, CI pass rates, or planned integrations as real-world product impact.
+2. Use one shared stack taxonomy everywhere: **Languages**, **Frontend**, **Backend**, **Data & Systems**, and **Tools**. The project cards show three primary technologies; the full case study shows every evidenced technology grouped under these same labels.
+3. Keep the fifteen-item Technical Skills inventory curated. Project-only libraries and infrastructure belong in their case study, not in the recurring-core list.
+4. Each case-study preview should expose one differentiator and one maturity label before opening the full dialog.
+5. Keep the detail order: problem → contribution → implemented workflow → architecture/decisions → evidence links → limitations → grouped stack.
+6. Show repository and working demo separately. Do not show a demo CTA when a URL is absent or unverified.
+7. Prefer a small number of concrete workflow diagrams/screenshots over generic AI art. Label authored illustrations as illustrations, not product screenshots.
+8. Attribute multi-contributor work carefully. Do not imply sole authorship where the repository is a team project.
+9. Never publish synthetic benchmark results, seeded data, CI pass rates, or planned integrations as real-world product impact.
 
 ## Research sources
 
