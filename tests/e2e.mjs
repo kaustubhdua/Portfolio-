@@ -360,8 +360,9 @@ for (const [label, viewport] of [
   await pp.locator('#forge .filters button').nth(1).click();
   ok('phone: engineering-focus filters update the project list', (await pp.locator('#forge .card').count()) > 0 && (await pp.locator('#forge .card').count()) < phoneCardsBefore);
   await pp.getByRole('button', { name: 'All projects' }).click();
-  await pp.getByRole('button', { name: 'Case study: NIRDHOOM' }).click();
-  ok('phone: a project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()) === 'NIRDHOOM');
+  const mobileFeaturedProject = featuredProjects[0];
+  await pp.getByRole('button', { name: `Case study: ${mobileFeaturedProject.name}` }).click();
+  ok('phone: a featured project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()) === mobileFeaturedProject.name);
   await pp.locator('.dialog-close').click();
   await phone.close();
 
