@@ -1,6 +1,6 @@
 # Project technology audit
 
-> Scope: the six featured builds and ten additional projects currently shown in the public GitHub profile README, plus the portfolio application itself. This is a source-backed inventory, not a list of technologies inferred from project titles.
+> Scope: the six featured builds and ten additional projects currently shown in the public GitHub profile README, plus the portfolio application itself. The portfolio website retains its separately curated five detailed case studies; JIIT Youth Club is covered here because it is one of the six profile features. This is a source-backed inventory, not a list of technologies inferred from project titles.
 
 ## How to read this inventory
 
