@@ -9,7 +9,7 @@ export const skillGroups = [
     items: [
       { id: 'python', name: 'Python', icon: 'SiPython', used: 'Data preparation and prediction in Smart Waste, plus the Saathi API and NIRDHOOM dispatch services.', evidence: [{ label: 'Smart Waste model', url: 'https://github.com/kaustubhdua/smart_waste_project/blob/main/person2_ml_prediction.py' }, { label: 'Saathi API', url: 'https://github.com/kaustubhdua/Saathi/blob/main/backend/app/main.py' }] },
       { id: 'typescript', name: 'TypeScript', icon: 'SiTypescript', used: 'Typed application and dispatch code in NIRDHOOM; the source shows project use, not sole authorship.', evidence: [{ label: 'NIRDHOOM application', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/src/App.tsx' }, { label: 'NIRDHOOM dispatch API', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/api/dispatch.ts' }] },
-      { id: 'javascript', name: 'JavaScript', icon: 'SiJavascript', used: 'The portfolio UI, NIRDHOOM and the JYC Website.', evidence: [{ label: 'JYC editorial UI', url: 'https://github.com/kaustubhdua/JYC-Website2/blob/main/src/jyc-editorial-home.jsx' }, { label: 'NIRDHOOM offline queue tests', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/tests/offline-evidence-queue.test.mjs' }] },
+      { id: 'javascript', name: 'JavaScript', icon: 'SiJavascript', used: 'The portfolio interface and NIRDHOOM application and test tooling.', evidence: [{ label: 'Portfolio React entry', url: 'https://github.com/kaustubhdua/Portfolio-/blob/main/src/main.jsx' }, { label: 'NIRDHOOM offline queue tests', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/tests/offline-evidence-queue.test.mjs' }] },
       { id: 'cpp', name: 'C++', icon: 'SiCplusplus', used: 'The RideForge backend API and routing implementation.', evidence: [{ label: 'RideForge application', url: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/main.cpp' }, { label: 'RideForge tests', url: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/tests.cpp' }] },
       { id: 'sql', name: 'SQL', glyph: 'SQL', used: 'Versioned relational schemas and access-control policies in NIRDHOOM and PostgreSQL-backed services.', evidence: [{ label: 'NIRDHOOM core migration', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/supabase/migrations/202609270001_nirdhoom_core.sql' }, { label: 'RLS role matrix tests', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/tests/rls_role_matrix.sql' }] },
     ],
@@ -18,7 +18,7 @@ export const skillGroups = [
     id: 'frontend',
     title: 'Frontend',
     items: [
-      { id: 'react', name: 'React', icon: 'SiReact', used: 'React interfaces in NIRDHOOM and the JYC Website.', evidence: [{ label: 'JYC React entry', url: 'https://github.com/kaustubhdua/JYC-Website2/blob/main/src/main.jsx' }, { label: 'NIRDHOOM React app', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/src/App.tsx' }] },
+      { id: 'react', name: 'React', icon: 'SiReact', used: 'React interfaces in NIRDHOOM and Saathi.', evidence: [{ label: 'NIRDHOOM React app', url: 'https://github.com/kaustubhdua/nihdhoom/blob/main/src/App.tsx' }, { label: 'Saathi page entry', url: 'https://github.com/kaustubhdua/Saathi/blob/main/frontend/app/page.tsx' }] },
       { id: 'nextjs', name: 'Next.js', icon: 'SiNextdotjs', used: 'The Saathi interface and operator workspace.', evidence: [{ label: 'Saathi page entry', url: 'https://github.com/kaustubhdua/Saathi/blob/main/frontend/app/page.tsx' }, { label: 'Saathi Next.js config', url: 'https://github.com/kaustubhdua/Saathi/blob/main/frontend/next.config.ts' }] },
     ],
   },
@@ -43,8 +43,8 @@ export const skillGroups = [
     id: 'tools',
     title: 'Tools',
     items: [
-      { id: 'github', name: 'GitHub Actions', icon: 'SiGithubactions', used: 'Build, test and security workflows across the selected repositories.', evidence: [{ label: 'Saathi CI workflow', url: 'https://github.com/kaustubhdua/Saathi/blob/main/.github/workflows/ci.yml' }, { label: 'JYC CI workflow', url: 'https://github.com/kaustubhdua/JYC-Website2/blob/main/.github/workflows/ci.yml' }] },
-      { id: 'playwright', name: 'Playwright', glyph: 'PW', used: 'Browser regression and responsive interaction checks in this portfolio and the JYC Website.', evidence: [{ label: 'Portfolio browser suite', url: 'https://github.com/kaustubhdua/Portfolio-/blob/main/tests/e2e.mjs' }, { label: 'JYC visual route matrix', url: 'https://github.com/kaustubhdua/JYC-Website2/blob/main/scripts/visual-route-matrix.spec.js' }] },
+      { id: 'github', name: 'GitHub Actions', icon: 'SiGithubactions', used: 'Build and verification workflows across selected projects.', evidence: [{ label: 'Saathi CI workflow', url: 'https://github.com/kaustubhdua/Saathi/blob/main/.github/workflows/ci.yml' }, { label: 'PatchPilot CI workflow', url: 'https://github.com/kaustubhdua/PatchPilot/blob/main/.github/workflows/ci.yml' }] },
+      { id: 'playwright', name: 'Playwright', glyph: 'PW', used: 'Browser regression and responsive interaction checks in this portfolio and Smart Waste.', evidence: [{ label: 'Portfolio browser suite', url: 'https://github.com/kaustubhdua/Portfolio-/blob/main/tests/e2e.mjs' }, { label: 'Smart Waste browser tests', url: 'https://github.com/kaustubhdua/smart_waste_project/tree/main/tests/e2e' }] },
       { id: 'docker', name: 'Docker', icon: 'SiDocker', used: 'Containerised local development and service delivery in PatchPilot and RideForge.', evidence: [{ label: 'PatchPilot Dockerfile', url: 'https://github.com/kaustubhdua/PatchPilot/blob/main/Dockerfile' }, { label: 'RideForge Dockerfile', url: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/backend/Dockerfile' }] },
     ],
   },
