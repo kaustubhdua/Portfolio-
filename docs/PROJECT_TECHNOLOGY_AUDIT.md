@@ -15,9 +15,10 @@
 ### 1. JIIT Youth Club — [repository](https://github.com/kaustubhdua/JYC-Website)
 
 **Core/runtime**
-- JavaScript, React 19, React DOM, React Router 7 and Vite 8.
+- JavaScript, React 19/React DOM, React Router 7 and Vite 8.
 - Supabase JavaScript client for cloud data/auth and Edge Function integration; PostgreSQL with Row Level Security is the data platform.
-- OGL/WebGL for GPU-accelerated visual effects, GSAP and Motion for animation, Hugeicons for interface iconography.
+- OGL/WebGL for GPU-accelerated visual effects, GSAP and Motion for animation, @hugeicons/react plus @hugeicons/core-free-icons for interface iconography.
+- lucide-react and canvas-confetti are used in selected project interfaces.
 
 **Build/quality**
 - Sharp for responsive image derivatives and media optimisation.
@@ -28,9 +29,9 @@
 ### 2. NIRDHOOM — [repository](https://github.com/kaustubhdua/nihdhoom)
 
 **Core/runtime**
-- TypeScript, React 19, React DOM, Vite 8 and Tailwind CSS 4.
+- TypeScript, React 19/React DOM, Vite 8 and Tailwind CSS 4.
 - Supabase JS, PostgreSQL, PostGIS and Row Level Security for application data and access control.
-- Leaflet for field maps; Three.js for selected 3D workspaces; Motion for interface transitions.
+- Leaflet for field maps; Three.js for selected 3D workspaces; Motion, lucide-react, Hugeicons and canvas-confetti for interface/interaction elements.
 - Python FastAPI dispatch microservice, HTTPX and Google OR-Tools for vehicle/machine scheduling. The service has a deterministic local fallback.
 - Vercel serverless API routes and PWA/service-worker support.
 
@@ -42,9 +43,9 @@
 ### 3. Saathi — [repository](https://github.com/kaustubhdua/Saathi)
 
 **Core/runtime**
-- Python 3.11, FastAPI, Starlette, Uvicorn, Pydantic Settings, HTTPX, python-dotenv, python-multipart and WebSockets.
-- Vosk for local Hindi speech recognition; eSpeak NG for local speech synthesis; Tesseract OCR for local Hindi/English image OCR; FFmpeg for audio/video handling.
-- Next.js 16, React 19, TypeScript, Motion and OGL for the web interface.
+- Python 3.11, FastAPI, Starlette, Uvicorn, Pydantic Settings, HTTPX, python-dotenv, python-multipart, WebSockets and Vosk.
+- Tesseract OCR (including Hindi/English language data), eSpeak NG and FFmpeg are installed as OS-level tools in the Docker image, not Python packages.
+- Next.js 16, React 19/React DOM, TypeScript, Motion, OGL and lucide-react power the web interface.
 - Streamlit for the separate judge/demo interface.
 - Supabase SSR/JS packages are present for optional integration; persistent household memory and production persistence remain separately gated.
 
@@ -74,7 +75,7 @@
 **Core/runtime**
 - C++17 API and workers using Boost.Beast/Boost headers, libcurl, PostgreSQL libpq, OpenSSL, nlohmann/json and C++ threads.
 - CMake for native builds; PostgreSQL for transactional booking, dispatch and event persistence.
-- React 19, TypeScript, Vite 6, Leaflet, Motion and lucide-react for passenger, driver and admin workspaces.
+- React 19/React DOM, TypeScript, Vite 6, Leaflet, Motion and lucide-react for passenger, driver and admin workspaces.
 - Nominatim-compatible geocoding and OSRM-compatible road routing are external provider integrations, not bundled libraries.
 - Docker/Compose deployment configuration and versioned PostgreSQL migrations.
 
@@ -89,7 +90,7 @@
 - Python, FastAPI, Uvicorn, SQLAlchemy, Psycopg 3, Pydantic Settings, HTTPX and python-multipart.
 - PostgreSQL/PostGIS, Alembic migrations and Google OR-Tools for capacity-constrained route optimisation; OSRM is the road-distance/geometry provider.
 - pandas, NumPy, scikit-learn, Random Forest and joblib for time-aware feature preparation and the optional fill-level forecast.
-- Streamlit, Folium and streamlit-folium for the standalone data/operations demo.
+- Streamlit, Folium and streamlit-folium for the standalone data/operations demo; HTTPX, python-multipart and Pydantic Settings support the API configuration/request layer.
 - The operator/driver web views are plain HTML/CSS/JavaScript with service-worker support, not a React application.
 - Docker Compose for local full-stack orchestration.
 
@@ -132,7 +133,7 @@
 
 **Core/runtime:** Python, FastAPI, Uvicorn, Pydantic, SQLAlchemy, Psycopg, NumPy, scikit-learn/DBSCAN, xarray, netCDF4, Rasterio, GeoPandas, Earth Engine API and CDS API. The README documents a React + Leaflet map interface.
 
-**Optional/integration:** PostgreSQL/TimescaleDB persistence is optional; TensorFlow is declared as an integration path, while the current hotspot clustering and deterministic interpolation should not be described as a trained TensorFlow model.
+**Optional/integration:** PostgreSQL/TimescaleDB persistence is optional. TensorFlow appears in backend requirements, but the README describes the active fallback as deterministic and the current hotspot path as scikit-learn DBSCAN; do not claim a trained TensorFlow model without implementation and test evidence.
 
 **Evidence:** [README](https://github.com/kaustubhdua/Akash-Chalak), [backend requirements](https://github.com/kaustubhdua/Akash-Chalak/blob/main/backend/requirements.txt).
 
@@ -140,7 +141,7 @@
 
 **Core/runtime:** Python, FastAPI, Uvicorn, Pydantic, python-multipart, Psycopg and PyJWT; React 19, TypeScript, Vite 8, React Router and lucide-react; PostgreSQL persistence and optional Supabase Auth integration.
 
-**Device/worker tooling:** Android SDK platform-tools (ADB), Android Emulator/AVD and a Python polling/runner worker. Appium is used in the documented test fixture path; it is not the core web runtime.
+**Device/worker tooling:** Android SDK platform-tools (adb), build-tools (aapt), Android Emulator/AVD and a Python polling/runner worker. The smoke app uses Gradle and Java 17; Appium is used in the documented test-fixture path, not the core web runtime.
 
 **Build/quality:** Vitest, jsdom, Playwright, TypeScript, GitHub Actions and dependency audits.
 
@@ -201,3 +202,10 @@ The portfolio is a React 19 application with a custom Node/esbuild build pipelin
 3. Keep optional, prepared, and externally hosted integrations labelled as such.
 4. Do not turn build tools, CI actions, transitive packages, or external services into claims of production runtime expertise.
 5. Update this ledger whenever a featured project's manifests or implementation change.
+
+
+## Source verification record — 8 November 2026
+
+The 16 project entries were cross-checked against current default-branch repository trees and direct manifests (package.json/package-lock.json, pyproject.toml, requirements files, CMake, Gradle and Docker/Compose files), then reconciled with project READMEs and implementation evidence. They correspond to the six featured builds and ten additional projects in the public profile README. The separate Portfolio application is inventoried below. This is a dependency-and-source audit, not a claim that every optional integration is deployed or every declared dependency is exercised at runtime.
+
+A package in a manifest is not automatically a live integration: prepared backends, optional AI, external providers, local OS packages, demo/test-only tools and unverified deployment boundaries are called out where applicable.
