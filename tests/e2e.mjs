@@ -292,6 +292,43 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('phone: sound button stays on screen after scrolling', sbox && sbox.y >= 0 && sbox.y < 100, JSON.stringify(sbox));
   await phone.close();
 
+  // Touch-first free roam: verify the mobile HUD is present and its controls remain usable.
+  const touchWorld = await glBrowser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await touchWorld.addInitScript(() => {
+    sessionStorage.setItem('nether-intro-seen', '1');
+    localStorage.setItem('portfolio-quick', 'off');
+  });
+  const touchPage = await touchWorld.newPage();
+  touchPage.on('pageerror', (e) => errors.push(`mobile free-roam pageerror ${e.message}`));
+  await touchPage.goto(BASE);
+  await touchPage.waitForFunction(() => document.documentElement.dataset.threed === 'on', null, { timeout: 60000 });
+  await touchPage.locator('.explore-btn').click();
+  await touchPage.waitForFunction(() => document.documentElement.dataset.explore === 'on', null, { timeout: 5000 });
+  ok('phone free roam opens the touch-first HUD', await touchPage.locator('.explore-hud[data-touch="yes"]').isVisible());
+  ok('phone free roam exposes joystick, jump and place controls', await touchPage.locator('.stick').isVisible() && await touchPage.locator('.ex-jump').isVisible() && await touchPage.locator('.ex-place').isVisible());
+  await touchPage.getByRole('button', { name: 'Glass (3)' }).click();
+  ok('phone hotbar selects a block by touch', await touchPage.getByRole('button', { name: 'Glass (3)' }).getAttribute('aria-pressed') === 'true');
+  const stick = touchPage.locator('.stick');
+  const stickBox = await stick.boundingBox();
+  if (stickBox) {
+    await touchPage.mouse.move(stickBox.x + stickBox.width / 2, stickBox.y + stickBox.height / 2);
+    await touchPage.mouse.down();
+    await touchPage.mouse.move(stickBox.x + stickBox.width / 2 + 24, stickBox.y + stickBox.height / 2, { steps: 3 });
+    await touchPage.waitForTimeout(120);
+    const movedKnob = await touchPage.locator('.stick-knob').evaluate((el) => getComputedStyle(el).transform !== 'none');
+    await touchPage.mouse.up();
+    const resetKnob = await touchPage.locator('.stick-knob').evaluate((el) => getComputedStyle(el).transform === 'none');
+    ok('phone joystick responds while pressed and recentres on release', movedKnob && resetKnob);
+  } else {
+    ok('phone joystick has a measurable touch target', false);
+  }
+  await touchPage.locator('.ex-jump').click();
+  await touchPage.locator('.ex-place').click();
+  ok('phone jump and place actions are operable', await touchPage.locator('.ex-jump').isVisible() && await touchPage.locator('.ex-place').isVisible());
+  await touchPage.getByRole('button', { name: /Leave world/ }).click();
+  ok('phone can leave free roam and return to the page', await touchPage.evaluate(() => document.documentElement.dataset.explore !== 'on'));
+  await touchWorld.close();
+
   const calm = await plainContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   const cp = await calm.newPage();
   await cp.goto(BASE);
