@@ -1,18 +1,5 @@
-/** A deliberately short selection: internship work and structured learning, not every event or course. */
+/** Only the most relevant structured learning highlights are shown. */
 export const advancements = [
-  {
-    id: 'pinnacle',
-    group: 'experience',
-    frame: 'goal',
-    category: 'Internship · Web Development · Pinnacle Labs',
-    title: 'Web Development Intern',
-    text: 'Built Weather Core, a city-based weather dashboard with asynchronous requests and explicit loading, timeout and error states, and Nord Studio, a priority-based task manager with browser persistence, filters and accessible controls. The public repositories document the work; no business-impact figures are claimed.',
-    links: [
-      { label: 'Weather Core source', url: 'https://github.com/kaustubhdua/weather-core-matrix' },
-      { label: 'Nord Studio source', url: 'https://github.com/kaustubhdua/nord-studio-task-manager' },
-    ],
-    sprite: 'banner',
-  },
   {
     id: 'jpmorgan',
     group: 'programs',
