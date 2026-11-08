@@ -11,7 +11,7 @@ export const profile = {
   kicker: 'ECM student · JIIT Noida',
   role: 'Software Engineering Student · Full-Stack & Applied AI',
   intro:
-    'I build practical software across full-stack product engineering, applied AI and data systems—from field-first workflows and multilingual assistance to developer tools. I also contribute to open-source infrastructure, with six merged upstream pull requests in Lemma Platform. I care about usable interfaces, clear system boundaries and tests that cover failure paths.',
+    'I build full-stack systems and applied-AI products, with six merged contributions to Lemma Platform. I focus on reliable APIs, clear data boundaries and interfaces people can actually use.',
   stack: ['Python', 'TypeScript', 'React', 'FastAPI', 'PostgreSQL', 'OR-Tools'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
