@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Section, Reveal } from './ui.jsx';
 import { biomeName, biomes, projectImage, projects, explored } from '../data/projects.js';
-import { useWorld } from '../hooks/useTheme.js';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'forge');
@@ -54,7 +53,6 @@ export function ProjectCard({ project, onOpen, delay }) {
 }
 
 export default function Forge({ onOpen }) {
-  const world = useWorld();
   const [filter, setFilter] = useState('all');
   const shown = filter === 'all' ? featuredProjects : featuredProjects.filter((p) => p.biome === filter);
   const present = [...new Set(featuredProjects.map((p) => p.biome))];
