@@ -1,3 +1,16 @@
+const STACK_GROUPS = [
+  { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17'] },
+  { id: 'frontend', title: 'Frontend', items: ['React', 'React 19', 'Next.js', 'Vite', 'Vite 8', 'Leaflet'] },
+  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Boost.Beast', 'Supabase', 'Ollama', 'Vosk', 'eSpeak NG', 'Tesseract', 'Exotel AgentStream'] },
+  { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostGIS', 'SQLAlchemy', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'Random Forest'] },
+  { id: 'tools', title: 'Tools', items: ['pytest', 'Ruff', 'Docker', 'GitHub Actions', 'Playwright'] },
+];
+
+/** Group each project's verified stack using the same labels as the Technical Skills inventory. */
+export const getProjectStackGroups = (stack = []) => STACK_GROUPS
+  .map((group) => ({ ...group, items: stack.filter((technology) => group.items.includes(technology)) }))
+  .filter((group) => group.items.length > 0);
+
 /**
  * Featured projects. Every statement is taken from the project's public README or
  * GitHub page. Limits are listed honestly, and no measured results are claimed
@@ -34,7 +47,7 @@ export const projects = [
     image: 'img/projects/nirdhoom.png',
     summary:
       'A field-to-offtake workflow linking farmer requests, time-bound machine capacity, dispatch, operator evidence, verified residue lots and buyer demand.',
-    stack: ['React 19', 'Vite', 'Supabase', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'Leaflet'],
+    stack: ['React 19', 'TypeScript', 'Vite 8', 'Supabase', 'PostgreSQL', 'PostGIS', 'Leaflet', 'Python', 'OR-Tools'],
     repo: 'https://github.com/kaustubhdua/nihdhoom',
     live: 'https://nihdhoom-9qiu.vercel.app/',
     liveLabel: 'Hosted prototype',
@@ -86,7 +99,7 @@ export const projects = [
     image: 'img/projects/saathi.png',
     summary:
       'A Hindi/Hinglish assistance MVP combining deterministic intent routing, source-stamped tools, local speech defaults, document OCR and consent-aware human escalation.',
-    stack: ['Next.js', 'React', 'FastAPI', 'Python', 'Speech APIs', 'GitHub Actions'],
+    stack: ['FastAPI', 'Python', 'Next.js', 'React', 'Ollama', 'Vosk', 'eSpeak NG', 'Tesseract', 'Exotel AgentStream', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Saathi',
     problem:
       'Information and service workflows are hard to reach for people who prefer speaking in their own language. Saathi aims at field-ready workflows rather than disconnected AI demos.',
@@ -184,7 +197,7 @@ export const projects = [
     image: 'img/projects/smartwaste.png',
     summary:
       'A full-stack operations loop: provenance-aware device telemetry, transparent prioritisation, approved collection jobs, PostGIS context, capacity-constrained routing and driver verification.',
-    stack: ['Python', 'FastAPI', 'PostgreSQL', 'PostGIS', 'OR-Tools', 'React', 'Random Forest'],
+    stack: ['Python', 'FastAPI', 'PostgreSQL', 'PostGIS', 'SQLAlchemy', 'Alembic', 'OR-Tools', 'OSRM', 'React', 'Random Forest', 'Docker', 'Playwright', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
     demoNote: 'No verified public demo',
     problem:
@@ -234,7 +247,7 @@ export const projects = [
     kind: 'Personal project',
     image: 'img/projects/rideforge.svg',
     summary: 'A multi-role bike-taxi MVP built around persisted PostgreSQL bookings, expiring driver offers, sequential redispatch, cancellation and graph-based route planning.',
-    stack: ['C++17', 'Boost.Beast', 'PostgreSQL', 'React', 'TypeScript', 'Leaflet'],
+    stack: ['C++17', 'Boost.Beast', 'PostgreSQL', 'React', 'TypeScript', 'Leaflet', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
     live: null,
     demoNote: 'No live deployment claimed',
