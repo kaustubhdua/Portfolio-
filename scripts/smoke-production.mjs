@@ -57,7 +57,9 @@ try {
       );
     }
 
-    await card.click();
+    const trigger = page.getByRole('button', { name: `Case study: ${name}` });
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
     const dialog = page.locator('dialog.dialog');
     await page.waitForFunction(
       () => globalThis.document.querySelector('dialog.dialog')?.open === true,
@@ -66,11 +68,21 @@ try {
     );
     const dialogText = await dialog.innerText();
     assert.ok(dialogText.toLowerCase().includes(name.toLowerCase()), `Case study opens for ${name}`);
+    assert.equal(
+      await page.evaluate(() => globalThis.document.body.classList.contains('modal-open')),
+      true,
+      `Body scroll locks while ${name} case study is open`,
+    );
     await page.keyboard.press('Escape');
     await page.waitForFunction(
       () => !globalThis.document.querySelector('dialog.dialog')?.open,
       null,
       { timeout: 10_000 },
+    );
+    assert.equal(
+      await page.evaluate(() => globalThis.document.activeElement?.getAttribute('aria-label')),
+      `Case study: ${name}`,
+      `Focus returns to the ${name} case-study trigger`,
     );
   }
 
