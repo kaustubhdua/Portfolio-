@@ -292,6 +292,14 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('toggle is disabled during the trip', await toggle.isDisabled());
   await page.waitForSelector('.travel', { state: 'detached', timeout: 6000 });
   ok('day mode applied after the trip', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
+  await page.locator('#forge').scrollIntoViewIfNeeded();
+  for (const [index, project] of featuredProjects.entries()) {
+    const image = page.locator('#forge .card').nth(index).locator('.card-media img');
+    await image.scrollIntoViewIfNeeded();
+    const source = await image.getAttribute('src');
+    const loaded = await image.evaluate((element) => element.complete && element.naturalWidth > 0);
+    ok(`day artwork loads for ${project.name}`, source?.includes('/day/') && loaded);
+  }
   ok('toggle label offers the way back', /Nether/.test(await toggle.getAttribute('aria-label')));
   ok('status message announces the new world', /Overworld/.test(await page.locator('[role="status"].sr-only').textContent()));
   await page.reload();
