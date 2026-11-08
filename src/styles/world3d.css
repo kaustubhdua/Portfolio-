@@ -143,6 +143,7 @@ html[data-explore='on'] #root > *:not(.world-canvas):not(.explore-hud):not(.fall
 .explore-hud > * { pointer-events: auto; }
 .explore-exit {
   position: absolute;
+  z-index: 4;
   top: max(0.75rem, env(safe-area-inset-top));
   right: 0.75rem;
   padding: 0.6rem 0.9rem;
