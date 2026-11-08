@@ -16,7 +16,7 @@ export function ProjectCard({ project, onOpen, delay }) {
       <div className="card-media">
         <img src={projectImage(project, world)} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
         <span className="biome-tag pixel">{biomeName(project.biome, world)}</span>
-        {project.flagship && <span className="flagship-tag pixel">Flagship</span>}
+        {project.flagship && <span className="flagship-tag pixel">Featured</span>}
         <span className={`stage-tag pixel${project.live ? ' is-live' : ''}`}>{project.live && project.stage !== 'Live site' ? `${project.stage} · Live` : project.stage}</span>
       </div>
       <div className="card-body">
@@ -72,7 +72,8 @@ export default function Forge({ onOpen }) {
       </div>
 
       <Reveal className="explored">
-        <h3 className="sub-title pixel">Selected Additional Work</h3>
+        <h3 className="sub-title pixel">Additional Builds &amp; Experiments</h3>
+        <p>Supporting projects and experiments beyond the four featured case studies.</p>
         <ul className="explored-grid">
           {explored.map((e) => (
             <li key={e.name} className="panel explored-item">
