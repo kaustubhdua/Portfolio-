@@ -376,6 +376,57 @@ export const projects = [
       'Engineering prototype with a Streamlit deployment that sleeps after inactivity. Model accuracy, route quality and savings remain experimental; no always-on demo is advertised and no results are claimed.',
   },
   {
+    id: 'jiit-toppers',
+    flagship: true,
+    stage: 'Prototype · production gates open',
+    name: 'JIIT Toppers',
+    tagline: 'Student-first academic workspace for JIIT',
+    contribution: 'Personal project. Implemented academic workflows are distinguished from planned modules and unverified live services.',
+    evidence: [
+      { label: 'Repository', url: 'https://github.com/kaustubhdua/Jiit-toppers-' },
+      { label: 'Release-readiness audit', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/IMPLEMENTATION_AUDIT_2026-11-02.md' },
+      { label: 'Authentication setup', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/AUTH_SETUP.md' },
+      { label: 'Data model', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/DATA_MODEL.md' },
+    ],
+    badges: ['Next.js 16', 'Supabase SSR', 'Academic workflows'],
+    biome: 'crimson',
+    kind: 'Personal project',
+    image: 'https://opengraph.githubassets.com/1/kaustubhdua/Jiit-toppers-',
+    summary: 'A JIIT-focused workspace for personal academic records, attendance and grade calculations, CSV imports, study planning and a PYQ reference tracker.',
+    stack: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Prisma', 'PostgreSQL'],
+    repo: 'https://github.com/kaustubhdua/Jiit-toppers-',
+    live: null,
+    demoNote: 'No verified production deployment',
+    problem: 'Students keep academic records, attendance calculations, exam plans and study resources in disconnected tools. JIIT Toppers brings personal workflows together while separating student-entered information from official university data.',
+    features: [
+      'Supabase SSR authentication foundation with email OTP/PKCE',
+      'Owner-scoped academic terms, subjects, grades and attendance records',
+      'Reviewable CSV import, history, JSON export and record deletion',
+      'Attendance, SGPA/CGPA and forecast calculators',
+      'Browser-local study planner and exam calendar with iCalendar export',
+      'Personal PYQ reference tracker with local storage boundaries',
+      'Server-side validation, ownership checks and database constraints',
+    ],
+    architecture: [
+      { title: 'Application', text: 'Next.js App Router and React student workspace.' },
+      { title: 'Identity', text: 'Cookie-backed Supabase sessions and server-derived user identity.' },
+      { title: 'Data', text: 'Prisma and PostgreSQL with ownership constraints and RLS.' },
+      { title: 'Quality', text: 'Automated tests, lint, type checks, schema validation and production build.' },
+    ],
+    decisions: [
+      'Student-entered records are not represented as official JIIT data.',
+      'The PYQ tracker stores references, not third-party PDFs.',
+      'A passing build is not proof of live authentication or tenant isolation.',
+    ],
+    limits: [
+      'The intended Supabase project is inactive; live Auth and persistence are unverified.',
+      'Live migration history and schema drift require inspection before production migrations.',
+      'Two-account authorization tests, backup/restore and production smoke tests remain release blockers.',
+      'Curriculum, placements, moderated resources, discussions, clubs and events remain planned.',
+    ],
+    status: 'Active prototype. Production release is blocked on a healthy approved Supabase project, verified migrations, two-account isolation tests and deployment smoke tests.',
+  },
+  {
     id: 'jyc',
     flagship: true,
     stage: 'Deployment unverified',
@@ -452,6 +503,18 @@ export const projects = [
 
 /** Forks and smaller prototypes. Shown separately and labelled honestly. */
 export const explored = [
+  {
+    name: 'Weather Core Matrix',
+    kind: 'Browser weather dashboard · Vanilla JavaScript',
+    text: 'A dependency-free city weather dashboard using the public wttr.in JSON endpoint. Includes URL-encoded city lookup, bounded requests, loading/error states, safe text rendering, current conditions and contract tests. Provider availability and rate limits are external dependencies; it is an informational project, not a safety alert service.',
+    repo: 'https://github.com/kaustubhdua/weather-core-matrix',
+  },
+  {
+    name: 'Nord Studio Task Manager',
+    kind: 'Local-first task manager · Vanilla JavaScript',
+    text: 'A compact task manager with priority labels, all/active/completed filters, remaining-task counts, task deletion and browser-local persistence. Stored records are validated, storage failures are surfaced, and user text is rendered safely. Data remains on the current browser/device and is not synced.',
+    repo: 'https://github.com/kaustubhdua/nord-studio-task-manager',
+  },
   {
     name: 'CrickVision',
     kind: 'Experimental computer-vision toolkit · Python',

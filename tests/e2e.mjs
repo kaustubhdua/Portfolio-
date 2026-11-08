@@ -9,6 +9,9 @@
  */
 import { profile } from '../src/data/profile.js';
 import { projects } from '../src/data/projects.js';
+const featuredProjects = projects.filter((project) => project.flagship);
+const featuredCount = featuredProjects.length;
+const projectsWithoutLiveDemo = featuredProjects.filter((project) => !project.live).length;
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4173/';
@@ -88,13 +91,13 @@ async function open({ threed = false, ...opts } = {}) {
   await page.waitForFunction(() => {
     const selected = document.querySelectorAll('#forge .filters button[aria-pressed="true"]');
     const cards = document.querySelectorAll('#forge .card');
-    return selected.length === 1 && cards.length > 0 && cards.length < 4;
+    return selected.length === 1 && cards.length > 0 && cards.length < featuredCount;
   });
-  ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < 4 && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
+  ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
-  ok('four curated featured projects shown without empty placeholder cards', (await page.locator('#forge .card').count()) === 4 && (await page.locator('#forge .card-soon').count()) === 0);
-  ok('all four selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === 4);
+  ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
+  ok('all selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === featuredCount);
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
@@ -210,7 +213,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
-    ok('featured projects without an always-on demo carry an honest note', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === 3 && (await page.locator('.roles-soon').count()) === 0);
+    ok('featured projects without an always-on demo carry an honest note', (await page.locator('.card:not(.card-soon) .demo-soon').count()) === projectsWithoutLiveDemo && (await page.locator('.roles-soon').count()) === 0);
     ok('the Forge contains no empty coming-soon flagship cards', (await page.locator('.card-soon').count()) === 0);
   } else {
     await page.goto(`${BASE}blog/`);
