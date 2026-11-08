@@ -38,6 +38,7 @@ export default function ProjectDialog({ project, onClose }) {
           <p className="card-kind pixel">{project.stage} · {project.kind}</p>
           <h2 id="case-title" className="pixel dialog-title">{project.name}</h2>
           <p id="case-summary" className="dialog-tag">{project.summary}</p>
+          {project.workflow && <p className="case-workflow"><strong className="pixel">WORKFLOW</strong> {project.workflow}</p>}
 
           <div className="dialog-actions">
             <a className="btn btn-primary btn-sm pixel" href={project.repo} target="_blank" rel="noopener noreferrer">
