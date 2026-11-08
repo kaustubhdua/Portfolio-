@@ -105,7 +105,7 @@
 
 **Core/runtime:** Python, Streamlit, Next.js 15, React 19, TypeScript, Tailwind CSS 4, FastAPI local-analysis service, PDF.js, jsQR, PyPDF, Pillow, OpenCV and ReportLab.
 
-**Optional/local tools:** Ollama for self-hosted text/vision assistance; faster-whisper for local video-audio transcription; FFmpeg for audio extraction. Deterministic analysis remains the default path without a hosted AI key.
+**Optional/local tools:** Ollama (including the documented Qwen 2.5 7B local model) for self-hosted text/vision assistance; faster-whisper for local video-audio transcription; FFmpeg for audio extraction. Wazuh is an optional external telemetry adapter. Microsoft Defender/Entra response adapters are opt-in/prepared and have not been live-validated. Deterministic analysis remains the default path without a hosted AI key.
 
 **Build/quality:** Python tests, Playwright, axe-core, TypeScript, GitHub Actions and CodeQL.
 
