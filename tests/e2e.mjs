@@ -99,6 +99,19 @@ async function open({ threed = false, ...opts } = {}) {
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('all selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === featuredCount);
 
+  // Every featured case study must open, identify the selected project, and expose its real repository.
+  for (const project of featuredProjects) {
+    await page.getByRole('button', { name: `Case study: ${project.name}` }).click();
+    const dialog = page.locator('dialog.dialog');
+    ok(`case study opens for ${project.name}`, await dialog.isVisible() && (await dialog.locator('#case-title').innerText()) === project.name);
+    ok(`case study links to the correct repository for ${project.name}`, (await dialog.locator(`a[href="${project.repo}"]`).count()) === 1);
+    if (project.live) {
+      ok(`live demo is shown for ${project.name}`, (await dialog.locator(`a[href="${project.live}"]`).count()) === 1);
+    }
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(120);
+  }
+
   await page.getByRole('button', { name: 'FastAPI' }).click();
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
 
