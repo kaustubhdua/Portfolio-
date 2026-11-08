@@ -101,7 +101,7 @@ async function open({ threed = false, ...opts } = {}) {
 
   ok('project section does not expose a second uncurated experiment grid', (await page.locator('#forge .explored-grid').count()) === 0);
   const metricValues = (await page.locator('.stat-num').allTextContents()).map((value) => value.trim());
-  ok('at-a-glance metrics are three static, single values', metricValues.length === 3 && metricValues.every((value) => /^\\d+$/.test(value)));
+  ok('at-a-glance metrics are three static, single values', metricValues.length === 3 && metricValues.every((value) => /^\d+$/.test(value)));
   ok('technical skills are curated to 15 core technologies', (await page.locator('#inventory .slot').count()) === 15);
 
   // Every featured case study must open, identify the selected project, and expose its real repository.
