@@ -290,6 +290,20 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('phone: day/night button stays on screen after scrolling', box && box.y >= 0 && box.y + box.height <= 844 && box.x + box.width <= 390, JSON.stringify(box));
   const sbox = await pp.locator('.sound-toggle').boundingBox();
   ok('phone: sound button stays on screen after scrolling', sbox && sbox.y >= 0 && sbox.y < 100, JSON.stringify(sbox));
+  await pp.locator('.theme-toggle').click();
+  await pp.waitForFunction(() => document.documentElement.dataset.theme === 'overworld', null, { timeout: 7000 });
+  ok('phone: day/night control completes a world switch', (await pp.locator('.theme-toggle').getAttribute('aria-label')).includes('Nether'));
+  await pp.locator('.quick-btn').click();
+  ok('phone: quick view hides the 3D scenery', await pp.evaluate(() => document.documentElement.dataset.quick === 'on'));
+  await pp.locator('.quick-btn').click();
+  await pp.locator('#forge').scrollIntoViewIfNeeded();
+  const phoneCardsBefore = await pp.locator('#forge .card').count();
+  await pp.locator('#forge .filters button').nth(1).click();
+  ok('phone: engineering-focus filters update the project list', (await pp.locator('#forge .card').count()) > 0 && (await pp.locator('#forge .card').count()) < phoneCardsBefore);
+  await pp.getByRole('button', { name: 'All projects' }).click();
+  await pp.getByRole('button', { name: 'Case study: NIRDHOOM' }).click();
+  ok('phone: a project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()) === 'NIRDHOOM');
+  await pp.locator('.dialog-close').click();
   await phone.close();
 
   // Touch-first free roam: verify the mobile HUD is present and its controls remain usable.
