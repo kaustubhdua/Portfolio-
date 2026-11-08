@@ -94,7 +94,7 @@ async function open({ threed = false, ...opts } = {}) {
     return selected.length === 1 && cards.length > 0 && cards.length < expectedFeaturedCount;
   }, featuredCount);
   ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
-  await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
+  await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('all selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === featuredCount);
