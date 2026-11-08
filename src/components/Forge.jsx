@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section, Reveal } from './ui.jsx';
-import { biomeName, projectImage, projects, explored } from '../data/projects.js';
+import { biomeName, biomes, projectImage, projects, explored } from '../data/projects.js';
 import { useWorld } from '../hooks/useTheme.js';
 import { profile, sections } from '../data/profile.js';
 
@@ -57,9 +57,9 @@ export default function Forge({ onOpen }) {
   const present = [...new Set(featuredProjects.map((p) => p.biome))];
 
   return (
-    <Section id="forge" {...meta} title="Featured Projects" lead={`${COUNT_WORDS[featuredProjects.length] ?? featuredProjects.length} selected case studies covering architecture, engineering decisions and honest project limits.`}>
-      <div className="filters" role="group" aria-label="Filter projects by biome">
-        {[['all', 'All biomes'], ...present.map((b) => [b, biomeName(b, world)])].map(([id, name]) => (
+    <Section id="forge" {...meta} title="Selected Projects" lead={`${COUNT_WORDS[featuredProjects.length] ?? featuredProjects.length} case studies. Start with the engineering area most relevant to the role, then open a case study for architecture, decisions, contribution and known limits.`}>
+      <div className="filters" role="group" aria-label="Filter projects by engineering focus">
+        {[['all', 'All projects'], ...present.map((b) => [b, biomes[b].note])].map(([id, name]) => (
           <button key={id} type="button" className={`filter pixel${filter === id ? ' is-on' : ''}`} aria-pressed={filter === id} onClick={() => setFilter(id)}>
             {name}
           </button>
