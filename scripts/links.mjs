@@ -6,6 +6,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { projects } from '../src/data/projects.js';
 import { profile } from '../src/data/profile.js';
 import { advancements } from '../src/data/advancements.js';
+import { skillGroups } from '../src/data/skills.js';
 
 const urls = new Map();
 const add = (label, url) => {
@@ -23,6 +24,17 @@ for (const role of profile.roles ?? []) add(`role: ${role.org}`, role.url);
 for (const item of profile.openSource ?? []) add(`upstream PR #${item.number}`, item.url);
 for (const item of advancements) {
   for (const link of item.links ?? []) add(`${item.title}: ${link.label}`, link.url);
+}
+for (const group of skillGroups) {
+  for (const skill of group.items) {
+    for (const item of skill.evidence ?? []) add(`skill ${skill.name}: ${item.label}`, item.url);
+  }
+}
+
+// The repository README is also a public entry point and should not carry stale links.
+const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+for (const match of readme.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)) {
+  add(`repository README: ${match[1]}`, match[2]);
 }
 
 // Blog articles are authored content too, so verify their Markdown destinations.
