@@ -19,7 +19,7 @@ export const projectImage = (project, world) =>
   world === 'overworld' ? project.image.replace('img/projects/', 'img/projects/day/') : project.image;
 
 export const projects = [
-  {
+{
     id: 'nirdhoom',
     flagship: true,
     stage: 'Prototype',
@@ -69,7 +69,7 @@ export const projects = [
     status:
       'Prototype and integration foundation. Seeded records and indicative planning values are kept separate from live records, and no performance figures are claimed.',
   },
-  {
+{
     id: 'saathi',
     flagship: true,
     stage: 'MVP',
@@ -116,7 +116,7 @@ export const projects = [
     status:
       'MVP prototype. Its previously listed public demo URL no longer resolves, so no live demo is advertised until a working deployment is verified. The next milestone is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
   },
-  {
+{
     id: 'patchpilot',
     flagship: true,
     stage: 'Early-stage',
@@ -159,122 +159,7 @@ export const projects = [
     status:
       'Early-stage tool with tests and CI. No live demo exists, and no accuracy figures are claimed.',
   },
-  {
-    id: 'satark',
-    flagship: false,
-    stage: 'Prototype',
-    name: 'SATARK Sentinel',
-    tagline: 'Evidence-led cyber incident investigation',
-    contribution: 'Personal project. SATARK Sentinel and FIRSTLIGHT are developed in this repository; the case study describes the implemented prototype and its documented safety boundaries.',
-    evidence: [
-      { label: 'Project README', url: 'https://github.com/kaustubhdua/Satark/blob/main/README.md' },
-      { label: 'FIRSTLIGHT workflow and safety boundaries', url: 'https://github.com/kaustubhdua/Satark/blob/main/docs/FIRSTLIGHT.md' },
-      { label: 'Architecture and threat model', url: 'https://github.com/kaustubhdua/Satark/blob/main/docs/ARCHITECTURE.md' },
-      { label: 'CI workflows', url: 'https://github.com/kaustubhdua/Satark/actions' },
-    ],
-    badges: ['FIRSTLIGHT Incident Command', 'Evidence integrity', 'Local AI · Ollama'],
-    biome: 'soul',
-    kind: 'Personal project',
-    image: 'https://raw.githubusercontent.com/kaustubhdua/Satark/main/assets/satark-banner.svg',
-    summary:
-      'A security-investigation prototype that structures suspicious digital artifacts and a synthetic incident into evidence-linked findings, timelines, gaps and human-reviewed next steps.',
-    stack: ['Python', 'Next.js', 'FastAPI', 'Streamlit', 'Ollama', 'Supabase'],
-    repo: 'https://github.com/kaustubhdua/Satark',
-    live: null,
-    demoNote: 'Deployment verification pending',
-    problem:
-      'Suspicious messages, links, QR codes, attachments and account alerts arrive as disconnected signals. SATARK aims to help a reviewer understand what the available evidence supports, what remains unknown and which next step is justified.',
-    features: [
-      'FIRSTLIGHT Incident Command demonstrates a repeatable investigation of a fictional account-compromise scenario',
-      'SHA-256 evidence-integrity checks and a controlled tampering demonstration',
-      'Deterministic, evidence-linked findings, chronological timelines and explicit evidence gaps',
-      'Human approval and rejection controls for simulated response actions, with supported JSON export',
-      'Supporting triage workflows for text, URLs, images, QR codes, PDFs and supported videos',
-      'Optional self-hosted Ollama assistance; the default local deterministic analysis path does not require a third-party AI API key',
-      'A bounded Linux endpoint sensor for local authentication-log observations and explicit-path file-integrity snapshots',
-    ],
-    architecture: [
-      { title: 'Web experience', text: 'A Next.js workspace provides the browser-based analysis and investigation experience.' },
-      { title: 'Investigation engine', text: 'Python components implement deterministic FIRSTLIGHT rules, evidence processing, findings and report workflows.' },
-      { title: 'Local AI', text: 'Optional Ollama inference runs on an operator-controlled machine; deterministic checks remain available without a hosted AI API.' },
-      { title: 'Endpoint sensor', text: 'A standard-library Linux sensor collects bounded local observations and writes a local hash-chained journal without network requests or automatic response actions.' },
-    ],
-    decisions: [
-      'Observations, model interpretation, uncertainty and response decisions are kept distinct.',
-      'FIRSTLIGHT uses a synthetic scenario so the investigation can be demonstrated without real incident data.',
-      'AI is an assistant for supported workflows, not the sole source of truth.',
-      'The default local analysis path avoids third-party threat-intelligence API calls.',
-      'Human approval remains central; response controls in FIRSTLIGHT are simulated.',
-    ],
-    limits: [
-      'The configured Vercel alias exists, but the exact deployed revision and runtime health must be verified before advertising it as a working live demo.',
-      'FIRSTLIGHT uses synthetic incident data and simulated response actions; it does not perform real account or endpoint response.',
-      'The session-based audit chain is not independently anchored chain-of-custody evidence.',
-      'SATARK is not a malware sandbox, certified forensic platform, antivirus replacement or production incident-response service.',
-      'Use synthetic or public, non-sensitive inputs in the current demonstration; production security and tenant-isolation gates remain to be verified.',
-    ],
-    status:
-      'Active engineering prototype with documented workflows, automated tests and CI. Production deployment, live response integrations and forensic-grade evidence custody are not claimed.',
-  },
-  {
-    id: 'genomeguard',
-    flagship: false,
-    stage: 'Research prototype',
-    name: 'GenomeGuard',
-    tagline: 'Privacy-aware governance for genomic research data',
-    contribution: 'Personal research-software project in my repository. The case study reflects the implemented prototype and explicitly documented release boundaries.',
-    evidence: [
-      { label: 'Project README and scope', url: 'https://github.com/kaustubhdua/GenomeGuard/blob/main/README.md' },
-      { label: 'Architecture and threat model', url: 'https://github.com/kaustubhdua/GenomeGuard/blob/main/docs/architecture.md' },
-      { label: 'Production-readiness audit', url: 'https://github.com/kaustubhdua/GenomeGuard/blob/main/docs/production-readiness-audit-2026-10-29.md' },
-      { label: 'CI workflows', url: 'https://github.com/kaustubhdua/GenomeGuard/actions' },
-    ],
-    badges: ['Consent-inspired policy', 'Disclosure-risk signals', 'Tamper-evident audit'],
-    biome: 'soul',
-    kind: 'Personal research prototype',
-    image: 'https://opengraph.githubassets.com/1/kaustubhdua/GenomeGuard',
-    summary:
-      'A research prototype for governing access to genomic datasets through purpose-aware policy checks, disclosure-risk assessment, output protection and auditable decisions.',
-    stack: ['Python', 'FastAPI', 'React', 'Supabase', 'PostgreSQL', 'FHIR R4'],
-    repo: 'https://github.com/kaustubhdua/GenomeGuard',
-    live: null,
-    demoNote: 'Hosted research API · frontend deployment drift',
-    problem:
-      'Genomic datasets can reveal sensitive information about individuals and relatives. Research access needs transparent purpose checks, privacy-aware outputs and a reviewable record of decisions.',
-    features: [
-      'Evaluates research requests against consent-inspired, dataset-level policy rules and returns reasoned decisions',
-      'Estimates disclosure risks involving rare variants, uniqueness, membership signals and potential exposure of relatives',
-      'Applies configurable output transformations and records a simplified privacy-budget estimate',
-      'Monitors selected query-probing and differencing patterns',
-      'Provides a read-only steward copilot that explains evidence but cannot approve, deny or release data',
-      'Records decisions in a hash-chained audit log with verification tooling',
-      'Includes Beacon v2-style interoperability experiments and synthetic FHIR R4 Consent export validation',
-      'Repeatable synthetic-data evaluations and optional public 1000 Genomes research workflows',
-    ],
-    architecture: [
-      { title: 'Policy pipeline', text: 'Deterministic request validation, policy checks, risk assessment, output transformation, anomaly monitoring, decision handling and audit recording.' },
-      { title: 'Research data', text: 'Synthetic data is the local default. Optional research workflows use public 1000 Genomes data with explicit provenance and import gates.' },
-      { title: 'Advisory AI', text: 'Advisory components receive sanitized summaries and cannot make access-control decisions.' },
-      { title: 'Application', text: 'A web frontend and Python research API are accompanied by Supabase authentication and organization-scoped request/review work in progress.' },
-    ],
-    decisions: [
-      'Deterministic application code, not AI, remains responsible for access decisions.',
-      'Dataset-level public-release policy is not represented as participant-specific consent.',
-      'The verified dataset catalogue remains empty until the complete import and provenance gate is satisfied.',
-      'Synthetic local demo data is kept distinct from optional public-genotype research evaluation.',
-    ],
-    limits: [
-      'Research prototype only; not for clinical or production use.',
-      'No participant-specific consent records or verified institutional identity provider are implemented for the public dataset.',
-      'The simplified privacy-budget ledger is not a formally audited differential-privacy implementation.',
-      'Cryptographic helpers and the educational Paillier path have not been independently audited.',
-      'The full policy/risk engine, normalized cohort import, audit parity and durable production cutover are not complete.',
-      'The legacy hosted API and current production frontend have deployment drift; hosted metrics and provenance claims must not be treated as independently verified.',
-    ],
-    status:
-      'Active research prototype with CI, synthetic-data evaluation and documented privacy/security boundaries. Not a clinical system, production genomic data service or participant-consent authority.',
-  },
-  {
+{
     id: 'bharatsim',
     flagship: true,
     stage: 'Controlled-beta MVP',
@@ -331,7 +216,7 @@ export const projects = [
     status:
       'Controlled-beta MVP with seven-job CI, security audits and a public risk-planning preview. Full production execution and arbitrary APK testing are intentionally not claimed.',
   },
-  {
+{
     id: 'smartwaste',
     flagship: true,
     stage: 'Prototype',
@@ -379,98 +264,7 @@ export const projects = [
     status:
       'Full-stack engineering prototype with FastAPI, PostgreSQL/PostGIS, authenticated operator and driver workflows, CI, CodeQL and Playwright smoke coverage. No live municipal deployment, field-pilot outcome or operational-savings claim is made.',
   },
-  {
-    id: 'jiit-toppers',
-    flagship: false,
-    stage: 'Prototype · production gates open',
-    name: 'JIIT Toppers',
-    tagline: 'Student-first academic workspace for JIIT',
-    contribution: 'Personal project. Implemented academic workflows are distinguished from planned modules and unverified live services.',
-    evidence: [
-      { label: 'Repository', url: 'https://github.com/kaustubhdua/Jiit-toppers-' },
-      { label: 'Release-readiness audit', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/IMPLEMENTATION_AUDIT_2026-11-02.md' },
-      { label: 'Authentication setup', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/AUTH_SETUP.md' },
-      { label: 'Data model', url: 'https://github.com/kaustubhdua/Jiit-toppers-/blob/main/docs/DATA_MODEL.md' },
-    ],
-    badges: ['Next.js 16', 'Supabase SSR', 'Academic workflows'],
-    biome: 'crimson',
-    kind: 'Personal project',
-    image: 'https://opengraph.githubassets.com/1/kaustubhdua/Jiit-toppers-',
-    summary: 'A JIIT-focused workspace for personal academic records, attendance and grade calculations, CSV imports, study planning and a PYQ reference tracker.',
-    stack: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Prisma', 'PostgreSQL'],
-    repo: 'https://github.com/kaustubhdua/Jiit-toppers-',
-    live: null,
-    demoNote: 'No verified production deployment',
-    problem: 'Students keep academic records, attendance calculations, exam plans and study resources in disconnected tools. JIIT Toppers brings personal workflows together while separating student-entered information from official university data.',
-    features: [
-      'Supabase SSR authentication foundation with email OTP/PKCE',
-      'Owner-scoped academic terms, subjects, grades and attendance records',
-      'Reviewable CSV import, history, JSON export and record deletion',
-      'Attendance, SGPA/CGPA and forecast calculators',
-      'Browser-local study planner and exam calendar with iCalendar export',
-      'Personal PYQ reference tracker with local storage boundaries',
-      'Server-side validation, ownership checks and database constraints',
-    ],
-    architecture: [
-      { title: 'Application', text: 'Next.js App Router and React student workspace.' },
-      { title: 'Identity', text: 'Cookie-backed Supabase sessions and server-derived user identity.' },
-      { title: 'Data', text: 'Prisma and PostgreSQL with ownership constraints and RLS.' },
-      { title: 'Quality', text: 'Automated tests, lint, type checks, schema validation and production build.' },
-    ],
-    decisions: [
-      'Student-entered records are not represented as official JIIT data.',
-      'The PYQ tracker stores references, not third-party PDFs.',
-      'A passing build is not proof of live authentication or tenant isolation.',
-    ],
-    limits: [
-      'The intended Supabase project is inactive; live Auth and persistence are unverified.',
-      'Live migration history and schema drift require inspection before production migrations.',
-      'Two-account authorization tests, backup/restore and production smoke tests remain release blockers.',
-      'Curriculum, placements, moderated resources, discussions, clubs and events remain planned.',
-    ],
-    status: 'Active prototype. Production release is blocked on a healthy approved Supabase project, verified migrations, two-account isolation tests and deployment smoke tests.',
-  },
-  {
-    id: 'jyc',
-    flagship: false,
-    stage: 'Deployment unverified',
-    name: 'JYC Website',
-    tagline: 'Public website for JIIT Youth Club',
-    contribution: 'Multi-contributor club website. The case study covers the shared product and its quality workflow; the commit history shows individual contributions.',
-    evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/README.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/JYC-Website2/actions"},{"label":"Visual route matrix test","url":"https://github.com/kaustubhdua/JYC-Website2/blob/main/scripts/visual-route-matrix.spec.js"}],
-    badges: ['CodeQL', 'Playwright QA', 'PWA shell'],
-    biome: 'crimson',
-    kind: 'Own repository',
-    image: 'img/projects/jyc.png',
-    summary:
-      'The official JIIT Youth Club 128 website: 23+ societies, events and fests, leadership, gallery, archive, announcements and recruitment.',
-    stack: ['React 19', 'Vite', 'React Router', 'Supabase', 'Playwright', 'GitHub Actions'],
-    repo: 'https://github.com/kaustubhdua/JYC-Website2',
-    problem:
-      'JYC coordinates major college events and fests and needs one public home for them. The site is deliberately not a student portal or social network.',
-    features: [
-      'Public sections for home, about, history, clubs and hubs, events, fests, gallery, archive, team, achievements and contact',
-      'Event lifecycle from draft and review through registration to results and archive',
-      'Supabase-backed content and Edge Functions',
-      'PWA shell with a service worker',
-    ],
-    architecture: [
-      { title: 'Front end', text: 'React 19, Vite 8 and React Router with a CSS-first interaction layer.' },
-      { title: 'Content', text: 'Supabase-backed records for clubs, events and gallery items.' },
-      { title: 'Quality gates', text: 'Static QA covers source integrity, security, SEO, accessibility and media; Playwright runs browser QA.' },
-      { title: 'CI', text: 'GitHub Actions workflows including CodeQL.' },
-    ],
-    decisions: [
-      'Historical material is treated as source material, not automatic proof of current clubs or office holders.',
-      'Unknown social handles are left blank instead of guessed.',
-      'Out-of-scope features (accounts, attendance, public AI chat, social feeds) are explicitly excluded.',
-    ],
-    limits: [
-      'The README lists running the browser suite against the deployed site and verifying the production deployment as remaining work.',
-    ],
-    status: 'Public club website with automated quality gates. The previously listed deployment URL no longer resolves, so a current production URL must be confirmed before advertising a live demo.',
-  },
-  {
+{
     id: 'rideforge',
     flagship: true,
     stage: 'Portfolio MVP',
@@ -516,84 +310,5 @@ export const projects = [
       'Realtime reconnect and external routing-provider behaviour still need broader production-like validation.',
     ],
     status: 'A tested portfolio MVP with C++/sanitizer, API, PostgreSQL migration, web/Playwright/accessibility and container release gates. The latest verified full-suite result applies to its recorded tested commit, not a live production deployment.',
-  },
-  {
-    id: 'adaptai',
-    flagship: false,
-    stage: 'Team project',
-    name: 'Adapt AI',
-    tagline: 'Hardware-aware local AI assistant',
-    contribution: 'Contributor on a team project; this repository is my fork. The README does not itemise contributions, so the commit history is the record.',
-    evidence: [{"label":"Fork repository","url":"https://github.com/kaustubhdua/adapt-ai"},{"label":"Upstream project","url":"https://github.com/ManOfDiamond/adapt-ai"}],
-    badges: ['Ollama', 'Local inference', 'Team project'],
-    biome: 'wastes',
-    kind: 'Team project · contributor',
-    image: 'img/projects/adaptai.png',
-    summary:
-      'A team-built local assistant, which I contributed to, that recommends an Ollama model based on the machine’s RAM and VRAM, for on-device chat, file and Python workflows.',
-    stack: ['FastAPI', 'Ollama', 'Local inference', 'JavaScript'],
-    repo: 'https://github.com/kaustubhdua/adapt-ai',
-    live: null,
-    problem:
-      'Choosing a local model that actually fits your hardware is trial and error. Adapt AI inspects the available memory and recommends one.',
-    features: [
-      'Model recommendation based on available RAM and VRAM',
-      'On-device chat, file and Python workflows through Ollama',
-    ],
-    architecture: [
-      { title: 'API', text: 'FastAPI service in front of local inference.' },
-      { title: 'Inference', text: 'Ollama runs the recommended model on the user’s own machine.' },
-    ],
-    decisions: ['Inference stays local, so conversations and files never leave the device.'],
-    limits: [
-      'The upstream repository is owned by a teammate (ManOfDiamond) and the link here is my fork. The README does not itemise individual contributions.',
-    ],
-    status: 'Team project I contributed to, built for OSDHACK’26 (Certificate of Merit for taking part) with Pulkit Sukhija, Aryan Sharma and Aishni Rathore. No performance figures are claimed.',
-  },
-];
-
-/** Forks and smaller prototypes. Shown separately and labelled honestly. */
-export const explored = [
-  {
-    name: 'Weather Core Matrix',
-    kind: 'Browser weather dashboard · Vanilla JavaScript',
-    text: 'A dependency-free city weather dashboard using the public wttr.in JSON endpoint. Includes URL-encoded city lookup, bounded requests, loading/error states, safe text rendering, current conditions and contract tests. Provider availability and rate limits are external dependencies; it is an informational project, not a safety alert service.',
-    repo: 'https://github.com/kaustubhdua/weather-core-matrix',
-  },
-  {
-    name: 'Nord Studio Task Manager',
-    kind: 'Local-first task manager · Vanilla JavaScript',
-    text: 'A compact task manager with priority labels, all/active/completed filters, remaining-task counts, task deletion and browser-local persistence. Stored records are validated, storage failures are surfaced, and user text is rendered safely. Data remains on the current browser/device and is not synced.',
-    repo: 'https://github.com/kaustubhdua/nord-studio-task-manager',
-  },
-  {
-    name: 'CrickVision',
-    kind: 'Experimental computer-vision toolkit · Python',
-    text: 'A local-first cricket video toolkit with person detection, shot-boundary heuristics, optional tracking, annotation sampling, provenance manifests and evaluation utilities. Cricket-specific accuracy and ball tracking are not yet validated.',
-    repo: 'https://github.com/kaustubhdua/CrickVision-',
-  },
-  {
-    name: 'CyberSentinel',
-    kind: 'Agentic cybersecurity prototype · JAI 2026 · 30–31 October',
-    text: 'Built during the Jaypee Agentic AI Hackathon at JIIT Sector 128. The prototype explores agent-based cybersecurity analysis, network-flow preprocessing, anomaly detection and threat analysis in a working application. The LinkedIn post links the project/code and a demo; the shortened links are retained as source evidence, not independently verified deployment claims.',
-    repo: 'https://github.com/kaustubhdua/jai-hack',
-  },
-  {
-    name: 'Infracis',
-    kind: 'Location due-diligence MVP',
-    text: 'An evidence-first property-location investigation tool that compares sourced amenities and environmental context, separating observed facts, calculations, interpretations and unknowns.',
-    repo: 'https://github.com/kaustubhdua/infracis',
-  },
-  {
-    name: 'RideForge',
-    kind: 'Portfolio MVP · C++17 · PostgreSQL',
-    text: 'A bike-taxi backend with a C++17 HTTP API, persisted fare quotes and bookings, expiring driver offers and graph-based routing. Not connected to real riders or payments.',
-    repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
-  },
-  {
-    name: 'AkashChalak',
-    kind: 'Hackathon prototype · SIH 2026 internal round',
-    text: 'A satellite-assisted air-quality and potential HCHO hotspot decision-support prototype explored by Team AkashChalak during JIIT Noida’s Smart India Hackathon 2026 internal round on 24–25 August. The concept combines CPCB observations, NASA FIRMS fire data, spatial interpolation and wind-aware visualisation; it is not presented as an official SIH finalist or winner.',
-    repo: 'https://github.com/kaustubhdua/AkashChalak',
-  },
+  }
 ];
