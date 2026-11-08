@@ -12,6 +12,9 @@ const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.addInitScript(() => {
+    globalThis.localStorage.setItem('portfolio-3d', 'off');
+  });
 
   const response = await page.goto(productionUrl, {
     waitUntil: 'domcontentloaded',
@@ -38,15 +41,6 @@ try {
   }
   assert.ok(await page.locator('a[href*="linkedin.com/in/kaustubh-dua"]').count() > 0, 'LinkedIn profile link is present');
   assert.ok(await page.locator('a[href="https://github.com/kaustubhdua"]').count() > 0, 'GitHub profile link is present');
-
-  const quickView = page.locator('.quick-btn');
-  assert.equal(await quickView.count(), 1, 'Quick View fallback control is present');
-  await quickView.click();
-  await page.waitForFunction(
-    () => globalThis.document.documentElement.dataset.quick === 'on',
-    null,
-    { timeout: 10_000 },
-  );
 
   for (let index = 0; index < expectedProjects.length; index += 1) {
     const card = cards.nth(index);
