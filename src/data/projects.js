@@ -223,7 +223,7 @@ export const projects = [
     badges: ['C++17 API', 'PostgreSQL bookings', 'Durable driver dispatch'],
     biome: 'basalt',
     kind: 'Personal project',
-    image: 'https://opengraph.githubassets.com/1/kaustubhdua/Smart_bike_taxi_platform',
+    image: 'img/projects/rideforge.svg',
     summary: 'A full-stack bike-taxi MVP with persisted ride bookings, driver offers, cancellation and route planning across passenger, driver and admin workspaces.',
     stack: ['C++17', 'Boost.Beast', 'PostgreSQL', 'React', 'TypeScript', 'Leaflet'],
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
