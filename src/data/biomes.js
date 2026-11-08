@@ -82,7 +82,7 @@ export const tips = [
   'JIIT Youth Club 128 pairs rich interactions with accessible navigation.',
   'RideForge expires driver offers after 45 seconds.',
   'BharatSim separates planned tests from executed device evidence.',
-  'SATARK links investigation findings to preserved source evidence.',
+  'SATARK Sentinel links investigation findings to preserved source evidence.',
   'Saathi tests Hindi and Hinglish intent routing on synthetic cases.',
   'Press Ctrl+K to open the keyboard command palette.',
   'Free roam hides the page and lets you explore the world.',
