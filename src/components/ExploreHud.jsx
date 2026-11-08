@@ -139,6 +139,11 @@ export default function ExploreHud({ onExit }) {
     api?.select(i);
   };
 
+  const setJumping = (event, active) => {
+    event.currentTarget.dataset.jump = active ? 'pressed' : 'released';
+    api?.jumpInput(active);
+  };
+
   return (
     <div className="explore-hud" data-touch={touch ? 'yes' : 'no'}>
       <button type="button" className="explore-exit pixel" onClick={onExit}>
@@ -168,13 +173,28 @@ export default function ExploreHud({ onExit }) {
           <button
             type="button"
             className="ex-btn ex-jump pixel"
+            aria-keyshortcuts="Space Enter"
+            data-jump="released"
             onPointerDown={(event) => {
               event.currentTarget.setPointerCapture(event.pointerId);
-              api?.jumpInput(true);
+              setJumping(event, true);
             }}
-            onPointerUp={() => api?.jumpInput(false)}
-            onPointerCancel={() => api?.jumpInput(false)}
-            onLostPointerCapture={() => api?.jumpInput(false)}
+            onPointerUp={(event) => setJumping(event, false)}
+            onPointerCancel={(event) => setJumping(event, false)}
+            onLostPointerCapture={(event) => setJumping(event, false)}
+            onKeyDown={(event) => {
+              if (event.repeat || (event.key !== ' ' && event.key !== 'Enter')) return;
+              event.preventDefault();
+              setJumping(event, true);
+            }}
+            onKeyUp={(event) => {
+              if (event.key !== ' ' && event.key !== 'Enter') return;
+              event.preventDefault();
+              setJumping(event, false);
+            }}
+            onBlur={(event) => {
+              if (event.currentTarget.dataset.jump === 'pressed') setJumping(event, false);
+            }}
           >
             Jump
           </button>
