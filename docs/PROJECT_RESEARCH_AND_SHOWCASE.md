@@ -21,7 +21,7 @@ The featured set is now selected for resume strength and engineering diversity: 
 **Core story:** a systems-oriented multi-role backend with durable booking and driver-offer state.
 
 - **Problem:** quotes, bookings, driver eligibility, offer expiry, cancellation, redispatch and support need consistent state across several actors.
-- **Engineering:** C++17/Boost.Beast API, PostgreSQL transactions and migrations, React/TypeScript workspaces, Leaflet, Nominatim/OSRM provider integrations, shortest-path routing, durable 45-second driver offers, expiry and sequential redispatch.
+- **Engineering:** C++17/Boost.Beast API, PostgreSQL transactions and migrations, React/TypeScript workspaces, Leaflet, Nominatim/OSRM provider integrations, shortest-path routing, durable 45-second driver offers, expiry and sequential redispatch; strict HS256 JWT verification with canonical base64url, bounded 15-minute claims and strict PBKDF2 record parsing.
 - **Evidence:** [README](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/README.md) · [release-readiness evidence](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/docs/RELEASE_READINESS_EVIDENCE.md) · [OpenAPI contract](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/backend/openapi.yaml) · [release workflow](https://github.com/kaustubhdua/Smart_bike_taxi_platform/actions/workflows/release-readiness.yml)
 - **Status boundary:** portfolio MVP, not a live commercial taxi service. Payments, real identity/vehicle checks and transport operations are outside current scope.
 - **Best recruiter angle:** C++ backend engineering, transactional workflows, state machines, routing algorithms and full-stack release verification.
@@ -30,7 +30,7 @@ The featured set is now selected for resume strength and engineering diversity: 
 **Core story:** a test orchestration and evidence pipeline that distinguishes a proposed plan from an executed device test.
 
 - **Problem:** mobile teams need risk-focused test planning and trustworthy execution evidence under constrained Android device/network conditions.
-- **Engineering:** FastAPI, React/TypeScript/Vite, PostgreSQL, APK validation and SHA-256 fingerprints, lease-based worker queue, heartbeats, guarded ADB runner, Android Emulator/Appium fixture workflow, logcat signal analysis and cross-source evidence synthesis.
+- **Engineering:** FastAPI, React/TypeScript/Vite, PostgreSQL, APK validation and SHA-256 fingerprints, lease-based worker queue, heartbeats, guarded ADB runner, Android Emulator/Appium fixture workflow, logcat signal analysis and cross-source evidence synthesis. Worker IDs now have a concurrency-safe single active slot: duplicate claims cannot clear a live lease or claim a second run.
 - **Evidence:** [README and current release status](https://github.com/kaustubhdua/Bharat-Sim/blob/main/README.md) · [planner methodology](https://github.com/kaustubhdua/Bharat-Sim/blob/main/docs/PLANNER.md) · [evidence synthesis](https://github.com/kaustubhdua/Bharat-Sim/blob/main/docs/EVIDENCE_SYNTHESIS.md) · [CI](https://github.com/kaustubhdua/Bharat-Sim/actions)
 - **Status boundary:** controlled-beta MVP. The fixture-based CI journey proves the source-built APK path only. Production APK execution remains gated on an independently verified isolated worker host; live Vercel database/storage round trips are not yet accepted.
 - **Best recruiter angle:** backend job orchestration, worker leases, Android tooling, test automation, artifact integrity and fail-closed production boundaries.
@@ -39,7 +39,7 @@ The featured set is now selected for resume strength and engineering diversity: 
 **Core story:** deterministic security triage with explicit evidence integrity, uncertainty and human review.
 
 - **Problem:** suspicious messages, links, attachments and event records are fragmented; an unexplained risk score can encourage unsafe conclusions.
-- **Engineering:** Python/FastAPI, Next.js/React, Streamlit legacy UI, deterministic FIRSTLIGHT investigation, SHA-256 artifact checks, evidence-linked findings, timelines, gap reporting, JSON export, local Linux endpoint sensor and optional self-hosted Ollama summaries.
+- **Engineering:** Python/FastAPI, Next.js/React, Streamlit legacy UI, deterministic FIRSTLIGHT investigation, SHA-256 artifact checks, evidence-linked findings, timelines, gap reporting, JSON export, local Linux endpoint sensor, optional self-hosted Ollama summaries and DNS-pinned public-URL evidence extraction with redirect/size limits and explicit hidden-content filtering.
 - **Evidence:** [README and safety boundaries](https://github.com/kaustubhdua/Satark/blob/main/README.md) · [FIRSTLIGHT scope](https://github.com/kaustubhdua/Satark/blob/main/docs/FIRSTLIGHT.md) · [native endpoint sensor guide](https://github.com/kaustubhdua/Satark/blob/main/docs/NATIVE_ENDPOINT_SENSOR.md) · [CI/security workflows](https://github.com/kaustubhdua/Satark/actions)
 - **Status boundary:** security-awareness and investigation prototype, not antivirus, full EDR, certified forensics or automatic containment. The FIRSTLIGHT audit chain is session-based; optional Defender/Entra adapters are not live-validated.
 - **Best recruiter angle:** security-minded backend engineering, safe input handling, evidence integrity, deterministic analysis and human-in-the-loop workflows.
