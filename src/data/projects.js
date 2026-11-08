@@ -126,7 +126,7 @@ export const projects = [
     evidence: [{"label":"README and quick start","url":"https://github.com/kaustubhdua/PatchPilot/blob/main/README.md"},{"label":"Benchmark methodology","url":"https://github.com/kaustubhdua/PatchPilot/blob/main/docs/benchmark-methodology.md"},{"label":"Roadmap and release gate","url":"https://github.com/kaustubhdua/PatchPilot/blob/main/ROADMAP.md"},{"label":"CI workflow","url":"https://github.com/kaustubhdua/PatchPilot/actions/workflows/ci.yml"}],
     badges: ['0-100 risk score', 'Rate-limited API', 'Non-root Docker'],
     biome: 'soul',
-    kind: 'Own repository',
+    kind: 'Personal project',
     image: 'img/projects/patchpilot.png',
     summary:
       'An early-stage service that reads a unified diff and returns changed-file statistics, evidence-backed risk signals, a coarse 0-100 score and test suggestions.',
