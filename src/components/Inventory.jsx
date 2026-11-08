@@ -5,7 +5,7 @@ import { skillGroups } from '../data/skills.js';
 import { sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'inventory');
-const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'ollama', 'github', 'playwright', 'docker']);
+const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'webgl', 'github', 'playwright', 'docker']);
 const groups = skillGroups.map((g) => ({ ...g, items: g.items.filter((i) => featuredSkillIds.has(i.id)) })).filter((g) => g.items.length);
 const all = groups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.title })));
 
@@ -17,7 +17,7 @@ export default function Inventory() {
   const [more, setMore] = useState(false);
 
   return (
-    <Section id="inventory" {...meta} title="Technical Skills" lead="Core technologies used across the selected projects. Select one to see repository evidence.">
+    <Section id="inventory" {...meta} title="Technical Skills" lead="Fifteen core technologies evidenced in selected projects and this portfolio. Select one to inspect the source.">
       <div className="inventory">
         <Reveal className={`panel info${more ? ' is-more' : ''}`} aria-live="polite">
           <div className="info-icon"><TechIcon item={selected} size={44} /></div>
