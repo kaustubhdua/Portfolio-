@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa6';
 import TechIcon from './TechIcon.jsx';
 import { Reveal } from './ui.jsx';
@@ -6,51 +6,20 @@ import { projects } from '../data/projects.js';
 import { profile } from '../data/profile.js';
 import { skillGroups } from '../data/skills.js';
 import { useInView } from '../hooks/useInView.js';
-import { useReducedMotion } from '../hooks/useMedia.js';
 
-// Every figure is derived from the data files, except the benchmark size that Saathi's README states.
-const items = skillGroups.flatMap((group) => group.items);
+const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'webgl', 'github', 'playwright', 'docker']);
+const items = skillGroups.flatMap((group) => group.items).filter((item) => featuredSkillIds.has(item.id));
 
+// Keep the figures static: the final value is visible to crawlers, assistive technology and visitors
+// from the first paint, rather than briefly exposing a duplicated screen-reader/count-up value.
 const stats = [
-  { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected project case studies' },
-  { id: 'live', value: projects.filter((p) => p.flagship && p.live).length, label: 'Featured demos' },
-  { id: 'opensource', value: profile.openSource.length, label: 'Merged upstream open-source PRs' },
-  { id: 'bench', value: 120, label: 'Synthetic benchmark cases in Saathi' },
+  { id: 'projects', value: projects.filter((p) => p.flagship).length, label: 'Selected projects' },
+  { id: 'previews', value: projects.filter((p) => p.flagship && p.live).length, label: 'Public project previews' },
+  { id: 'opensource', value: profile.openSource.length, label: 'Merged upstream PRs' },
 ];
 
-/** Counts up from zero once visible; shows the final number immediately for reduced motion. */
-function CountUp({ to, run, duration = 1100 }) {
-  const reduced = useReducedMotion();
-  const [n, setN] = useState(0);
-
-  useEffect(() => {
-    if (!run) return undefined;
-    if (reduced) {
-      setN(to);
-      return undefined;
-    }
-    let raf = 0;
-    let start = null;
-    const tick = (t) => {
-      start ??= t;
-      const p = Math.min(1, (t - start) / duration);
-      setN(Math.round(to * (1 - (1 - p) ** 3)));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [run, to, duration, reduced]);
-
-  return (
-    <>
-      <span className="sr-only">{to}</span>
-      <span aria-hidden="true">{n}</span>
-    </>
-  );
-}
-
 export default function Stats() {
-  const [ref, seen] = useInView({ threshold: 0.4 });
+  const [ref] = useInView({ threshold: 0.4 });
   const [paused, setPaused] = useState(false);
 
   return (
@@ -59,16 +28,14 @@ export default function Stats() {
         <ul ref={ref} className="stats">
           {stats.map((s, i) => (
             <Reveal as="li" key={s.id} delay={i * 70} className="stat">
-              <strong className="stat-num pixel">
-                <CountUp to={s.value} run={seen} />
-              </strong>
+              <strong className="stat-num pixel">{s.value}</strong>
               <span className="stat-label">{s.label}</span>
             </Reveal>
           ))}
         </ul>
 
         <div className={`marquee${paused ? ' is-paused' : ''}`}>
-          <ul className="marquee-track" aria-label="Technologies I have used">
+          <ul className="marquee-track" aria-label="Core technologies used in selected work and this portfolio">
             {[...items, ...items].map((item, i) => (
               <li key={`${item.id}-${i}`} aria-hidden={i >= items.length ? 'true' : undefined}>
                 <TechIcon item={item} size={20} />

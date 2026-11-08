@@ -9,6 +9,7 @@
  */
 import { profile } from '../src/data/profile.js';
 import { projects } from '../src/data/projects.js';
+import { tips, splashes } from '../src/data/biomes.js';
 const featuredProjects = projects.filter((project) => project.flagship);
 const featuredCount = featuredProjects.length;
 const projectsWithoutLiveDemo = featuredProjects.filter((project) => !project.live).length;
@@ -88,16 +89,50 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#forge .filters button').first().waitFor({ state: 'visible' });
   const biomeFilter = page.locator('#forge .filters button').nth(1);
   await biomeFilter.click();
-  await page.waitForFunction(() => {
+  await page.waitForFunction((expectedFeaturedCount) => {
     const selected = document.querySelectorAll('#forge .filters button[aria-pressed="true"]');
     const cards = document.querySelectorAll('#forge .card');
-    return selected.length === 1 && cards.length > 0 && cards.length < featuredCount;
-  });
-  ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
-  await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
+    return selected.length === 1 && cards.length > 0 && cards.length < expectedFeaturedCount;
+  }, featuredCount);
+  ok('engineering-focus filter narrows cards to the selected category', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
+  await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
-  ok('all selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === featuredCount);
+  ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
+  const unselectedNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
+  ok('loading tips only reinforce the selected project shortlist', tips.some((tip) => /Smart Waste|RideForge|NIRDHOOM|Saathi|PatchPilot/.test(tip)) && [...tips, ...splashes].every((message) => unselectedNames.every((name) => !message.toLowerCase().includes(name.toLowerCase()))));
+  for (const [index, project] of featuredProjects.entries()) {
+    const image = page.locator('#forge .card').nth(index).locator('.card-media img');
+    await image.scrollIntoViewIfNeeded();
+    await image.waitFor({ state: 'visible' });
+    const loaded = await image.evaluate((element) => element.complete && element.naturalWidth > 0);
+    ok(`project artwork loads for ${project.name}`, loaded);
+  }
+
+  ok('project section does not expose a second uncurated experiment grid', (await page.locator('#forge .explored-grid').count()) === 0);
+  const metricValues = (await page.locator('.stat-num').allTextContents()).map((value) => value.trim());
+  ok('at-a-glance metrics are three static, single values', metricValues.length === 3 && metricValues.every((value) => /^\d+$/.test(value)));
+  ok('technical skills are curated to 15 core technologies', (await page.locator('#inventory .slot').count()) === 15);
+
+  // Every featured case study must open, identify the selected project, and expose its real repository.
+  for (const project of featuredProjects) {
+    await page.getByRole('button', { name: `Case study: ${project.name}` }).click();
+    const dialog = page.locator('dialog.dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
+    const caseTitle = (await dialog.locator('#case-title').innerText()).trim().toLowerCase();
+    ok(`case study opens for ${project.name}`, await dialog.isVisible() && caseTitle === project.name.trim().toLowerCase());
+    const caseHeadings = (await dialog.locator('.case-h').allTextContents()).map((value) => value.trim());
+    ok(`case study prioritises contribution and current status for ${project.name}`, caseHeadings.includes('My role & contribution') && (await dialog.locator('.status').count()) === 1);
+    ok(`case study has native dialog labelling for ${project.name}`, (await dialog.getAttribute('aria-labelledby')) === 'case-title' && (await dialog.getAttribute('aria-describedby')) === 'case-summary');
+    const repositoryHref = await dialog.locator('.dialog-actions a').first().getAttribute('href');
+    ok(`case study links to the correct repository for ${project.name}`, repositoryHref === project.repo);
+    if (project.live) {
+      const liveHref = await dialog.locator('.dialog-actions a').nth(1).getAttribute('href');
+      ok(`live demo is shown for ${project.name}`, liveHref === project.live);
+    }
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('dialog.dialog')?.open, null, { timeout: 3000 });
+  }
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
   ok('inventory info panel updates', (await page.locator('.info-name').innerText()).toUpperCase() === 'FASTAPI');
@@ -193,6 +228,29 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await ctx.close();
 }
 
+// Common Android portrait and phone-landscape viewports, including touch hit areas.
+for (const [label, viewport] of [
+  ['412x915 portrait', { width: 412, height: 915 }],
+  ['915x412 landscape', { width: 915, height: 412 }],
+]) {
+  const [ctx, page] = await open({ viewport, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  await page.waitForSelector('#root > *');
+  const m = await page.evaluate(() => {
+    const d = document.documentElement;
+    const nav = document.querySelector('.nav-list');
+    const small = [...document.querySelectorAll('a,button')]
+      .filter((e) => {
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.height < 40 && getComputedStyle(e).display !== 'inline' && !e.classList.contains('skip-link');
+      });
+    return { over: d.scrollWidth - d.clientWidth, navFits: nav.scrollWidth <= nav.parentElement.clientWidth + 1, small: small.length };
+  });
+  ok(`${label}: no horizontal overflow`, m.over <= 0, `over=${m.over}`);
+  ok(`${label}: navigation fits`, m.navFits);
+  ok(`${label}: touch targets are at least 40px`, m.small === 0, `small targets=${m.small}`);
+  await ctx.close();
+}
+
 // Contact links and the blog: professional routes, posts and RSS render and link back.
 {
   const [ctx, page] = await open();
@@ -203,13 +261,17 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('selected campus leadership roles are listed', (await page.locator('.roles:not(.experience) li').count()) === 2 && await page.locator('.roles').getByText('Campus Ambassador').count() === 1 && await page.locator('.roles').getByText('JIIT Youth Club').count() === 1);
   await page.locator('.open-source-panel').scrollIntoViewIfNeeded();
   await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').first().waitFor({ state: 'visible' });
-  ok('six merged upstream open-source contributions are linked', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 6);
-  ok('CGPA and excluded internship are absent from public profile', !/CGPA|Pinnacle Labs|Web Development Intern/i.test(await page.locator('main').innerText()));
+  ok('three representative upstream open-source contributions are shown', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 3 && (await page.locator('.open-source-count').innerText()).includes('06'));
+  ok('all six merged upstream contributions remain one click away', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pulls?q="]').count()) === 1);
+  await page.locator('#advancements .adv-groups').scrollIntoViewIfNeeded();
+  await page.locator('#advancements .adv-groups.unlocked').waitFor({ state: 'attached' });
+  const highlightsText = await page.locator('#advancements').textContent();
+  ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/i.test(highlightsText), highlightsText);
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
   const smartWasteProject = projects.find((project) => project.id === 'smartwaste');
-  ok('Smart Waste is not advertised as an always-on demo', Boolean(smartWasteProject && !smartWasteProject.live && smartWasteProject.demoNote?.includes('sleeps after inactivity')));
+  ok('Smart Waste is not advertised as an always-on demo', Boolean(smartWasteProject && !smartWasteProject.live && /no verified public demo/i.test(smartWasteProject.demoNote ?? '')));
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
@@ -260,6 +322,14 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('toggle is disabled during the trip', await toggle.isDisabled());
   await page.waitForSelector('.travel', { state: 'detached', timeout: 6000 });
   ok('day mode applied after the trip', (await page.evaluate(() => document.documentElement.dataset.theme)) === 'overworld');
+  await page.locator('#forge').scrollIntoViewIfNeeded();
+  for (const [index, project] of featuredProjects.entries()) {
+    const image = page.locator('#forge .card').nth(index).locator('.card-media img');
+    await image.scrollIntoViewIfNeeded();
+    const source = await image.getAttribute('src');
+    const loaded = await image.evaluate((element) => element.complete && element.naturalWidth > 0);
+    ok(`day artwork loads for ${project.name}`, source?.includes('/day/') && loaded);
+  }
   ok('toggle label offers the way back', /Nether/.test(await toggle.getAttribute('aria-label')));
   ok('status message announces the new world', /Overworld/.test(await page.locator('[role="status"].sr-only').textContent()));
   await page.reload();
@@ -277,7 +347,71 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('phone: day/night button stays on screen after scrolling', box && box.y >= 0 && box.y + box.height <= 844 && box.x + box.width <= 390, JSON.stringify(box));
   const sbox = await pp.locator('.sound-toggle').boundingBox();
   ok('phone: sound button stays on screen after scrolling', sbox && sbox.y >= 0 && sbox.y < 100, JSON.stringify(sbox));
+  await pp.locator('.theme-toggle').click();
+  await pp.waitForFunction(() => document.documentElement.dataset.theme === 'overworld', null, { timeout: 7000 });
+  ok('phone: day/night control completes a world switch', (await pp.locator('.theme-toggle').getAttribute('aria-label')).includes('Nether'));
+  await pp.locator('.quick-btn').click();
+  ok('phone: quick view hides the 3D scenery', await pp.evaluate(() => document.documentElement.dataset.quick === 'on'));
+  await pp.locator('.quick-btn').click();
+  await pp.locator('#forge').scrollIntoViewIfNeeded();
+  const phoneCardsBefore = await pp.locator('#forge .card').count();
+  await pp.locator('#forge .filters button').nth(1).click();
+  ok('phone: engineering-focus filters update the project list', (await pp.locator('#forge .card').count()) > 0 && (await pp.locator('#forge .card').count()) < phoneCardsBefore);
+  await pp.getByRole('button', { name: 'All projects' }).click();
+  await pp.getByRole('button', { name: 'Case study: NIRDHOOM' }).click();
+  ok('phone: a project case study opens and is readable', await pp.locator('dialog.dialog').isVisible() && (await pp.locator('#case-title').innerText()) === 'NIRDHOOM');
+  await pp.locator('.dialog-close').click();
   await phone.close();
+
+  // Touch-first free roam: verify the mobile HUD is present and its controls remain usable.
+  const touchWorld = await glBrowser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await touchWorld.addInitScript(() => {
+    sessionStorage.setItem('nether-intro-seen', '1');
+    localStorage.setItem('portfolio-quick', 'off');
+  });
+  const touchPage = await touchWorld.newPage();
+  touchPage.on('pageerror', (e) => errors.push(`mobile free-roam pageerror ${e.message}`));
+  await touchPage.goto(BASE);
+  await touchPage.waitForFunction(() => document.documentElement.dataset.threed === 'on', null, { timeout: 60000 });
+  await touchPage.locator('.explore-btn').click();
+  await touchPage.waitForFunction(() => document.documentElement.dataset.explore === 'on', null, { timeout: 5000 });
+  ok('phone free roam opens the touch-first HUD', await touchPage.locator('.explore-hud[data-touch="yes"]').isVisible());
+  ok('phone free roam exposes joystick, jump and place controls', await touchPage.locator('.stick').isVisible() && await touchPage.locator('.ex-jump').isVisible() && await touchPage.locator('.ex-place').isVisible());
+  for (const [name, index] of [['Planks (1)', 0], ['Cobblestone (2)', 1], ['Glass (3)', 2], ['Lamp (4)', 3]]) {
+    await touchPage.getByRole('button', { name }).click();
+    ok(`phone hotbar selects ${name} by touch`, await touchPage.getByRole('button', { name }).getAttribute('aria-pressed') === 'true' && await touchPage.locator('.hotbar-slot').nth(index).getAttribute('aria-pressed') === 'true');
+  }
+  const stick = touchPage.locator('.stick');
+  const stickBox = await stick.boundingBox();
+  if (stickBox) {
+    await touchPage.mouse.move(stickBox.x + stickBox.width / 2, stickBox.y + stickBox.height / 2);
+    await touchPage.mouse.down();
+    await touchPage.mouse.move(stickBox.x + stickBox.width / 2 + 24, stickBox.y + stickBox.height / 2, { steps: 3 });
+    await touchPage.waitForTimeout(120);
+    const movedKnob = await touchPage.locator('.stick-knob').evaluate((el) => getComputedStyle(el).transform !== 'none');
+    await touchPage.mouse.up();
+    const resetKnob = await touchPage.locator('.stick-knob').evaluate((el) => getComputedStyle(el).transform === 'none');
+    ok('phone joystick responds while pressed and recentres on release', movedKnob && resetKnob);
+  } else {
+    ok('phone joystick has a measurable touch target', false);
+  }
+  const jumpButton = touchPage.locator('.ex-jump');
+  await jumpButton.click();
+  await touchPage.locator('.ex-place').click();
+  ok('phone jump and place actions are operable', await jumpButton.isVisible() && await touchPage.locator('.ex-place').isVisible());
+  ok('phone jump button advertises keyboard activation', (await jumpButton.getAttribute('aria-keyshortcuts')) === 'Space Enter');
+  await jumpButton.focus();
+  await touchPage.keyboard.down('Space');
+  ok('phone jump responds to Space keydown', (await jumpButton.getAttribute('data-jump')) === 'pressed');
+  await touchPage.keyboard.up('Space');
+  ok('phone jump releases after Space keyup', (await jumpButton.getAttribute('data-jump')) === 'released');
+  await touchPage.keyboard.down('Enter');
+  ok('phone jump responds to Enter keydown', (await jumpButton.getAttribute('data-jump')) === 'pressed');
+  await touchPage.keyboard.up('Enter');
+  ok('phone jump releases after Enter keyup', (await jumpButton.getAttribute('data-jump')) === 'released');
+  await touchPage.getByRole('button', { name: /Leave world/ }).click();
+  ok('phone can leave free roam and return to the page', await touchPage.evaluate(() => document.documentElement.dataset.explore !== 'on'));
+  await touchWorld.close();
 
   const calm = await plainContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
   const cp = await calm.newPage();
@@ -325,7 +459,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('3D world starts in the Nether fortress', (await canvas.getAttribute('data-world')) === 'nether');
   await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.frames) > 3, null, { timeout: 20000 }).catch(() => {});
   ok('3D world draws frames', Number(await canvas.getAttribute('data-frames')) > 3);
-  const stops = [['profile', 1], ['forge', 3], ['world', 5], ['contact', 6]];
+  const stops = [['forge', 1], ['profile', 2], ['inventory', 3], ['advancements', 4], ['world', 5], ['contact', 6]];
   for (const [id, n] of stops) {
     await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id);
     await page.waitForFunction((n) => Math.abs(Number(document.querySelector('canvas.world-canvas').dataset.progress) - n) < 0.15, n, { timeout: 15000 }).catch(() => {});
@@ -366,8 +500,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
   await page.keyboard.press('Digit3');
   ok('number keys select the matching block and update the hotbar', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2' && document.querySelectorAll('.hotbar-slot')[2].getAttribute('aria-pressed') === 'true'));
-  await page.getByRole('button', { name: 'Lamp (4)' }).click();
-  ok('hotbar buttons update the selected block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
+  await page.keyboard.press('Digit4');
+  ok('Digit4 selects the lamp while the desktop pointer is locked', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));

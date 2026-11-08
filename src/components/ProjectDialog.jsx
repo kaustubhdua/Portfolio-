@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { FaGithub, FaArrowUpRightFromSquare, FaXmark } from 'react-icons/fa6';
-import { biomeName, projectImage } from '../data/projects.js';
+import { projectImage } from '../data/projects.js';
 import { useWorld } from '../hooks/useTheme.js';
 
-/** Case study in a native <dialog>: focus trap, Escape and focus restoration come from the platform. */
+/** A concise case study: role, proof and engineering choices before exhaustive implementation detail. */
 export default function ProjectDialog({ project, onClose }) {
   const world = useWorld();
   const ref = useRef(null);
@@ -23,6 +23,7 @@ export default function ProjectDialog({ project, onClose }) {
       ref={ref}
       className="dialog"
       aria-labelledby="case-title"
+      aria-describedby="case-summary"
       onClose={onClose}
       onClick={(e) => {
         if (e.target === ref.current) ref.current.close();
@@ -34,17 +35,17 @@ export default function ProjectDialog({ project, onClose }) {
         </button>
         <img className="dialog-img" src={projectImage(project, world)} alt="" width="320" height="180" />
         <div className="dialog-body">
-          <p className="card-kind pixel">{biomeName(project.biome, world)} · {project.kind}</p>
+          <p className="card-kind pixel">{project.stage} · {project.kind}</p>
           <h2 id="case-title" className="pixel dialog-title">{project.name}</h2>
-          <p className="dialog-tag">{project.tagline}</p>
+          <p id="case-summary" className="dialog-tag">{project.summary}</p>
 
           <div className="dialog-actions">
             <a className="btn btn-primary btn-sm pixel" href={project.repo} target="_blank" rel="noopener noreferrer">
-              <FaGithub aria-hidden="true" /> GitHub<span className="sr-only"> (opens in a new tab)</span>
+              <FaGithub aria-hidden="true" /> Source code<span className="sr-only"> (opens in a new tab)</span>
             </a>
             {project.live && (
               <a className="btn btn-secondary btn-sm pixel" href={project.live} target="_blank" rel="noopener noreferrer">
-                <FaArrowUpRightFromSquare aria-hidden="true" /> {project.liveLabel ?? 'Live demo'}<span className="sr-only"> (opens in a new tab)</span>
+                <FaArrowUpRightFromSquare aria-hidden="true" /> {project.liveLabel ?? 'Project preview'}<span className="sr-only"> (opens in a new tab)</span>
               </a>
             )}
           </div>
@@ -52,27 +53,27 @@ export default function ProjectDialog({ project, onClose }) {
           <h3 className="pixel case-h">The problem</h3>
           <p>{project.problem}</p>
 
-          <h3 className="pixel case-h">Key functionality</h3>
-          <ul className="bullets">{project.features.map((f) => <li key={f}>{f}</li>)}</ul>
+          <h3 className="pixel case-h">My role & contribution</h3>
+          <p>{project.contribution ?? 'Individual contribution is not yet documented; review the repository history before attributing implementation work.'}</p>
 
-          <h3 className="pixel case-h">Architecture</h3>
+          <h3 className="pixel case-h">What it does</h3>
+          <ul className="bullets">{project.features.slice(0, 4).map((f) => <li key={f}>{f}</li>)}</ul>
+
+          <h3 className="pixel case-h">System design</h3>
           <dl className="arch">
-            {project.architecture.map((a) => (
+            {project.architecture.slice(0, 3).map((a) => (
               <div key={a.title}><dt className="pixel">{a.title}</dt><dd>{a.text}</dd></div>
             ))}
           </dl>
 
-          <h3 className="pixel case-h">Engineering decisions</h3>
-          <ul className="bullets">{project.decisions.map((d) => <li key={d}>{d}</li>)}</ul>
+          <h3 className="pixel case-h">Key engineering decisions</h3>
+          <ul className="bullets">{project.decisions.slice(0, 3).map((d) => <li key={d}>{d}</li>)}</ul>
 
-
-          <h3 className="pixel case-h">My contribution & attribution</h3>
-          <p>{project.contribution ?? 'Individual contribution has not been documented for this project yet. Review repository commits and pull requests before attributing implementation work.'}</p>
           {project.evidence?.length > 0 && (
             <>
               <h3 className="pixel case-h">Evidence & source trail</h3>
               <ul className="bullets">
-                {project.evidence.map((item) => (
+                {project.evidence.slice(0, 3).map((item) => (
                   <li key={item.url}>
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
                       {item.label}<span className="sr-only"> (opens in a new tab)</span>
@@ -83,13 +84,12 @@ export default function ProjectDialog({ project, onClose }) {
             </>
           )}
 
-          <h3 className="pixel case-h">Known limits</h3>
-          <ul className="bullets">{project.limits.map((l) => <li key={l}>{l}</li>)}</ul>
+          <h3 className="pixel case-h">Current boundaries</h3>
+          <ul className="bullets">{project.limits.slice(0, 2).map((l) => <li key={l}>{l}</li>)}</ul>
+          <p className="status"><strong className="pixel">Current status</strong> {project.status}</p>
 
-          <p className="status"><strong className="pixel">Status</strong> {project.status}</p>
-
-          <h3 className="pixel case-h">Stack</h3>
-          <ul className="chips">{project.stack.map((t) => <li key={t}>{t}</li>)}</ul>
+          <h3 className="pixel case-h">Core stack</h3>
+          <ul className="chips">{project.stack.slice(0, 6).map((t) => <li key={t}>{t}</li>)}</ul>
         </div>
       </div>
     </dialog>

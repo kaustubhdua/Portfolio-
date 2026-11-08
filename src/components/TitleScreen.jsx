@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { splashes } from '../data/splashes.js';
+import { splashes } from '../data/biomes.js';
 
 const savedWorld = () => {
   try {

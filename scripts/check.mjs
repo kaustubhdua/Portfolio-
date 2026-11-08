@@ -13,18 +13,35 @@ import { dist } from './lib/site.mjs';
 
 const { profile } = await import(pathToFileURL(path.resolve('src/data/profile.js')).href);
 const { advancements } = await import(pathToFileURL(path.resolve('src/data/advancements.js')).href);
+const { skillGroups } = await import(pathToFileURL(path.resolve('src/data/skills.js')).href);
+const { projects } = await import(pathToFileURL(path.resolve('src/data/projects.js')).href);
+const { tips, splashes } = await import(pathToFileURL(path.resolve('src/data/biomes.js')).href);
 
 const problems = [];
 const fail = (msg) => problems.push(msg);
+const coreSkills = skillGroups.flatMap((group) => group.items);
+if (coreSkills.length !== 15) fail(`Expected 15 curated core skills, found ${coreSkills.length}`);
+if (new Set(coreSkills.map((skill) => skill.id)).size !== coreSkills.length) fail('Skill inventory contains duplicate IDs');
+const featuredProjects = projects.filter((project) => project.flagship);
+if (featuredProjects.length !== 5) fail(`Expected five selected case studies, found ${featuredProjects.length}`);
+const excludedProjectNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
+for (const message of [...tips, ...splashes]) {
+  for (const name of excludedProjectNames) {
+    if (message.toLowerCase().includes(name.toLowerCase())) fail(`Immersive copy exposes an unselected project: ${name}`);
+  }
+}
+for (const unusedArt of ['img/projects/adaptai.png', 'img/projects/day/adaptai.png', 'img/projects/jyc.png', 'img/projects/day/jyc.png']) {
+  if (existsSync(path.join(dist, unusedArt))) fail(`Unselected project artwork still ships: ${unusedArt}`);
+}
 
-const allowedAdvancementGroups = new Set(['leadership', 'opensource', 'participation', 'certifications', 'programs']);
+const allowedAdvancementGroups = new Set(['certifications', 'programs']);
 for (const item of advancements) {
   if (!allowedAdvancementGroups.has(item.group)) fail(`Advancement "${item.id}" has no valid group`);
 }
 for (const item of advancements.filter((entry) => /hackathon|participat|certificate of merit/i.test(`${entry.category} ${entry.text}`))) {
   if (item.group === 'certifications') fail(`Participation item "${item.id}" must not be listed as a certification`);
 }
-for (const requiredGroup of allowedAdvancementGroups) {
+for (const requiredGroup of ['certifications', 'programs']) {
   if (!advancements.some((item) => item.group === requiredGroup)) fail(`Experience section is missing group: ${requiredGroup}`);
 }
 

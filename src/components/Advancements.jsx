@@ -7,18 +7,15 @@ import { useInView } from '../hooks/useInView.js';
 const meta = sections.find((s) => s.id === 'advancements');
 
 const groups = [
-  { id: 'leadership', title: 'Leadership & Campus Roles', description: 'Organising, community-building and student leadership.' },
-  { id: 'opensource', title: 'Open-source Contributions', description: 'Merged work in upstream projects, with contribution details.' },
-  { id: 'participation', title: 'Hackathons & Technical Participation', description: 'Events and team projects. Participation is not presented as a certification, finalist position or award.' },
-  { id: 'certifications', title: 'Certifications & Coursework', description: 'Formal course completion and credentials.' },
-  { id: 'programs', title: 'Technical Programs & Simulations', description: 'Structured industry learning experiences; these are not employment.' },
+  { id: 'programs', title: 'Technical Programs', description: 'Structured industry learning; simulations are not employment.' },
+  { id: 'certifications', title: 'Coursework', description: 'Selected technical coursework with a completed final project.' },
 ];
 
 export default function Advancements() {
   const [ref, seen] = useInView({ threshold: 0.12 });
 
   return (
-    <Section id="advancements" {...meta} title="Experience, Contributions & Learning" lead="A clear record of leadership, upstream engineering, event participation and formal learning—with each type kept distinct.">
+    <Section id="advancements" {...meta} title="Technical Highlights" lead="A short selection of structured learning relevant to backend engineering and data work.">
       <div ref={ref} className={`adv-groups${seen ? ' unlocked' : ''}`}>
         {groups.map((group) => {
           const items = advancements.filter((item) => item.group === group.id);

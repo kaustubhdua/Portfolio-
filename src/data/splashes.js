@@ -5,7 +5,7 @@
 export const splashes = [
   '6 upstream PRs merged!',
   'NSoC Campus Ambassador!',
-  '120-case benchmark!',
+  '120 synthetic eval cases!',
   'Open to internships!',
   'Built at JIIT Noida!',
   'Webhook retries matter!',

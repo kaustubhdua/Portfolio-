@@ -1,20 +1,51 @@
 /**
- * Checks every external link in the site data and prints the ones that fail.
- * Needs network access, so it is not part of `npm run verify`:  npm run check:links
+ * Checks every authored external destination in project, profile and blog data.
+ * Needs network access, so it is not part of `npm run verify`: npm run check:links
  */
-import { projects, explored } from '../src/data/projects.js';
+import { readdir, readFile } from 'node:fs/promises';
+import { projects } from '../src/data/projects.js';
 import { profile } from '../src/data/profile.js';
+import { advancements } from '../src/data/advancements.js';
+import { skillGroups } from '../src/data/skills.js';
 
 const urls = new Map();
 const add = (label, url) => {
-  if (url && /^https?:/.test(url)) urls.set(url, [...(urls.get(url) ?? []), label]);
+  if (url && /^https?:\/\//i.test(url)) urls.set(url, [...(urls.get(url) ?? []), label]);
 };
-for (const p of [...projects, ...explored]) {
+
+for (const p of projects) {
   add(`${p.name} repo`, p.repo);
   add(`${p.name} live`, p.live);
   for (const item of p.evidence ?? []) add(`${p.name} evidence: ${item.label}`, item.url);
 }
 for (const [k, v] of Object.entries(profile.links)) add(`profile ${k}`, v);
+add('upstream contribution archive', profile.openSourceArchive);
+for (const role of profile.roles ?? []) add(`role: ${role.org}`, role.url);
+for (const item of profile.openSource ?? []) add(`upstream PR #${item.number}`, item.url);
+for (const item of advancements) {
+  for (const link of item.links ?? []) add(`${item.title}: ${link.label}`, link.url);
+}
+for (const group of skillGroups) {
+  for (const skill of group.items) {
+    for (const item of skill.evidence ?? []) add(`skill ${skill.name}: ${item.label}`, item.url);
+  }
+}
+
+// The repository README is also a public entry point and should not carry stale links.
+const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+for (const match of readme.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)) {
+  add(`repository README: ${match[1]}`, match[2]);
+}
+
+// Blog articles are authored content too, so verify their Markdown destinations.
+const blogDir = new URL('../content/blog/', import.meta.url);
+for (const file of await readdir(blogDir)) {
+  if (!file.endsWith('.md')) continue;
+  const markdown = await readFile(new URL(file, blogDir), 'utf8');
+  for (const match of markdown.matchAll(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g)) {
+    add(`blog ${file}: ${match[1]}`, match[2]);
+  }
+}
 
 let failed = 0;
 let uncertain = 0;

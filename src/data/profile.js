@@ -11,7 +11,7 @@ export const profile = {
   kicker: 'ECM student · JIIT Noida',
   role: 'Software Engineering Student · Full-Stack & Applied AI',
   intro:
-    'I build practical software across full-stack product engineering, applied AI and data systems—from field-first workflows and multilingual assistance to developer tools. I also contribute to open-source infrastructure, with six merged upstream pull requests in Lemma Platform. I care about usable interfaces, clear system boundaries and tests that cover failure paths.',
+    'I build full-stack software and applied-AI systems, with a focus on backend reliability, useful data workflows and interfaces people can actually use. I contribute to open-source infrastructure and care about clear system boundaries, honest product status and tests for failure paths.',
   stack: ['Python', 'TypeScript', 'React', 'FastAPI', 'PostgreSQL', 'OR-Tools'],
   program: 'Electronics & Computer Engineering (ECM)',
   institution: 'Jaypee Institute of Information Technology (JIIT), Noida',
@@ -20,9 +20,8 @@ export const profile = {
   /** What the owner is looking for. Chosen from the public profile: backend and full-stack work with AI and data. */
   openTo: 'Software engineering internships in full-stack, backend and applied AI or data work.',
   about: [
-    'I am an Electronics & Computer Engineering student at JIIT Noida, focused on software engineering and full-stack product development.',
-    'I enjoy turning complex workflows into usable products, with careful API design, clear data boundaries and reliable testing.',
-    'I build applied AI, data and systems projects, contribute to open source, and represent Nexus Spring of Code as a campus ambassador.',
+    'I’m an Electronics & Computer Engineering student at JIIT Noida, focused on software engineering, full-stack product development and applied AI.',
+    'I like turning messy workflows into dependable tools: clear APIs, careful data handling, usable interfaces and tests that cover failure paths.',
   ],
   motto: 'Build thoughtfully. Verify everything.',
   /** Selected campus leadership roles most relevant to software engineering and open source. */
@@ -44,34 +43,13 @@ export const profile = {
   ],
   openSource: [
     { number: 1156, title: 'PostgreSQL 18 local volume compatibility', note: 'Aligned the managed local volume mount with the PostgreSQL 18 image contract and added regression coverage.', url: 'https://github.com/lemma-work/lemma-platform/pull/1156' },
-    { number: 1155, title: 'Podman function-sandbox tmpfs compatibility', note: 'Removed Docker-specific tmpfs ownership options rejected by Podman while preserving a writable private cache.', url: 'https://github.com/lemma-work/lemma-platform/pull/1155' },
     { number: 1136, title: 'GitHub webhook event identity and idempotency', note: 'Preserved push-event identity and distinguished check-suite rerequests from webhook redeliveries.', url: 'https://github.com/lemma-work/lemma-platform/pull/1136' },
     { number: 1128, title: 'Bundle sidecar path containment', note: 'Prevented file and JSON sidecar references from escaping their resource directory, including symlink paths.', url: 'https://github.com/lemma-work/lemma-platform/pull/1128' },
+    { number: 1155, title: 'Podman function-sandbox tmpfs compatibility', note: 'Removed Docker-specific tmpfs ownership options rejected by Podman while preserving a writable private cache.', url: 'https://github.com/lemma-work/lemma-platform/pull/1155' },
     { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
     { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
   ],
-  workflow: [
-    { step: 'Discover', note: 'Understand the real workflow and its constraints.' },
-    { step: 'Model', note: 'Draw clear system boundaries before writing code.' },
-    { step: 'Build', note: 'Ship interfaces people can actually use.' },
-    { step: 'Test', note: 'Cover the failure paths, not only the happy path.' },
-    { step: 'Verify', note: 'Check every claim against evidence.' },
-    { step: 'Ship', note: 'Release with honest status labels.' },
-  ],
-  principles: [
-    {
-      title: 'Honest status labels',
-      text: 'Prototype, simulated and live data are labelled as such. Smart Waste states that its data is synthetic, and Saathi labels demo and live results.',
-    },
-    {
-      title: 'Failure-path testing',
-      text: 'Projects run quality gates in CI. The JYC Website combines GitHub Actions, CodeQL and Playwright browser checks.',
-    },
-    {
-      title: 'Clear system boundaries',
-      text: 'External providers sit behind replaceable adapters, and secrets stay server-side, as in Saathi and NIRDHOOM.',
-    },
-  ],
+  openSourceArchive: 'https://github.com/lemma-work/lemma-platform/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua',
   links: {
     github: 'https://github.com/kaustubhdua',
     email: 'kaustubhdua1991@gmail.com',
@@ -85,7 +63,7 @@ export const sections = [
   { id: 'forge', label: 'Projects', short: 'Projects', hint: 'The Forge', sprite: 'anvil' },
   { id: 'profile', label: 'About', short: 'About', hint: 'Character Profile', sprite: 'head' },
   { id: 'inventory', label: 'Skills', short: 'Skills', hint: 'Inventory', sprite: 'chest' },
-  { id: 'advancements', label: 'Experience', short: 'Experience', hint: 'Highlights', sprite: 'star' },
+  { id: 'advancements', label: 'Highlights', short: 'Highlights', hint: 'Technical Milestones', sprite: 'star' },
   { id: 'world', label: 'Focus', short: 'Focus', hint: 'World Map', sprite: 'map' },
   { id: 'contact', label: 'Contact', short: 'Contact', hint: 'Ender Chest', sprite: 'ender' },
 ];
