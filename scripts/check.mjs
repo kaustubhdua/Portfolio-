@@ -14,7 +14,7 @@ import { dist } from './lib/site.mjs';
 const { profile } = await import(pathToFileURL(path.resolve('src/data/profile.js')).href);
 const { advancements } = await import(pathToFileURL(path.resolve('src/data/advancements.js')).href);
 const { skillGroups } = await import(pathToFileURL(path.resolve('src/data/skills.js')).href);
-const { projects } = await import(pathToFileURL(path.resolve('src/data/projects.js')).href);
+const { projects, getProjectStackGroups } = await import(pathToFileURL(path.resolve('src/data/projects.js')).href);
 const { tips, splashes } = await import(pathToFileURL(path.resolve('src/data/biomes.js')).href);
 
 const problems = [];
@@ -24,6 +24,24 @@ if (coreSkills.length !== 15) fail(`Expected 15 curated core skills, found ${cor
 if (new Set(coreSkills.map((skill) => skill.id)).size !== coreSkills.length) fail('Skill inventory contains duplicate IDs');
 const featuredProjects = projects.filter((project) => project.flagship);
 if (featuredProjects.length !== 5) fail(`Expected five selected case studies, found ${featuredProjects.length}`);
+for (const project of featuredProjects) {
+  const technologies = project.stack ?? [];
+  const grouped = getProjectStackGroups(technologies).flatMap((group) => group.items);
+  if (!technologies.length) fail(`Featured project "${project.name}" has no technology inventory`);
+  if (new Set(technologies).size !== technologies.length) fail(`Featured project "${project.name}" repeats a technology`);
+  if (grouped.length !== technologies.length || technologies.some((technology) => !grouped.includes(technology))) {
+    fail(`Featured project "${project.name}" has technologies missing from the shared stack taxonomy`);
+  }
+}
+const technologyAuditPath = path.resolve('docs/PROJECT_TECHNOLOGY_AUDIT.md');
+if (!existsSync(technologyAuditPath)) fail('The complete project technology audit is missing');
+else {
+  const technologyAudit = readFileSync(technologyAuditPath, 'utf8');
+  const auditedProjects = [...technologyAudit.matchAll(/^### (?:[0-9]+)\./gm)].length;
+  if (auditedProjects !== 16) fail(`Expected a 16-project technology audit, found ${auditedProjects}`);
+  if (!technologyAudit.includes('## The portfolio application itself')) fail('Technology audit is missing the portfolio application inventory');
+  if (!technologyAudit.includes('## Source verification record')) fail('Technology audit is missing its source verification record');
+}
 const excludedProjectNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
 for (const message of [...tips, ...splashes]) {
   for (const name of excludedProjectNames) {
