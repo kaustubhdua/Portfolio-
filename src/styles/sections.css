@@ -476,19 +476,6 @@
   letter-spacing: 0.1em;
 }
 
-.card-workflow {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.55rem;
-  align-items: start;
-  margin-top: 0.15rem;
-  padding: 0.55rem 0.65rem;
-  border-left: 2px solid var(--accent, var(--gold));
-  background: rgba(0, 0, 0, 0.12);
-  color: var(--muted);
-  font-size: 0.76rem;
-  line-height: 1.45;
-}
 .card-workflow .pixel {
   color: var(--gold);
   font-size: 0.56rem;
