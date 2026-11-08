@@ -1,6 +1,6 @@
 const STACK_GROUPS = [
   { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript'] },
-  { id: 'frontend', title: 'Frontend', items: ['React 19', 'Next.js 16', 'Vite 8', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript'] },
+  { id: 'frontend', title: 'Frontend', items: ['React 19', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript'] },
   { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets'] },
   { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib'] },
   { id: 'tools', title: 'Tools', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Hugeicons', 'Sharp', 'lucide-react', 'Oxlint'] },
@@ -247,7 +247,7 @@ export const projects = [
     kind: 'Personal project',
     image: 'img/projects/rideforge.svg',
     summary: 'A multi-role bike-taxi MVP built around persisted PostgreSQL bookings, expiring driver offers, sequential redispatch, cancellation and graph-based route planning.',
-    stack: ['C++17', 'Boost.Beast', 'CMake', 'libcurl', 'PostgreSQL/libpq', 'OpenSSL', 'nlohmann/json', 'React 19', 'TypeScript', 'Leaflet', 'Motion', 'lucide-react', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'axe-core', 'GitHub Actions'],
+    stack: ['C++17', 'Boost.Beast', 'CMake', 'libcurl', 'PostgreSQL/libpq', 'OpenSSL', 'nlohmann/json', 'React 19', 'TypeScript', 'Vite 6', 'Leaflet', 'Motion', 'lucide-react', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'axe-core', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
     live: null,
     demoNote: 'No live deployment claimed',
