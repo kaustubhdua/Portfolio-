@@ -42,7 +42,7 @@ else {
   if (!technologyAudit.includes('## The portfolio application itself')) fail('Technology audit is missing the portfolio application inventory');
   if (!technologyAudit.includes('## Source verification record')) fail('Technology audit is missing its source verification record');
 }
-const excludedProjectNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
+const excludedProjectNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'JIIT Toppers'];
 for (const message of [...tips, ...splashes]) {
   for (const name of excludedProjectNames) {
     if (message.toLowerCase().includes(name.toLowerCase())) fail(`Immersive copy exposes an unselected project: ${name}`);
