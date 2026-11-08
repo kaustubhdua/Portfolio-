@@ -1,4 +1,4 @@
-name: Build and deploy portfolio
+name: Verify and optionally deploy GitHub Pages
 
 on:
   push:
@@ -55,7 +55,9 @@ jobs:
         with:
           path: dist
 
+  # Vercel is the canonical production host. Enable this job only after Pages is configured.
   deploy:
+    if: vars.ENABLE_GITHUB_PAGES == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
