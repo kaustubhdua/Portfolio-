@@ -31,6 +31,8 @@ These five projects are the main portfolio shortlist. Other experiments remain d
 
 Every case study separates the problem, contribution, implementation choices, evidence and current boundaries. A project is not described as production-ready simply because its code or a preview exists.
 
+**New: [Research-backed project guide](docs/PROJECT_RESEARCH_AND_SHOWCASE.md)** — deeper project-by-project breakdowns, architecture differentiators, evidence links, maturity boundaries and recruiter-facing display guidance.
+
 ## Profile and engineering evidence
 
 The site presents a short profile, selected campus roles and three representative upstream contributions. Six merged pull requests to [Lemma Platform](https://github.com/lemma-work/lemma-platform) remain available through the linked contribution archive.
