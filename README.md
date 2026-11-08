@@ -1,49 +1,48 @@
 # Kaustubh Dua — Developer Portfolio
 
-Live site: [kaustubhdua.vercel.app](https://kaustubhdua.vercel.app)  
-Owner: [Kaustubh Dua](https://github.com/kaustubhdua) · JIIT Noida, Electronics & Computer Engineering
+**Live portfolio:** [kaustubhdua.vercel.app](https://kaustubhdua.vercel.app)  
+**Owner:** [Kaustubh Dua](https://github.com/kaustubhdua) · Electronics & Computer Engineering, JIIT Noida
 
-A recruiter-facing portfolio built as an interactive voxel world. It combines a custom WebGL scene with a clear, directly accessible portfolio: selected projects, open-source contributions, skills, a coming-soon resume notice and contact links.
+A recruiter-facing portfolio presented as an interactive voxel world. The visual layer is memorable, but the underlying experience stays straightforward: a short introduction, a curated set of case studies, selected engineering evidence and clear contact paths.
 
-## What it demonstrates
+## What the portfolio is designed to show
 
-- **Custom WebGL rendering:** a voxel-style world built from project-owned renderer, mesh, shader, lighting, atlas and world-generation modules; no Three.js or external 3D engine dependency.
-- **Two visual environments:** a night-world Nether theme and a daylight Overworld theme, each with its own palette and atmosphere.
-- **Progressive experience:** the portfolio content loads directly on normal visits; the immersive title-screen experience is opt-in with `?immersive=1`.
-- **Responsive UI:** project case studies, profile, experience, skills, focus areas and contact content adapt to desktop and mobile layouts.
-- **Accessibility:** keyboard navigation, command palette (`Ctrl+K`), semantic content, reduced-motion handling and a non-3D fallback.
-- **Honest experience evidence:** campus roles, upstream contributions, hackathon participation, formal coursework and job simulations are grouped separately; participation is never presented as a certification, employment or an award.
-- **Honest project evidence:** flagship projects are curated, team work is labelled and demo availability is stated accurately.
-- **Resume availability:** the resume entry points currently show a coming-soon notice; no downloadable PDF is publicly exposed.
+- **A clear engineering identity:** full-stack product engineering, backend reliability and applied AI.
+- **Selected work, not a repository dump:** five case studies chosen for distinct engineering problems and evidence.
+- **Honest project status:** team contributions, prototypes, MVPs, synthetic data and unavailable demos are labelled clearly.
+- **Evidence over claims:** project source, architecture decisions, current limitations and upstream pull requests are linked.
+- **Two visual worlds:** a Nether/night environment and an Overworld/day environment, each with its own palette and atmosphere.
+- **Progressive 3D:** normal visits open directly on readable portfolio content; the immersive experience is optional.
+- **Accessible alternatives:** semantic content, keyboard navigation, reduced-motion support, quick view and a non-3D path.
+- **Responsive interaction:** desktop keyboard/pointer controls and touch-first mobile free-roam controls.
+- **Resume status:** resume actions consistently show a coming-soon notice; no downloadable resume is exposed.
 
-## Selected work featured on the site
+## Selected projects
 
-- [NIRDHOOM](https://github.com/kaustubhdua/nihdhoom) — field-first crop-residue coordination prototype.
-- [Saathi](https://github.com/kaustubhdua/Saathi) — Hindi/Hinglish assistant with deterministic intent routing and source provenance.
-- [PatchPilot](https://github.com/kaustubhdua/PatchPilot) — evidence-backed pull-request diff triage; it does not execute repository code.
-- [SATARK Sentinel](https://github.com/kaustubhdua/Satark) — evidence-led cybersecurity investigation prototype with FIRSTLIGHT, deterministic threat triage and optional local Ollama assistance; response actions are simulated.
-- [GenomeGuard](https://github.com/kaustubhdua/GenomeGuard) — genomic-data governance research prototype with consent-inspired policy checks, disclosure-risk assessment and auditable decisions; not for clinical or production use.
-- [BharatSim](https://github.com/kaustubhdua/Bharat-Sim) — controlled-beta Android resilience testing workspace with risk planning, APK intake validation and a lease-based ADB/Appium worker; production execution remains gated.
-- [Adapt AI](https://github.com/kaustubhdua/adapt-ai) — team-built, hardware-aware local AI assistant that recommends Ollama models based on available RAM/VRAM. I contributed as part of the team.
-- [Smart Waste Management](https://github.com/kaustubhdua/smart_waste_project) — synthetic-data prototype combining fill-level prediction, collection prioritisation and OR-Tools route optimisation.
-- [JIIT Youth Club Website 2](https://github.com/kaustubhdua/JYC-Website2) — campus-club website for societies, events, gallery and recruitment.
+These five projects are the main portfolio shortlist. Other experiments remain discoverable from the [GitHub repositories page](https://github.com/kaustubhdua?tab=repositories), rather than competing for attention on the homepage.
 
-## Additional engineering work
+| Project | What it demonstrates | Current status |
+| --- | --- | --- |
+| [NIRDHOOM](https://github.com/kaustubhdua/nihdhoom) | Field-first crop-residue workflows connecting farmer records, machinery, dispatch, verification and residue offtake | Hosted prototype |
+| [Saathi](https://github.com/kaustubhdua/Saathi) | Hindi/Hinglish assistance, deterministic intent routing, source provenance and consent-aware escalation | MVP; provider and persistence release gates remain |
+| [PatchPilot](https://github.com/kaustubhdua/PatchPilot) | Explainable pull-request diff triage with deterministic, evidence-backed findings and safe defaults | Early MVP; no hosted public demo |
+| [Smart Waste](https://github.com/kaustubhdua/smart_waste_project) | Waste-collection prioritisation, forecasting experiments and OR-Tools route planning | Prototype using synthetic/demo data |
+| [RideForge](https://github.com/kaustubhdua/Smart_bike_taxi_platform) | C++17 API, PostgreSQL-backed bookings, driver dispatch and web workspaces | Portfolio MVP; no live commercial service |
 
-- [CrickVision](https://github.com/kaustubhdua/CrickVision-) — experimental local-first cricket video computer-vision toolkit; cricket-specific accuracy is not yet validated.
-- [CyberSentinel](https://github.com/kaustubhdua/jai-hack) — agentic cybersecurity prototype explored during JAI 2026 at JIIT (30–31 October); participation is not presented as a win.
-- [Infracis](https://github.com/kaustubhdua/infracis) — evidence-first location due-diligence and comparison MVP.
-- [RideForge](https://github.com/kaustubhdua/Smart_bike_taxi_platform) — C++17 bike-taxi backend prototype.
-- [AkashChalak](https://github.com/kaustubhdua/AkashChalak) — satellite-assisted air-quality and potential HCHO hotspot decision-support prototype explored during JIIT’s SIH 2026 internal round (24–25 August); not presented as a national finalist or winner.
+Every case study separates the problem, contribution, implementation choices, evidence and current boundaries. A project is not described as production-ready simply because its code or a preview exists.
 
-The profile also highlights six merged upstream contributions to [Lemma Platform](https://github.com/lemma-work/lemma-platform), and the NSoC Winter Edition 2026 Campus Ambassador selection for the Outreach & Relations team (remote term: 15–30 October 2026). Hackathon participation (JAI 2026, SIH 2026 internal round, Bharatiya Antariksh Hackathon and OSDHACK’26) appears in its own section, separate from CS50 SQL coursework.
+## Profile and engineering evidence
 
-## Tech stack
+The site presents a short profile, selected campus roles and three representative upstream contributions. Six merged pull requests to [Lemma Platform](https://github.com/lemma-work/lemma-platform) remain available through the linked contribution archive.
+
+Structured technical learning is kept separate from employment and project claims. The site does not publish academic scores or unverified experience.
+
+## Technology
 
 - **UI:** React 19, JavaScript, CSS
-- **Rendering:** WebGL, GLSL shaders, custom voxel renderer
-- **Build:** Node.js 20+, esbuild
-- **Quality:** ESLint, Playwright, custom project/world checks and link verification
+- **Rendering:** custom WebGL renderer, GLSL shaders, voxel meshes, lighting and world generation
+- **Build:** Node.js, esbuild
+- **Quality:** ESLint, Playwright, custom world tests, static distribution checks and external-link verification
 - **Hosting:** Vercel
 
 ## Run locally
@@ -51,44 +50,52 @@ The profile also highlights six merged upstream contributions to [Lemma Platform
 Requirements: Node.js 20 or newer.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-The development server starts using the custom script in `scripts/dev.mjs`.
+The development server is started by the project script in `scripts/dev.mjs`.
 
-## Quality checks
+## Verification
 
 ```bash
+npm ci
 npm run lint
 npm run build
 npm run check
 npm run test:world
+```
+
+For browser and accessibility checks, start the production preview in one terminal:
+
+```bash
+npm run preview
+```
+
+Then run:
+
+```bash
 npm run test:e2e
+npm run audit
 npm run check:links
 ```
 
-Or run the standard verification sequence:
+The GitHub Actions workflow runs the clean install, lint, production build, static checks, offline world tests, Chromium browser suite, performance/accessibility audit and external-link check on pull requests and pushes.
 
-```bash
-npm run verify
-```
+## Release discipline
 
-`npm run verify` runs lint, production build, repository checks and world tests. The Playwright browser suite is available separately through `npm run test:e2e`.
-
-## Resume status
-
-The resume is intentionally not published yet. The portfolio shows a consistent coming-soon notice wherever the resume action appears. The source generator remains in `scripts/build-resume.py` for the next release.
+A production release is only considered after all checks pass on the exact candidate commit. A Vercel preview being ready is not the same as a production release. The production deployment should be smoke-tested against the verified commit after it is promoted.
 
 ## Repository layout
 
-- `src/components/` — React sections and interactive UI.
-- `src/data/` — profile, projects, skills, milestones, world content and splash/tip text.
-- `src/lib/voxel/` — custom WebGL world renderer and supporting systems.
-- `src/styles/` — responsive layout, theme tokens, world styles and interaction effects.
-- `scripts/` — development/build/preview, asset generation, audits, link checks and resume generation.
-- `tests/` — browser and world-behaviour checks.
+- `src/components/` — portfolio sections, dialogs, navigation and interaction UI
+- `src/data/` — profile, selected projects, skills, milestones and world content
+- `src/lib/voxel/` — custom WebGL world renderer and supporting systems
+- `src/styles/` — responsive layout, theme tokens and world-specific styles
+- `tests/` — browser and voxel-world regression suites
+- `scripts/` — build, static checks, audits, asset generation and link verification
+- `content/blog/` — technical notes and project write-ups
 
 ---
 
-This is a personal portfolio project. Team projects and prototypes are identified as such, and production or impact claims are only made where they can be verified.
+Built to make the work easy to understand before asking anyone to explore the world.
