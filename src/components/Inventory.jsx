@@ -5,7 +5,9 @@ import { skillGroups } from '../data/skills.js';
 import { sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'inventory');
-const all = skillGroups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.title })));
+const featuredSkillIds = new Set(['python', 'typescript', 'javascript', 'cpp', 'sql', 'react', 'nextjs', 'fastapi', 'postgres', 'supabase', 'ortools', 'ollama', 'github', 'playwright', 'docker']);
+const groups = skillGroups.map((g) => ({ ...g, items: g.items.filter((i) => featuredSkillIds.has(i.id)) })).filter((g) => g.items.length);
+const all = groups.flatMap((g) => g.items.map((i) => ({ ...i, group: g.title })));
 
 export default function Inventory() {
   const [selectedId, setSelectedId] = useState(all[0].id);
@@ -15,7 +17,7 @@ export default function Inventory() {
   const [more, setMore] = useState(false);
 
   return (
-    <Section id="inventory" {...meta} title="Technical Skills" lead="Core technologies used in the projects and internship work shown here. Select one to see repository evidence.">
+    <Section id="inventory" {...meta} title="Technical Skills" lead="Core technologies used across the selected projects. Select one to see repository evidence.">
       <div className="inventory">
         <Reveal className={`panel info${more ? ' is-more' : ''}`} aria-live="polite">
           <div className="info-icon"><TechIcon item={selected} size={44} /></div>
@@ -43,7 +45,7 @@ export default function Inventory() {
         </Reveal>
 
         <div className="slots-wrap">
-          {skillGroups.map((g, gi) => (
+          {groups.map((g, gi) => (
             <Reveal key={g.id} delay={gi * 50} as="section" aria-labelledby={`grp-${g.id}`} className="panel slot-group">
               <h3 id={`grp-${g.id}`} className="slot-group-title pixel">{g.title}</h3>
               <ul className="slots">
