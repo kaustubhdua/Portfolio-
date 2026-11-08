@@ -28,6 +28,8 @@ jobs:
           name: portfolio-generated-lockfile
           path: package-lock.json
           if-no-files-found: error
+      - name: Verify generated lockfile with a clean npm ci install
+        run: npm ci --no-audit --no-fund
       - name: Lint
         run: npm run lint
       - name: Production build
