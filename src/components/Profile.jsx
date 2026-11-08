@@ -8,13 +8,13 @@ const facts = [
   ['Institution', profile.institution],
   ['Year', `${profile.year}, Class of ${profile.graduation}`],
   ['Looking for', profile.openTo],
-  ['Focus', 'Full-stack software engineering, applied AI and data'],
-  ['Working with', profile.stack.join(', ')],
 ];
 
 export default function Profile() {
+  const selectedContributions = profile.openSource.slice(0, 3);
+
   return (
-    <Section id="profile" {...meta} title="About" lead="Software engineering student at JIIT Noida, building full-stack products and applied AI/data tools.">
+    <Section id="profile" {...meta} title="About" lead="Software engineering student at JIIT Noida, building full-stack products and applied-AI systems.">
       <div className="profile-grid">
         <Reveal className="panel player-card">
           <div className="player-head">
@@ -51,11 +51,13 @@ export default function Profile() {
             <blockquote className="motto pixel">{profile.motto}</blockquote>
           </Reveal>
           <Reveal delay={110} className="panel roles">
-            <h3 className="pixel">Campus Leadership</h3>
+            <h3 className="pixel">Campus & Community Roles</h3>
             <ul>
               {profile.roles.map((r) => (
                 <li key={r.org}>
-                  <p className="role-org pixel">{r.url ? <a href={r.url} target="_blank" rel="noopener noreferrer">{r.org}<span className="sr-only"> (opens in a new tab)</span></a> : r.org}</p>
+                  <p className="role-org pixel">
+                    {r.url ? <a href={r.url} target="_blank" rel="noopener noreferrer">{r.org}<span className="sr-only"> (opens in a new tab)</span></a> : r.org}
+                  </p>
                   <p className="role-title">{r.role}</p>
                   <p className="role-note">{r.note}</p>
                 </li>
@@ -66,10 +68,15 @@ export default function Profile() {
       </div>
 
       <Reveal delay={140} className="panel open-source-panel">
-        <h3 className="pixel">Open Source Contributions</h3>
-        <p className="role-note">Six merged pull requests to the upstream Lemma Platform repository. Selected changes span runtime compatibility, webhook correctness, path safety and SDK/parser reliability.</p>
+        <div className="open-source-heading">
+          <div>
+            <h3 className="pixel">Upstream Open Source</h3>
+            <p className="role-note">Six merged pull requests in Lemma Platform. Three representative changes are shown here; the full contribution history stays one click away.</p>
+          </div>
+          <span className="open-source-count pixel">06 MERGED</span>
+        </div>
         <ul>
-          {profile.openSource.map((item) => (
+          {selectedContributions.map((item) => (
             <li key={item.number}>
               <p className="role-org pixel">
                 <a href={item.url} target="_blank" rel="noopener noreferrer">PR #{item.number} · {item.title}<span className="sr-only"> (opens in a new tab)</span></a>
@@ -78,29 +85,10 @@ export default function Profile() {
             </li>
           ))}
         </ul>
+        <a className="btn btn-secondary btn-sm pixel" href="https://github.com/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua" target="_blank" rel="noopener noreferrer">
+          View all merged PRs<span className="sr-only"> (opens in a new tab)</span>
+        </a>
       </Reveal>
-
-      <Reveal className="workflow" aria-label="How I build">
-        <h3 className="sub-title pixel">Engineering Approach</h3>
-        <ol className="hotbar-flow">
-          {profile.workflow.map((w, i) => (
-            <li key={w.step} className="slot-step">
-              <span className="slot-num pixel">{i + 1}</span>
-              <strong className="pixel">{w.step}</strong>
-              <span>{w.note}</span>
-            </li>
-          ))}
-        </ol>
-      </Reveal>
-
-      <div className="principles">
-        {profile.principles.map((p, i) => (
-          <Reveal key={p.title} delay={i * 80} className="panel principle">
-            <h3 className="pixel">{p.title}</h3>
-            <p>{p.text}</p>
-          </Reveal>
-        ))}
-      </div>
     </Section>
   );
 }
