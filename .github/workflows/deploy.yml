@@ -9,6 +9,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: github-pages
@@ -17,25 +18,40 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
 
-      - name: Lint, build, and verify
+      - name: Lint, build and static verification
         run: npm run verify
         env:
           SITE_URL: https://kaustubhdua.github.io/Portfolio-
 
+      - name: Install Chromium for browser checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser, performance and accessibility verification
+        run: |
+          npm run preview &
+          npx wait-on http://localhost:4173 --timeout 30000
+          npm run test:e2e
+          npm run audit
+
+      - name: Verify external project and evidence links
+        run: npm run check:links
+
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -48,4 +64,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.1
