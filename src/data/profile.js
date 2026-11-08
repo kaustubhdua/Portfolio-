@@ -62,7 +62,7 @@ export const sections = [
   { id: 'forge', label: 'Projects', short: 'Projects', hint: 'The Forge', sprite: 'anvil' },
   { id: 'profile', label: 'About', short: 'About', hint: 'Character Profile', sprite: 'head' },
   { id: 'inventory', label: 'Skills', short: 'Skills', hint: 'Inventory', sprite: 'chest' },
-  { id: 'advancements', label: 'Experience', short: 'Experience', hint: 'Highlights', sprite: 'star' },
+  { id: 'advancements', label: 'Highlights', short: 'Highlights', hint: 'Technical Milestones', sprite: 'star' },
   { id: 'world', label: 'Focus', short: 'Focus', hint: 'World Map', sprite: 'map' },
   { id: 'contact', label: 'Contact', short: 'Contact', hint: 'Ender Chest', sprite: 'ender' },
 ];
