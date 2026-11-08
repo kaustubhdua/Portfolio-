@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { FaGithub, FaArrowUpRightFromSquare, FaXmark } from 'react-icons/fa6';
-import { projectImage } from '../data/projects.js';
+import { getProjectStackGroups, projectImage } from '../data/projects.js';
 import { useWorld } from '../hooks/useTheme.js';
 
 /** A concise case study: role, proof and engineering choices before exhaustive implementation detail. */
 export default function ProjectDialog({ project, onClose }) {
   const world = useWorld();
   const ref = useRef(null);
+  const stackGroups = project ? getProjectStackGroups(project.stack) : [];
 
   useEffect(() => {
     const dialog = ref.current;
@@ -96,8 +97,15 @@ export default function ProjectDialog({ project, onClose }) {
           <ul className="bullets">{project.limits.map((l) => <li key={l}>{l}</li>)}</ul>
           <p className="status"><strong className="pixel">Current status</strong> {project.status}</p>
 
-          <h3 className="pixel case-h">Core stack</h3>
-          <ul className="chips">{project.stack.slice(0, 6).map((t) => <li key={t}>{t}</li>)}</ul>
+          <h3 className="pixel case-h">Technology stack</h3>
+          <dl className="arch stack-arch">
+            {stackGroups.map((group) => (
+              <div key={group.id}>
+                <dt className="pixel">{group.title}</dt>
+                <dd><ul className="chips">{group.items.map((technology) => <li key={technology}>{technology}</li>)}</ul></dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </dialog>
