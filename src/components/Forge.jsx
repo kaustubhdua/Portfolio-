@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Section, Reveal } from './ui.jsx';
 import { biomeName, biomes, projectImage, projects, explored } from '../data/projects.js';
 import { profile, sections } from '../data/profile.js';
+import { useWorld } from '../hooks/useTheme.js';
 
 const meta = sections.find((s) => s.id === 'forge');
 const featuredProjects = projects
