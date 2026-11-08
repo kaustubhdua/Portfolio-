@@ -6,59 +6,63 @@ This index translates the public repository documentation into recruiter-facing 
 
 ## The five featured case studies
 
-### 1. NIRDHOOM — crop-residue coordination
-**Core story:** a multi-party operational workflow, not a generic agriculture dashboard.
+The featured set is now selected for resume strength and engineering diversity: one real stakeholder-facing platform, one systems/backend product, one Android testing platform, one security investigation workflow, and one local-first AI product. The profile repository separately features six builds; Smart Waste remains a prominent secondary project there.
 
-- **Problem:** crop-residue clearance spans farmers, machine operators, dispatchers, verifiers, transport and downstream buyers.
-- **Engineering:** React 19/Vite product shell; Supabase/PostgreSQL with PostGIS and RLS; field and job records; device GPS; private evidence uploads with SHA-256; offline evidence queue; OR-Tools dispatch service with a local heuristic fallback; PWA support.
-- **Distinctive design decisions:** machine capacity is time-bound; residue lots retain quantity, quality, custody and destination; solver output requires human review; satellite detections are supporting context, never proof of a specific field event.
-- **Evidence to open:** [README](https://github.com/kaustubhdua/nihdhoom/blob/main/README.md) · [release roadmap](https://github.com/kaustubhdua/nihdhoom/blob/main/docs/PRODUCT-RELEASE-ROADMAP.md) · [connected Supabase notes](https://github.com/kaustubhdua/nihdhoom/blob/main/docs/CONNECTED-SUPABASE.md) · [CI](https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml)
-- **Status boundary:** prototype/integration foundation. Seeded and indicative records are not field-pilot outcomes; phone OTP/consent, authoritative land boundaries, real-device offline sync and low-end Android validation remain gates. Payments are not live.
-- **Best recruiter angle:** operational data modelling, geospatial workflows, evidence provenance, role-aware workflows and human-in-the-loop optimisation.
+### 1. JIIT Youth Club 128 — official campus platform
+**Core story:** a real stakeholder-facing platform with public information architecture, rich interaction and performance/accessibility constraints.
 
-### 2. Saathi — voice-first multilingual assistance
-**Core story:** source-backed assistance with deterministic control and local-first speech options.
+- **Problem:** students need a dependable official surface for 23+ societies, campus events, leadership, announcements and media.
+- **Engineering:** React 19, Vite, React Router, Supabase Cloud, PostgreSQL/RLS, Edge Functions, WebGL/OGL interactions, GSAP/Motion, Sharp image derivatives, route-shell pre-rendering and PWA caching.
+- **Evidence:** [repository README](https://github.com/kaustubhdua/JYC-Website) · [platform overview](https://github.com/kaustubhdua/JYC-Website#platform-overview)
+- **Status boundary:** official internal campus platform. Repository is closed to outside contributions. This is technical-team work; resume bullets must be limited to the modules and changes attributable to your own commits. Do not imply sole ownership.
+- **Best recruiter angle:** shipping and maintaining a stakeholder-facing React platform; media optimization, interaction engineering, route performance and accessibility.
 
-- **Problem:** people need to reach information and services through familiar languages and voice, while factual answers and consent must remain dependable.
-- **Engineering:** FastAPI/Python backend and React/Next.js interfaces; deterministic Hindi/Hinglish intent routing; Open-Meteo and configurable government mandi adapters; local Ollama tool selection, Vosk STT and eSpeak NG TTS defaults; optional Sarvam integrations; Tesseract OCR; Exotel AgentStream WebSocket path; rate limits, correlation IDs and capability-aware readiness.
-- **Distinctive design decisions:** the LLM is not the source of truth; provider adapters are replaceable; results carry provenance and retrieval time; demo data is labelled; memory and outbound calls require explicit consent.
-- **Evidence to open:** [README](https://github.com/kaustubhdua/Saathi/blob/main/README.md) · [evaluation](https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md) · [voice runtime](https://github.com/kaustubhdua/Saathi/blob/main/docs/VOICE_RUNTIME.md) · [open-source-first architecture](https://github.com/kaustubhdua/Saathi/blob/main/docs/OPEN_SOURCE_FIRST.md)
-- **Status boundary:** MVP/prototype. The 120-case synthetic intent suite is not real-world speech accuracy. Durable household persistence, live provider validation, low-latency phone transport and real Hindi/Hinglish/Haryanvi latency/accuracy benchmarks remain release gates.
-- **Best recruiter angle:** API design, deterministic orchestration, provider boundaries, privacy/consent and graceful degradation.
+### 2. RideForge — transactional bike-taxi booking and dispatch
+**Core story:** a systems-oriented multi-role backend with durable booking and driver-offer state.
 
-### 3. PatchPilot — explainable pull-request risk triage
-**Core story:** safe, evidence-linked analysis of untrusted diffs.
+- **Problem:** quotes, bookings, driver eligibility, offer expiry, cancellation, redispatch and support need consistent state across several actors.
+- **Engineering:** C++17/Boost.Beast API, PostgreSQL transactions and migrations, React/TypeScript workspaces, Leaflet, Nominatim/OSRM provider integrations, shortest-path routing, durable 45-second driver offers, expiry and sequential redispatch.
+- **Evidence:** [README](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/README.md) · [release-readiness evidence](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/docs/RELEASE_READINESS_EVIDENCE.md) · [OpenAPI contract](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/backend/openapi.yaml) · [release workflow](https://github.com/kaustubhdua/Smart_bike_taxi_platform/actions/workflows/release-readiness.yml)
+- **Status boundary:** portfolio MVP, not a live commercial taxi service. Payments, real identity/vehicle checks and transport operations are outside current scope.
+- **Best recruiter angle:** C++ backend engineering, transactional workflows, state machines, routing algorithms and full-stack release verification.
 
-- **Problem:** reviewers need help finding risky changes in large pull requests without trusting an opaque score.
-- **Engineering:** Python 3.11+, FastAPI and CLI; unified-diff parsing; file/path/dependency/test signals; bounded input and strict schemas; readiness/health endpoints; rate limiting; pytest/Ruff CI; non-root Docker image.
-- **Distinctive design decisions:** submitted diffs are treated as untrusted text; no repository cloning, dependency installation, code execution or LLM call; malformed hunks are surfaced and incomplete analysis is explicitly marked; findings carry file/line evidence.
-- **Evidence to open:** [README](https://github.com/kaustubhdua/PatchPilot/blob/main/README.md) · [architecture](https://github.com/kaustubhdua/PatchPilot/blob/main/docs/architecture.md) · [benchmark methodology](https://github.com/kaustubhdua/PatchPilot/blob/main/docs/benchmark-methodology.md) · [roadmap](https://github.com/kaustubhdua/PatchPilot/blob/main/ROADMAP.md) · [CI](https://github.com/kaustubhdua/PatchPilot/actions/workflows/ci.yml)
-- **Status boundary:** early MVP, no hosted public demo. The 0–100 score is a heuristic, not defect probability or merge advice; the small synthetic labelled corpus does not establish production precision/recall.
-- **Best recruiter angle:** secure input handling, parser integrity, explainability, API hardening and testable deterministic logic.
+### 3. BharatSim — Android resilience testing
+**Core story:** a test orchestration and evidence pipeline that distinguishes a proposed plan from an executed device test.
 
-### 4. Smart Waste — collection operations and fleet optimisation
-**Core story:** a complete operational loop from telemetry to verified collection.
+- **Problem:** mobile teams need risk-focused test planning and trustworthy execution evidence under constrained Android device/network conditions.
+- **Engineering:** FastAPI, React/TypeScript/Vite, PostgreSQL, APK validation and SHA-256 fingerprints, lease-based worker queue, heartbeats, guarded ADB runner, Android Emulator/Appium fixture workflow, logcat signal analysis and cross-source evidence synthesis.
+- **Evidence:** [README and current release status](https://github.com/kaustubhdua/Bharat-Sim/blob/main/README.md) · [planner methodology](https://github.com/kaustubhdua/Bharat-Sim/blob/main/docs/PLANNER.md) · [evidence synthesis](https://github.com/kaustubhdua/Bharat-Sim/blob/main/docs/EVIDENCE_SYNTHESIS.md) · [CI](https://github.com/kaustubhdua/Bharat-Sim/actions)
+- **Status boundary:** controlled-beta MVP. The fixture-based CI journey proves the source-built APK path only. Production APK execution remains gated on an independently verified isolated worker host; live Vercel database/storage round trips are not yet accepted.
+- **Best recruiter angle:** backend job orchestration, worker leases, Android tooling, test automation, artifact integrity and fail-closed production boundaries.
 
-- **Problem:** static collection schedules can send vehicles to bins that do not need service and miss urgent collection needs.
-- **Engineering:** FastAPI, SQLAlchemy/Alembic, PostgreSQL/PostGIS; per-device credentials and bin-scoped telemetry; freshness and idempotency checks; explicit live/imported/demo provenance; collection job lifecycle; Sugeno fuzzy prioritisation; OSRM road-distance matrices; OR-Tools capacity-constrained vehicle routing; transactional dispatch; optional timestamp-aware Random Forest next-observation forecast; operator and driver workspaces.
-- **Distinctive design decisions:** synthetic readings cannot masquerade as live sensors; dispatch is limited to approved jobs and capacity-checked vehicles; route plans and assignments are persisted; forecasting is evaluated chronologically and rejects cadence/schema mismatches.
-- **Evidence to open:** [README](https://github.com/kaustubhdua/smart_waste_project/blob/main/README.md) · [release checklist](https://github.com/kaustubhdua/smart_waste_project/blob/main/docs/RELEASE_CHECKLIST.md) · [security threat model](https://github.com/kaustubhdua/smart_waste_project/blob/main/docs/SECURITY_THREAT_MODEL.md) · [CI and browser tests](https://github.com/kaustubhdua/smart_waste_project/actions)
-- **Status boundary:** engineering prototype using synthetic/demo data. No physical sensor calibration, municipal field pilot, production restore drill or measured operational savings is established.
-- **Best recruiter angle:** end-to-end backend workflows, geospatial querying, optimisation, data provenance and operational state machines.
+### 4. SATARK Sentinel — evidence-first incident investigation
+**Core story:** deterministic security triage with explicit evidence integrity, uncertainty and human review.
 
-### 5. RideForge — bike-taxi booking and dispatch
-**Core story:** transactional ride lifecycle and durable driver dispatch in a multi-role system.
+- **Problem:** suspicious messages, links, attachments and event records are fragmented; an unexplained risk score can encourage unsafe conclusions.
+- **Engineering:** Python/FastAPI, Next.js/React, Streamlit legacy UI, deterministic FIRSTLIGHT investigation, SHA-256 artifact checks, evidence-linked findings, timelines, gap reporting, JSON export, local Linux endpoint sensor and optional self-hosted Ollama summaries.
+- **Evidence:** [README and safety boundaries](https://github.com/kaustubhdua/Satark/blob/main/README.md) · [FIRSTLIGHT scope](https://github.com/kaustubhdua/Satark/blob/main/docs/FIRSTLIGHT.md) · [native endpoint sensor guide](https://github.com/kaustubhdua/Satark/blob/main/docs/NATIVE_ENDPOINT_SENSOR.md) · [CI/security workflows](https://github.com/kaustubhdua/Satark/actions)
+- **Status boundary:** security-awareness and investigation prototype, not antivirus, full EDR, certified forensics or automatic containment. The FIRSTLIGHT audit chain is session-based; optional Defender/Entra adapters are not live-validated.
+- **Best recruiter angle:** security-minded backend engineering, safe input handling, evidence integrity, deterministic analysis and human-in-the-loop workflows.
 
-- **Problem:** ride booking requires consistent state across quotes, passenger bookings, driver eligibility, offer expiry, cancellation, redispatch and support.
-- **Engineering:** C++17/Boost.Beast API; PostgreSQL-backed quotes and bookings; React/TypeScript workspaces; Leaflet, Nominatim and OSRM mapping/routing; shortest-path logic; durable 45-second driver offers with expiry and sequential redispatch; admin and support workflows; release-readiness automation across C++, API, migrations, web, accessibility and containers.
-- **Distinctive design decisions:** offers expire and are redispatched instead of remaining stale; booking/dispatch state is persisted; deterministic tie and failure cases are tested; release evidence is tied to a specific commit.
-- **Evidence to open:** [README](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/README.md) · [release-readiness evidence](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/docs/RELEASE_READINESS_EVIDENCE.md) · [deep improvement research](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/docs/DEEP_IMPROVEMENT_RESEARCH.md) · [OpenAPI contract](https://github.com/kaustubhdua/Smart_bike_taxi_platform/blob/main/backend/openapi.yaml)
-- **Status boundary:** portfolio MVP in progress. Passing CI on a tested revision is not proof of a live commercial service or production deployment.
-- **Best recruiter angle:** systems programming, transactional data, distributed workflow thinking, algorithmic routing and broad test automation.
+### 5. Saathi — local-first Hindi/Hinglish voice assistance
+**Core story:** a multilingual assistant architecture with deterministic control, source provenance and replaceable provider adapters.
+
+- **Problem:** people should be able to reach information through familiar language and voice without losing factual provenance or consent.
+- **Engineering:** FastAPI/Python, Next.js/React/TypeScript, deterministic intent routing, local Vosk STT, eSpeak NG TTS, Tesseract OCR, Ollama optional local reasoning, weather/mandi adapters, WebSockets and Exotel AgentStream integration.
+- **Evidence:** [README](https://github.com/kaustubhdua/Saathi/blob/main/README.md) · [evaluation methodology](https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md) · [voice runtime](https://github.com/kaustubhdua/Saathi/blob/main/docs/VOICE_RUNTIME.md) · [open-source-first architecture](https://github.com/kaustubhdua/Saathi/blob/main/docs/OPEN_SOURCE_FIRST.md)
+- **Status boundary:** multi-contributor MVP. The 120-case synthetic intent suite is not real-world speech accuracy. Persistent memory, provider-backed voice latency/accuracy and durable human case workflows remain gates. Attribute personal work from commit history.
+- **Best recruiter angle:** applied AI architecture, deterministic orchestration, local inference, speech integration, API design and privacy/consent.
+
+### Secondary projects retained in the profile
+
+- **Smart Waste:** strong data/optimization secondary project—FastAPI, PostGIS, OR-Tools/OSRM, telemetry provenance and dispatch. It remains an engineering prototype on synthetic/demo data; no physical sensor calibration, municipal pilot or measured savings are claimed.
+- **NIRDHOOM:** multi-party field workflow prototype; useful for geospatial product design, evidence provenance and human-reviewed optimization, but not presented as a validated field deployment.
+- **PatchPilot:** personal early MVP for safe, explainable diff triage; useful for secure parsing and deterministic analysis, but its heuristic score is not a defect probability and production precision/recall are unestablished.
+- **CrickVision, GenomeGuard, AkashChalak, Infracis, JIIT Toppers and Adapt AI:** retain as specialist/research builds in the expanded profile list; their own READMEs and release gates define what can be claimed.
 
 ## Complete technology inventory
 
-The five featured case studies below show their full direct stack in the portfolio UI. For the wider project collection, see the [source-backed 16-project technology audit](PROJECT_TECHNOLOGY_AUDIT.md). That ledger separates runtime dependencies, build/test tooling, optional integrations and external providers; it also covers JIIT Youth Club and the Portfolio application itself.
+The five featured case studies below show their full direct stack in the portfolio UI. The profile README features the same top engineering stories plus Smart Waste as a sixth project; secondary experiments remain discoverable without competing for flagship attention. For the wider project collection, see the [source-backed 16-project technology audit](PROJECT_TECHNOLOGY_AUDIT.md). That ledger separates runtime dependencies, build/test tooling, optional integrations and external providers; it also covers JIIT Youth Club and the Portfolio application itself.
 
 ## Display guidance
 
