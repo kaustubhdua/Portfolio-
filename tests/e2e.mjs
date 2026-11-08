@@ -103,6 +103,7 @@ async function open({ threed = false, ...opts } = {}) {
   for (const project of featuredProjects) {
     await page.getByRole('button', { name: `Case study: ${project.name}` }).click();
     const dialog = page.locator('dialog.dialog');
+    await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
     const caseTitle = (await dialog.locator('#case-title').innerText()).trim().toLowerCase();
     ok(`case study opens for ${project.name}`, await dialog.isVisible() && caseTitle === project.name.trim().toLowerCase());
     const repositoryHref = await dialog.locator('.dialog-actions a').first().getAttribute('href');
