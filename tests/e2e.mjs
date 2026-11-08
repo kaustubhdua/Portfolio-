@@ -88,11 +88,11 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#forge .filters button').first().waitFor({ state: 'visible' });
   const biomeFilter = page.locator('#forge .filters button').nth(1);
   await biomeFilter.click();
-  await page.waitForFunction(() => {
+  await page.waitForFunction((expectedFeaturedCount) => {
     const selected = document.querySelectorAll('#forge .filters button[aria-pressed="true"]');
     const cards = document.querySelectorAll('#forge .card');
-    return selected.length === 1 && cards.length > 0 && cards.length < featuredCount;
-  });
+    return selected.length === 1 && cards.length > 0 && cards.length < expectedFeaturedCount;
+  }, featuredCount);
   ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All biomes' }).click();
   await page.waitForTimeout(300);
