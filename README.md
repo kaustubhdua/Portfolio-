@@ -33,6 +33,8 @@ Every case study separates the problem, contribution, implementation choices, ev
 
 **New: [Research-backed project guide](docs/PROJECT_RESEARCH_AND_SHOWCASE.md)** — deeper project-by-project breakdowns, architecture differentiators, evidence links, maturity boundaries and recruiter-facing display guidance.
 
+**[Complete project technology audit](docs/PROJECT_TECHNOLOGY_AUDIT.md)** — source-backed stacks for all 16 projects shown on the GitHub profile, plus this portfolio application. Runtime dependencies, build/test tooling, optional integrations and external providers are separated so the technology claims stay accurate.
+
 ## Profile and engineering evidence
 
 The site presents a short profile, selected campus roles and three representative upstream contributions. Six merged pull requests to [Lemma Platform](https://github.com/lemma-work/lemma-platform) remain available through the linked contribution archive.
