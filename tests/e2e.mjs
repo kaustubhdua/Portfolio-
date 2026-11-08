@@ -97,6 +97,13 @@ async function open({ threed = false, ...opts } = {}) {
   ok('engineering-focus filter narrows cards to the selected category', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
   await page.waitForTimeout(300);
+  const appliedAiFilter = page.locator('#forge .filters').getByRole('button', { name: 'Applied AI' });
+  ok('Applied AI is a real selected-project category', (await appliedAiFilter.count()) === 1);
+  await appliedAiFilter.click();
+  const appliedAiProjects = (await page.locator('#forge .card-title').allTextContents()).map((name) => name.trim());
+  ok('Applied AI filter surfaces the Saathi case study only', appliedAiProjects.length === 1 && appliedAiProjects[0] === 'Saathi');
+  await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
+  await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
   const unselectedNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];

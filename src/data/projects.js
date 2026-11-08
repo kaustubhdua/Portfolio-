@@ -78,7 +78,7 @@ export const projects = [
     contribution: 'Multi-contributor MVP. The case study covers the shared product and architecture; the repository history shows individual contributions.',
     evidence: [{"label":"Project README","url":"https://github.com/kaustubhdua/Saathi/blob/main/README.md"},{"label":"Evaluation methodology","url":"https://github.com/kaustubhdua/Saathi/blob/main/docs/EVALUATION.md"},{"label":"GitHub Actions","url":"https://github.com/kaustubhdua/Saathi/actions"}],
     badges: ['120-case synthetic benchmark', 'Hindi + Hinglish', 'Human escalation'],
-    biome: 'crimson',
+    biome: 'wastes',
     kind: 'Multi-contributor MVP',
     image: 'img/projects/saathi.png',
     summary:
