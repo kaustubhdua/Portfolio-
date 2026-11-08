@@ -19,7 +19,7 @@ A recruiter-facing portfolio presented as an interactive voxel world. The visual
 
 ## Selected projects
 
-These five projects are the main portfolio shortlist. Other experiments remain discoverable from the [GitHub repositories page](https://github.com/kaustubhdua?tab=repositories), rather than competing for attention on the homepage.
+The five flagship case studies are **JIIT Youth Club 128**, **RideForge**, **BharatSim**, **SATARK Sentinel** and **Saathi**. Smart Waste, NIRDHOOM and PatchPilot remain discoverable through the [GitHub repositories page](https://github.com/kaustubhdua?tab=repositories), rather than competing for attention on the homepage.
 
 | Project | What it demonstrates | Current status |
 | --- | --- | --- |
