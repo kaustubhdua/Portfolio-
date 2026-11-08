@@ -1,12 +1,12 @@
 const STACK_GROUPS = [
-  { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17'] },
-  { id: 'frontend', title: 'Frontend', items: ['React', 'React 19', 'Next.js', 'Vite', 'Vite 8', 'Leaflet'] },
-  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Boost.Beast', 'Supabase', 'Ollama', 'Vosk', 'eSpeak NG', 'Tesseract', 'Exotel AgentStream'] },
-  { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostGIS', 'SQLAlchemy', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'Random Forest'] },
-  { id: 'tools', title: 'Tools', items: ['pytest', 'Ruff', 'Docker', 'GitHub Actions', 'Playwright'] },
+  { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript'] },
+  { id: 'frontend', title: 'Frontend', items: ['React 19', 'Next.js 16', 'Vite 8', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript'] },
+  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets'] },
+  { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib'] },
+  { id: 'tools', title: 'Tools', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Hugeicons', 'Sharp', 'lucide-react', 'Oxlint'] },
 ];
 
-/** Group each project's verified stack using the same labels as the Technical Skills inventory. */
+/** Group project technologies by evidence-backed role; keep the core skills list intentionally curated. */
 export const getProjectStackGroups = (stack = []) => STACK_GROUPS
   .map((group) => ({ ...group, items: stack.filter((technology) => group.items.includes(technology)) }))
   .filter((group) => group.items.length > 0);
@@ -47,7 +47,7 @@ export const projects = [
     image: 'img/projects/nirdhoom.png',
     summary:
       'A field-to-offtake workflow linking farmer requests, time-bound machine capacity, dispatch, operator evidence, verified residue lots and buyer demand.',
-    stack: ['React 19', 'TypeScript', 'Vite 8', 'Supabase', 'PostgreSQL', 'PostGIS', 'Leaflet', 'Python', 'OR-Tools'],
+    stack: ['TypeScript', 'React 19', 'Vite 8', 'Tailwind CSS 4', 'Supabase JS', 'PostgreSQL', 'PostGIS', 'Leaflet', 'Three.js', 'Python', 'FastAPI', 'OR-Tools', 'HTTPX', 'Motion', 'Vercel Functions', 'PWA / Service Worker', 'Oxlint', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/nihdhoom',
     live: 'https://nihdhoom-9qiu.vercel.app/',
     liveLabel: 'Hosted prototype',
@@ -99,7 +99,7 @@ export const projects = [
     image: 'img/projects/saathi.png',
     summary:
       'A Hindi/Hinglish assistance MVP combining deterministic intent routing, source-stamped tools, local speech defaults, document OCR and consent-aware human escalation.',
-    stack: ['FastAPI', 'Python', 'Next.js', 'React', 'Ollama', 'Vosk', 'eSpeak NG', 'Tesseract', 'Exotel AgentStream', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Starlette', 'Uvicorn', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'Vosk', 'Next.js 16', 'React 19', 'Motion', 'OGL', 'Supabase SSR', 'Ollama', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Streamlit', 'Exotel AgentStream', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Saathi',
     problem:
       'Information and service workflows are hard to reach for people who prefer speaking in their own language. Saathi aims at field-ready workflows rather than disconnected AI demos.',
@@ -148,7 +148,7 @@ export const projects = [
     image: 'img/projects/patchpilot.png',
     summary:
       'A deterministic diff-review tool that surfaces parser integrity, risky paths, evidence-linked findings and test suggestions—without cloning or executing submitted code.',
-    stack: ['Python', 'FastAPI', 'pytest', 'Ruff', 'Docker', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Pydantic', 'Uvicorn', 'Vanilla HTML/CSS/JavaScript', 'HTTPX', 'pytest', 'Ruff', 'Docker', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/PatchPilot',
     live: null,
     problem:
@@ -197,7 +197,7 @@ export const projects = [
     image: 'img/projects/smartwaste.png',
     summary:
       'A full-stack operations loop: provenance-aware device telemetry, transparent prioritisation, approved collection jobs, PostGIS context, capacity-constrained routing and driver verification.',
-    stack: ['Python', 'FastAPI', 'PostgreSQL', 'PostGIS', 'SQLAlchemy', 'Alembic', 'OR-Tools', 'OSRM', 'React', 'Random Forest', 'Docker', 'Playwright', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Uvicorn', 'SQLAlchemy', 'Psycopg 3', 'PostgreSQL', 'PostGIS', 'Alembic', 'OR-Tools', 'OSRM', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript', 'Docker Compose', 'pytest', 'Playwright', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
     demoNote: 'No verified public demo',
     problem:
@@ -247,7 +247,7 @@ export const projects = [
     kind: 'Personal project',
     image: 'img/projects/rideforge.svg',
     summary: 'A multi-role bike-taxi MVP built around persisted PostgreSQL bookings, expiring driver offers, sequential redispatch, cancellation and graph-based route planning.',
-    stack: ['C++17', 'Boost.Beast', 'PostgreSQL', 'React', 'TypeScript', 'Leaflet', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'GitHub Actions'],
+    stack: ['C++17', 'Boost.Beast', 'CMake', 'libcurl', 'PostgreSQL/libpq', 'OpenSSL', 'nlohmann/json', 'React 19', 'TypeScript', 'Leaflet', 'Motion', 'lucide-react', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'axe-core', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
     live: null,
     demoNote: 'No live deployment claimed',
