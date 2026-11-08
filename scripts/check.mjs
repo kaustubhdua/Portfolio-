@@ -15,7 +15,7 @@ const { profile } = await import(pathToFileURL(path.resolve('src/data/profile.js
 const { advancements } = await import(pathToFileURL(path.resolve('src/data/advancements.js')).href);
 const { skillGroups } = await import(pathToFileURL(path.resolve('src/data/skills.js')).href);
 const { projects } = await import(pathToFileURL(path.resolve('src/data/projects.js')).href);
-const { tips } = await import(pathToFileURL(path.resolve('src/data/biomes.js')).href);
+const { tips, splashes } = await import(pathToFileURL(path.resolve('src/data/biomes.js')).href);
 
 const problems = [];
 const fail = (msg) => problems.push(msg);
@@ -25,9 +25,9 @@ if (new Set(coreSkills.map((skill) => skill.id)).size !== coreSkills.length) fai
 const featuredProjects = projects.filter((project) => project.flagship);
 if (featuredProjects.length !== 5) fail(`Expected five selected case studies, found ${featuredProjects.length}`);
 const excludedProjectNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
-for (const tip of tips) {
+for (const message of [...tips, ...splashes]) {
   for (const name of excludedProjectNames) {
-    if (tip.toLowerCase().includes(name.toLowerCase())) fail(`Loading-screen tip exposes an unselected project: ${name}`);
+    if (message.toLowerCase().includes(name.toLowerCase())) fail(`Immersive copy exposes an unselected project: ${name}`);
   }
 }
 for (const unusedArt of ['img/projects/adaptai.png', 'img/projects/day/adaptai.png', 'img/projects/jyc.png', 'img/projects/day/jyc.png']) {
