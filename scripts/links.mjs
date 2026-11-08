@@ -2,14 +2,14 @@
  * Checks every external link in the site data and prints the ones that fail.
  * Needs network access, so it is not part of `npm run verify`:  npm run check:links
  */
-import { projects, explored } from '../src/data/projects.js';
+import { projects } from '../src/data/projects.js';
 import { profile } from '../src/data/profile.js';
 
 const urls = new Map();
 const add = (label, url) => {
   if (url && /^https?:/.test(url)) urls.set(url, [...(urls.get(url) ?? []), label]);
 };
-for (const p of [...projects, ...explored]) {
+for (const p of projects) {
   add(`${p.name} repo`, p.repo);
   add(`${p.name} live`, p.live);
   for (const item of p.evidence ?? []) add(`${p.name} evidence: ${item.label}`, item.url);
