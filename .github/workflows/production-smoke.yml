@@ -2,6 +2,10 @@ name: Production smoke
 
 on:
   deployment_status:
+  pull_request:
+    paths:
+      - '.github/workflows/production-smoke.yml'
+      - 'scripts/smoke-production.mjs'
   workflow_dispatch:
     inputs:
       expected_sha:
@@ -21,6 +25,7 @@ jobs:
   smoke:
     if: >-
       ${{ github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'pull_request' ||
           (github.event.deployment_status.state == 'success' &&
            contains(github.event.deployment.environment, 'Production')) }}
     runs-on: ubuntu-latest
@@ -29,7 +34,7 @@ jobs:
       - name: Check out the deployed commit
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+          ref: ${{ github.event.deployment.sha || github.sha }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -47,4 +52,4 @@ jobs:
         run: npm run smoke:prod
         env:
           PROD_URL: ${{ inputs.production_url || 'https://kaustubhdua.vercel.app' }}
-          EXPECTED_SHA: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+          EXPECTED_SHA: ${{ github.event.deployment.sha || (github.event_name == 'pull_request' && 'not-attested') || inputs.expected_sha || github.sha }}

@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 
 const productionUrl = process.env.PROD_URL || 'https://kaustubhdua.vercel.app';
 const expectedSha = process.env.EXPECTED_SHA || '';
-assert.match(expectedSha, /^[a-f0-9]{40}$/i, 'Expected a full deployed commit SHA');
+if (expectedSha !== 'not-attested') assert.match(expectedSha, /^[a-f0-9]{40}$/i, 'Expected a full deployed commit SHA');
 
 const expectedProjects = ['NIRDHOOM', 'Saathi', 'PatchPilot', 'Smart Waste', 'RideForge'];
 const pageErrors = [];
@@ -12,6 +12,9 @@ const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.addInitScript(() => {
+    globalThis.localStorage.setItem('portfolio-3d', 'off');
+  });
 
   const response = await page.goto(productionUrl, {
     waitUntil: 'domcontentloaded',
@@ -54,13 +57,33 @@ try {
       );
     }
 
-    await card.click();
-    const dialog = page.getByRole('dialog');
-    await dialog.waitFor({ state: 'visible', timeout: 10_000 });
+    const trigger = page.getByRole('button', { name: `Case study: ${name}` });
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.click();
+    const dialog = page.locator('dialog.dialog');
+    await page.waitForFunction(
+      () => globalThis.document.querySelector('dialog.dialog')?.open === true,
+      null,
+      { timeout: 10_000 },
+    );
     const dialogText = await dialog.innerText();
     assert.ok(dialogText.toLowerCase().includes(name.toLowerCase()), `Case study opens for ${name}`);
+    assert.equal(
+      await page.evaluate(() => globalThis.document.body.classList.contains('modal-open')),
+      true,
+      `Body scroll locks while ${name} case study is open`,
+    );
     await page.keyboard.press('Escape');
-    await dialog.waitFor({ state: 'hidden', timeout: 10_000 });
+    await page.waitForFunction(
+      () => !globalThis.document.querySelector('dialog.dialog')?.open,
+      null,
+      { timeout: 10_000 },
+    );
+    assert.equal(
+      await page.evaluate(() => globalThis.document.activeElement?.getAttribute('aria-label')),
+      `Case study: ${name}`,
+      `Focus returns to the ${name} case-study trigger`,
+    );
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
