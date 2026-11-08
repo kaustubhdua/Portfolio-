@@ -367,8 +367,9 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
   await page.keyboard.press('Digit3');
   ok('number keys select the matching block and update the hotbar', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2' && document.querySelectorAll('.hotbar-slot')[2].getAttribute('aria-pressed') === 'true'));
-  await page.getByRole('button', { name: 'Lamp (4)' }).click();
-  ok('hotbar buttons update the selected block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
+  // Pointer lock captures the desktop mouse; the keyboard is the intended desktop hotbar control.
+  await page.keyboard.press('Digit4');
+  ok('number keys select the fourth block while pointer lock is active', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
@@ -406,18 +407,34 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('phone free-roam exposes touch controls instead of desktop-only hints',
     await page.locator('.stick').isVisible() && await page.locator('.look-area').count() === 1 &&
     await page.locator('.ex-jump').isVisible() && await page.locator('.ex-place').isVisible());
+  const touch = await touchCtx.newCDPSession(page);
+  const hotbar = await page.locator('.hotbar-slot').nth(2).boundingBox();
+  if (hotbar) {
+    const x = hotbar.x + hotbar.width / 2;
+    const y = hotbar.y + hotbar.height / 2;
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  }
+  ok('phone touch selects a hotbar block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2'));
   const stick = await page.locator('.stick').boundingBox();
   const before = (await page.locator('canvas.world-canvas').getAttribute('data-pos')) ?? '0,0,0';
   if (stick) {
-    await page.mouse.move(stick.x + stick.width / 2, stick.y + stick.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(stick.x + stick.width / 2, stick.y + stick.height / 2 - 30, { steps: 5 });
+    const x = stick.x + stick.width / 2;
+    const y = stick.y + stick.height / 2;
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 2 }] });
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - 30, id: 2 }] });
     await page.waitForTimeout(1200);
-    await page.mouse.up();
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   }
   const after = (await page.locator('canvas.world-canvas').getAttribute('data-pos')) ?? before;
-  ok('phone joystick sends movement input to the 3D player', before !== after, `${before} -> ${after}`);
-  await page.locator('.explore-exit').click();
+  ok('phone joystick sends real touch movement to the 3D player', before !== after, `${before} -> ${after}`);
+  const exit = await page.locator('.explore-exit').boundingBox();
+  if (exit) {
+    const x = exit.x + exit.width / 2;
+    const y = exit.y + exit.height / 2;
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 3 }] });
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  }
   ok('phone can leave free-roam without a hardware Escape key',
     await page.evaluate(() => document.documentElement.dataset.explore !== 'on'));
   await touchCtx.close();
