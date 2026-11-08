@@ -263,7 +263,7 @@ for (const [label, viewport] of [
   await page.locator('#advancements .adv-groups').scrollIntoViewIfNeeded();
   await page.locator('#advancements .adv-groups.unlocked').waitFor({ state: 'attached' });
   const highlightsText = await page.locator('#advancements').textContent();
-  ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/.test(highlightsText), highlightsText);
+  ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/i.test(highlightsText), highlightsText);
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
