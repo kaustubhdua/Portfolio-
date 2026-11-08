@@ -453,3 +453,13 @@ projects.push(
     ],
   },
 );
+
+const PROJECT_DISPLAY_ORDER = new Map([
+  'jyc', 'rideforge', 'bharatsim', 'satark', 'saathi',
+  'smartwaste', 'nirdhoom', 'patchpilot',
+].map((id, index) => [id, index]));
+
+projects.sort((left, right) =>
+  (PROJECT_DISPLAY_ORDER.get(left.id) ?? Number.MAX_SAFE_INTEGER) -
+  (PROJECT_DISPLAY_ORDER.get(right.id) ?? Number.MAX_SAFE_INTEGER)
+);
