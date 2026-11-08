@@ -326,7 +326,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('3D world starts in the Nether fortress', (await canvas.getAttribute('data-world')) === 'nether');
   await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.frames) > 3, null, { timeout: 20000 }).catch(() => {});
   ok('3D world draws frames', Number(await canvas.getAttribute('data-frames')) > 3);
-  const stops = [['profile', 1], ['forge', 3], ['world', 5], ['contact', 6]];
+  const stops = [['forge', 1], ['profile', 1.5], ['world', 5], ['contact', 6]];
   for (const [id, n] of stops) {
     await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id);
     await page.waitForFunction((n) => Math.abs(Number(document.querySelector('canvas.world-canvas').dataset.progress) - n) < 0.15, n, { timeout: 15000 }).catch(() => {});
@@ -429,12 +429,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   const after = (await page.locator('canvas.world-canvas').getAttribute('data-pos')) ?? before;
   ok('phone joystick sends real touch movement to the 3D player', before !== after, `${before} -> ${after}`);
   const exit = await page.locator('.explore-exit').boundingBox();
-  if (exit) {
-    const x = exit.x + exit.width / 2;
-    const y = exit.y + exit.height / 2;
-    await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 3 }] });
-    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  }
+  if (exit) await page.touchscreen.tap(exit.x + exit.width / 2, exit.y + exit.height / 2);
   ok('phone can leave free-roam without a hardware Escape key',
     await page.evaluate(() => document.documentElement.dataset.explore !== 'on'));
   await touchCtx.close();
