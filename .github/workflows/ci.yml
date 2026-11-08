@@ -27,6 +27,8 @@ jobs:
         run: npm run build
       - name: Static distribution checks
         run: npm run check
+      - name: Validate production smoke script
+        run: node --check scripts/smoke-production.mjs
       - name: Offline voxel-world tests
         run: npm run test:world
       - name: Install Chromium for browser tests
