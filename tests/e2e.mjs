@@ -236,8 +236,11 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await page.locator('.open-source-panel').scrollIntoViewIfNeeded();
   await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').first().waitFor({ state: 'visible' });
   ok('three representative upstream open-source contributions are shown', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pull/"]').count()) === 3 && (await page.locator('.open-source-count').innerText()).includes('06'));
-  ok('all six merged upstream contributions remain one click away', (await page.locator('.open-source-panel a[href*="github.com/pulls?q="]').count()) === 1);
-  ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(await page.locator('#advancements').innerText()) && /Introduction to Databases with SQL/.test(await page.locator('#advancements').innerText()));
+  ok('all six merged upstream contributions remain one click away', (await page.locator('.open-source-panel a[href*="lemma-work/lemma-platform/pulls?q="]').count()) === 1);
+  await page.locator('#advancements').scrollIntoViewIfNeeded();
+  await page.locator('#advancements .adv').first().waitFor({ state: 'visible' });
+  const highlightsText = await page.locator('#advancements').innerText();
+  ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/.test(highlightsText), highlightsText);
   ok('CGPA and excluded internship are absent from public profile', !/CGPA|Pinnacle Labs|Web Development Intern/i.test(await page.locator('main').innerText()));
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
