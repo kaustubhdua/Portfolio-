@@ -74,7 +74,8 @@ async function open({ threed = false, ...opts } = {}) {
     ok(`nav ${id}: section in place and marked current`, Math.abs(top) < 90 && current === href, `top=${top}`);
   }
 
-  const trigger = page.getByRole('button', { name: 'Case study: NIRDHOOM' });
+  const firstFeaturedProject = featuredProjects[0];
+  const trigger = page.getByRole('button', { name: `Case study: ${firstFeaturedProject.name}` });
   await trigger.scrollIntoViewIfNeeded();
   await trigger.click();
   await page.waitForTimeout(600);
@@ -83,7 +84,7 @@ async function open({ threed = false, ...opts } = {}) {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape closes dialog', !(await page.evaluate(() => document.querySelector('dialog.dialog').open)));
-  ok('focus returns to the trigger', await page.evaluate(() => document.activeElement?.getAttribute('aria-label') === 'Case study: NIRDHOOM'));
+  ok('focus returns to the trigger', await page.evaluate((name) => document.activeElement?.getAttribute('aria-label') === `Case study: ${name}`, firstFeaturedProject.name));
 
   await page.locator('#forge').scrollIntoViewIfNeeded();
   await page.locator('#forge .filters button').first().waitFor({ state: 'visible' });
@@ -99,8 +100,9 @@ async function open({ threed = false, ...opts } = {}) {
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
-  const unselectedNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
-  ok('loading tips only reinforce the selected project shortlist', tips.some((tip) => /Smart Waste|RideForge|NIRDHOOM|Saathi|PatchPilot/.test(tip)) && [...tips, ...splashes].every((message) => unselectedNames.every((name) => !message.toLowerCase().includes(name.toLowerCase()))));
+  const unselectedNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'JIIT Toppers', 'NIRDHOOM', 'PatchPilot', 'Smart Waste'];
+  const featuredNames = ['JIIT Youth Club 128', 'RideForge', 'BharatSim', 'SATARK Sentinel', 'Saathi'];
+  ok('loading tips reinforce the five selected flagship projects', featuredNames.every((name) => tips.some((tip) => tip.toLowerCase().includes(name.toLowerCase()))) && [...tips, ...splashes].every((message) => unselectedNames.every((name) => !message.toLowerCase().includes(name.toLowerCase()))));
   for (const [index, project] of featuredProjects.entries()) {
     const image = page.locator('#forge .card').nth(index).locator('.card-media img');
     await image.scrollIntoViewIfNeeded();
