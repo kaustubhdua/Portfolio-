@@ -1,0 +1,50 @@
+name: Production smoke
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: Optional deployed commit SHA (defaults to the workflow commit)
+        required: false
+        type: string
+      production_url:
+        description: Canonical production URL
+        required: false
+        default: https://kaustubhdua.vercel.app
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          (github.event.deployment_status.state == 'success' &&
+           contains(github.event.deployment.environment, 'Production')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out the deployed commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke-test the canonical production site
+        run: npm run smoke:prod
+        env:
+          PROD_URL: ${{ inputs.production_url || 'https://kaustubhdua.vercel.app' }}
+          EXPECTED_SHA: ${{ github.event.deployment.sha || inputs.expected_sha || github.sha }}
