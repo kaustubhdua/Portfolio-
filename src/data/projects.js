@@ -68,6 +68,7 @@ export const projects = [
     ],
     status:
       'Prototype and integration foundation. Seeded records and indicative planning values are kept separate from live records, and no performance figures are claimed.',
+    research: ["Demand-driven coordination matches field deadlines to time-bound machine capacity, rather than merely listing machinery.","Residue needs a traceable lifecycle linking source field, quantity, quality, custody, pickup and destination; buyer interest is not a contract.","Verification is layered: operator evidence, timestamps, field-boundary provenance and satellite observations answer different questions. A satellite fire point is not proof about an individual field.","Punjab's 2025 season-end fire count is public context, never an outcome attributable to this prototype."],
   },
 {
     id: 'saathi',
@@ -115,6 +116,7 @@ export const projects = [
     ],
     status:
       'MVP prototype. Its previously listed public demo URL no longer resolves, so no live demo is advertised until a working deployment is verified. The next milestone is a measured, provider-backed voice slice; no accuracy or performance numbers are claimed.',
+    research: ["The strongest architecture choice is deterministic intent and tool policy around an assistant, rather than allowing an LLM to decide factual truth.","Factual answers need source provenance and retrieval time; partial provider failures and ambiguous records must be disclosed instead of guessed.","The 120-case intent and 40-field extraction suites are synthetic regression benchmarks, not real-world speech accuracy measurements.","Voice readiness is end-to-end: STT, tool execution, TTS, consent, provider failure handling and measured p50/p95 latency must all be demonstrated."],
   },
 {
     id: 'patchpilot',
@@ -158,6 +160,7 @@ export const projects = [
     ],
     status:
       'Early-stage tool with tests and CI. No live demo exists, and no accuracy figures are claimed.',
+    research: ["PatchPilot treats submitted unified diffs as untrusted text: bounded request size, strict schemas and no cloning or execution of the target repository.","Parser integrity is part of the result. Malformed or incomplete hunks are surfaced and analysis_complete becomes false so a partial low score cannot look reassuring.","Each finding carries matched evidence and file/line context; the 0–100 score is a coarse triage heuristic, not a defect probability or merge decision.","The current labelled corpus is small, synthetic and authored alongside the rules. Its scores are regression evidence, not production precision or recall."],
   },
 {
     id: 'smartwaste',
@@ -206,6 +209,7 @@ export const projects = [
     ],
     status:
       'Full-stack engineering prototype with FastAPI, PostgreSQL/PostGIS, authenticated operator and driver workflows, CI, CodeQL and Playwright smoke coverage. No live municipal deployment, field-pilot outcome or operational-savings claim is made.',
+    research: ["The core engineering story is the operations loop: authenticated device telemetry → prioritisation → approved jobs → capacity-aware routes → persisted dispatch → driver completion and verification.","Telemetry carries live/imported/demo provenance, timestamp freshness and idempotency. Synthetic seed data must never be mistaken for physical sensor evidence.","PostGIS supports indexed nearby-bin queries; OSRM road distances feed OR-Tools capacity-constrained routing, with route plans and assignments persisted transactionally.","The optional Random Forest forecast is timestamp-aware and guarded by chronological evaluation; no field calibration, municipal deployment or savings claim is established."],
   },
 {
     id: 'rideforge',
@@ -253,5 +257,6 @@ export const projects = [
       'Realtime reconnect and external routing-provider behaviour still need broader production-like validation.',
     ],
     status: 'A tested portfolio MVP with C++/sanitizer, API, PostgreSQL migration, web/Playwright/accessibility and container release gates. The latest verified full-suite result applies to its recorded tested commit, not a live production deployment.',
+    research: ["The differentiator is durable multi-role ride state, not just a map: quotes, bookings, driver offers, expiry, redispatch, cancellation and trip history share a transactional backend.","The C++17 Boost.Beast API and PostgreSQL layer use bounded connection handling, migrations and explicit request/readiness boundaries.","Driver offers are durable and time-limited, with sequential redispatch; SSE/outbox updates are paired with reconnect and polling recovery.","Current evidence supports a substantial portfolio MVP, not a commercial taxi service: public deployment, real two-device journeys, compliance and transport approvals remain unverified."],
   }
 ];
