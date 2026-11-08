@@ -97,7 +97,7 @@ async function open({ threed = false, ...opts } = {}) {
   await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
-  ok('all selected case studies are marked as featured', (await page.locator('#forge .flagship-tag').count()) === featuredCount);
+  ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
 
   // Every featured case study must open, identify the selected project, and expose its real repository.
   for (const project of featuredProjects) {
