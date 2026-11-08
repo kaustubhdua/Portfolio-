@@ -93,7 +93,7 @@ async function open({ threed = false, ...opts } = {}) {
     const cards = document.querySelectorAll('#forge .card');
     return selected.length === 1 && cards.length > 0 && cards.length < expectedFeaturedCount;
   }, featuredCount);
-  ok('biome filter narrows cards to the selected biome', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
+  ok('engineering-focus filter narrows cards to the selected category', await page.locator('#forge .card').count() > 0 && await page.locator('#forge .card').count() < featuredCount && await page.locator('#forge .filters button[aria-pressed="true"]').count() === 1);
   await page.locator('#forge .filters').getByRole('button', { name: 'All projects' }).click();
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
@@ -103,13 +103,16 @@ async function open({ threed = false, ...opts } = {}) {
   for (const project of featuredProjects) {
     await page.getByRole('button', { name: `Case study: ${project.name}` }).click();
     const dialog = page.locator('dialog.dialog');
-    ok(`case study opens for ${project.name}`, await dialog.isVisible() && (await dialog.locator('#case-title').innerText()) === project.name);
-    ok(`case study links to the correct repository for ${project.name}`, (await dialog.locator(`a[href="${project.repo}"]`).count()) === 1);
+    const caseTitle = (await dialog.locator('#case-title').innerText()).trim().toLowerCase();
+    ok(`case study opens for ${project.name}`, await dialog.isVisible() && caseTitle === project.name.trim().toLowerCase());
+    const repositoryHref = await dialog.locator('.dialog-actions a').first().getAttribute('href');
+    ok(`case study links to the correct repository for ${project.name}`, repositoryHref === project.repo);
     if (project.live) {
-      ok(`live demo is shown for ${project.name}`, (await dialog.locator(`a[href="${project.live}"]`).count()) === 1);
+      const liveHref = await dialog.locator('.dialog-actions a').nth(1).getAttribute('href');
+      ok(`live demo is shown for ${project.name}`, liveHref === project.live);
     }
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(120);
+    await dialog.locator('.dialog-close').click();
+    await page.waitForFunction(() => !document.querySelector('dialog.dialog')?.open, null, { timeout: 3000 });
   }
 
   await page.getByRole('button', { name: 'FastAPI' }).click();
@@ -391,7 +394,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('3D world starts in the Nether fortress', (await canvas.getAttribute('data-world')) === 'nether');
   await page.waitForFunction(() => Number(document.querySelector('canvas.world-canvas').dataset.frames) > 3, null, { timeout: 20000 }).catch(() => {});
   ok('3D world draws frames', Number(await canvas.getAttribute('data-frames')) > 3);
-  const stops = [['profile', 1], ['forge', 3], ['world', 5], ['contact', 6]];
+  const stops = [['forge', 1], ['profile', 2], ['inventory', 3], ['advancements', 4], ['world', 5], ['contact', 6]];
   for (const [id, n] of stops) {
     await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id);
     await page.waitForFunction((n) => Math.abs(Number(document.querySelector('canvas.world-canvas').dataset.progress) - n) < 0.15, n, { timeout: 15000 }).catch(() => {});
