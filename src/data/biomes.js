@@ -79,11 +79,11 @@ export const splashes = [
 
 /** Loading-screen tips draw only from the five selected case studies and this portfolio. */
 export const tips = [
-  'Saathi tests its Hindi and Hinglish router on 120 synthetic cases.',
-  'NIRDHOOM keeps privileged service keys on the server.',
-  'PatchPilot treats submitted diffs as untrusted text.',
-  'Smart Waste labels synthetic telemetry as demo data.',
+  'JIIT Youth Club 128 pairs rich interactions with accessible navigation.',
   'RideForge expires driver offers after 45 seconds.',
+  'BharatSim separates planned tests from executed device evidence.',
+  'SATARK links investigation findings to preserved source evidence.',
+  'Saathi tests Hindi and Hinglish intent routing on synthetic cases.',
   'Press Ctrl+K to open the keyboard command palette.',
   'Free roam hides the page and lets you explore the world.',
   'Every texture and sound here is generated in-house.',
