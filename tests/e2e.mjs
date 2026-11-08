@@ -98,6 +98,13 @@ async function open({ threed = false, ...opts } = {}) {
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
+  for (const [index, project] of featuredProjects.entries()) {
+    const image = page.locator('#forge .card').nth(index).locator('.card-media img');
+    await image.scrollIntoViewIfNeeded();
+    await image.waitFor({ state: 'visible' });
+    const loaded = await image.evaluate((element) => element.complete && element.naturalWidth > 0);
+    ok(`project artwork loads for ${project.name}`, loaded);
+  }
 
   ok('project section does not expose a second uncurated experiment grid', (await page.locator('#forge .explored-grid').count()) === 0);
   const metricValues = (await page.locator('.stat-num').allTextContents()).map((value) => value.trim());
