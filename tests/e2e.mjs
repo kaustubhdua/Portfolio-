@@ -234,7 +234,7 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
   const smartWasteProject = projects.find((project) => project.id === 'smartwaste');
-  ok('Smart Waste is not advertised as an always-on demo', Boolean(smartWasteProject && !smartWasteProject.live && smartWasteProject.demoNote?.includes('sleeps after inactivity')));
+  ok('Smart Waste is not advertised as an always-on demo', Boolean(smartWasteProject && !smartWasteProject.live && /no verified public demo/i.test(smartWasteProject.demoNote ?? '')));
   if (!profile.blogEnabled) {
     ok('blog is not linked while it is coming soon', (await page.locator('a[href="blog/"]').count()) === 0);
     ok('contact shows "Blog: coming soon"', (await page.locator('.btn-soon', { hasText: 'coming soon' }).count()) === 1);
