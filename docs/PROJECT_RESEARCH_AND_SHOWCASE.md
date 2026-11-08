@@ -60,6 +60,16 @@ The featured set is now selected for resume strength and engineering diversity: 
 - **PatchPilot:** personal early MVP for safe, explainable diff triage; useful for secure parsing and deterministic analysis, but its heuristic score is not a defect probability and production precision/recall are unestablished.
 - **CrickVision, GenomeGuard, AkashChalak, Infracis, JIIT Toppers and Adapt AI:** retain as specialist/research builds in the expanded profile list; their own READMEs and release gates define what can be claimed.
 
+## Resume-ready project phrasing
+
+Use these as starting points, not as claims to copy blindly. For team projects, keep only the verbs and modules supported by your own merged commits/PRs. Add measured outcomes only after you have reproducible measurements.
+
+- **JIIT Youth Club 128:** Contributed to the React 19/Vite campus platform for societies, events and student governance, working across interactive UI, optimized media delivery and accessibility/performance improvements. Replace the broad scope with the exact modules you personally shipped.
+- **RideForge:** Built a C++17/Boost.Beast ride-booking API backed by PostgreSQL, implementing transactional booking state and durable, expiring driver offers with sequential redispatch; verified the workflow through API, migration, web and container test suites.
+- **BharatSim:** Engineered a FastAPI-based Android test-orchestration workflow with APK integrity checks, lease-based worker jobs and ADB/Appium fixture execution; correlated logcat and worker evidence while keeping production APK execution fail-closed pending isolated infrastructure.
+- **SATARK Sentinel:** Developed an evidence-first incident-investigation prototype with deterministic findings, SHA-256 integrity checks, timeline reconstruction and human-reviewed response simulation; separated observed signals from optional model interpretation.
+- **Saathi:** Co-developed a local-first Hindi/Hinglish assistant using deterministic intent routing, source-stamped tools and local speech/OCR components; maintained explicit consent and provider-readiness boundaries.
+
 ## Complete technology inventory
 
 The five featured case studies below show their full direct stack in the portfolio UI. The profile README features the same top engineering stories plus Smart Waste as a sixth project; secondary experiments remain discoverable without competing for flagship attention. For the wider project collection, see the [source-backed 16-project technology audit](PROJECT_TECHNOLOGY_AUDIT.md). That ledger separates runtime dependencies, build/test tooling, optional integrations and external providers; it also covers JIIT Youth Club and the Portfolio application itself.
