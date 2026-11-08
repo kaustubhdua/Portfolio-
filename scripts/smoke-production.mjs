@@ -66,7 +66,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(250);
   const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > window.innerWidth + 1,
+    () => globalThis.document.documentElement.scrollWidth > globalThis.window.innerWidth + 1,
   );
   assert.equal(hasHorizontalOverflow, false, 'Mobile production layout has no horizontal overflow');
   assert.deepEqual(pageErrors, [], 'Production page has no uncaught JavaScript errors');
