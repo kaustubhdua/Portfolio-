@@ -7,7 +7,7 @@
 export const biomes = {
   crimson: { name: 'Crimson Forest', dayName: 'Sunny Meadow', note: 'Full-stack platforms' },
   basalt: { name: 'Basalt Deltas', dayName: 'Stone Highlands', note: 'Data and optimisation' },
-  wastes: { name: 'Nether Wastes', dayName: 'Golden Hour', note: 'Local AI' },
+  wastes: { name: 'Nether Wastes', dayName: 'Golden Hour', note: 'Applied AI' },
   soul: { name: 'Soul Sand Valley', dayName: 'Pine Woods', note: 'Security and trust' },
 };
 
