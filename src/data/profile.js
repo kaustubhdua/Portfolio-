@@ -43,9 +43,9 @@ export const profile = {
   ],
   openSource: [
     { number: 1156, title: 'PostgreSQL 18 local volume compatibility', note: 'Aligned the managed local volume mount with the PostgreSQL 18 image contract and added regression coverage.', url: 'https://github.com/lemma-work/lemma-platform/pull/1156' },
-    { number: 1155, title: 'Podman function-sandbox tmpfs compatibility', note: 'Removed Docker-specific tmpfs ownership options rejected by Podman while preserving a writable private cache.', url: 'https://github.com/lemma-work/lemma-platform/pull/1155' },
     { number: 1136, title: 'GitHub webhook event identity and idempotency', note: 'Preserved push-event identity and distinguished check-suite rerequests from webhook redeliveries.', url: 'https://github.com/lemma-work/lemma-platform/pull/1136' },
     { number: 1128, title: 'Bundle sidecar path containment', note: 'Prevented file and JSON sidecar references from escaping their resource directory, including symlink paths.', url: 'https://github.com/lemma-work/lemma-platform/pull/1128' },
+    { number: 1155, title: 'Podman function-sandbox tmpfs compatibility', note: 'Removed Docker-specific tmpfs ownership options rejected by Podman while preserving a writable private cache.', url: 'https://github.com/lemma-work/lemma-platform/pull/1155' },
     { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
     { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
   ],
