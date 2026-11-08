@@ -1,9 +1,9 @@
 const STACK_GROUPS = [
-  { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript'] },
-  { id: 'frontend', title: 'Frontend', items: ['React 19', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript'] },
-  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets'] },
+  { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript', 'SQL'] },
+  { id: 'frontend', title: 'Frontend', items: ['React 19', 'React DOM', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'lucide-react', 'Hugeicons', 'canvas-confetti'] },
+  { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'python-dotenv', 'python-multipart'] },
   { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib'] },
-  { id: 'tools', title: 'Tools', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Hugeicons', 'Sharp', 'lucide-react', 'Oxlint'] },
+  { id: 'tools', title: 'Tools & Quality', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', '@playwright/test', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Sharp', 'Oxlint', 'Hatchling', 'Node.js', 'CodeQL', 'npm audit', 'ESLint'] },
 ];
 
 /** Group project technologies by evidence-backed role; keep the core skills list intentionally curated. */
@@ -47,7 +47,7 @@ export const projects = [
     image: 'img/projects/nirdhoom.png',
     summary:
       'A field-to-offtake workflow linking farmer requests, time-bound machine capacity, dispatch, operator evidence, verified residue lots and buyer demand.',
-    stack: ['TypeScript', 'React 19', 'Vite 8', 'Tailwind CSS 4', 'Supabase JS', 'PostgreSQL', 'PostGIS', 'Leaflet', 'Three.js', 'Python', 'FastAPI', 'OR-Tools', 'HTTPX', 'Motion', 'Vercel Functions', 'PWA / Service Worker', 'Oxlint', 'GitHub Actions'],
+    stack: ['TypeScript', 'React 19', 'React DOM', 'Vite 8', 'Tailwind CSS 4', 'Supabase JS', 'PostgreSQL', 'PostGIS', 'Leaflet', 'Three.js', 'Python', 'FastAPI', 'OR-Tools', 'HTTPX', 'Motion', 'Vercel Functions', 'PWA / Service Worker', 'lucide-react', 'canvas-confetti', 'Hugeicons', 'Oxlint', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/nihdhoom',
     live: 'https://nihdhoom-9qiu.vercel.app/',
     liveLabel: 'Hosted prototype',
@@ -99,7 +99,7 @@ export const projects = [
     image: 'img/projects/saathi.png',
     summary:
       'A Hindi/Hinglish assistance MVP combining deterministic intent routing, source-stamped tools, local speech defaults, document OCR and consent-aware human escalation.',
-    stack: ['Python', 'FastAPI', 'Starlette', 'Uvicorn', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'Vosk', 'Next.js 16', 'React 19', 'Motion', 'OGL', 'Supabase SSR', 'Ollama', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Streamlit', 'Exotel AgentStream', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Starlette', 'Uvicorn', 'Pydantic Settings', 'HTTPX', 'python-dotenv', 'python-multipart', 'WebSockets', 'Vosk', 'Next.js 16', 'React 19', 'React DOM', 'TypeScript', 'Motion', 'OGL', 'lucide-react', 'Supabase SSR', 'Supabase JS', 'Ollama', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Streamlit', 'Exotel AgentStream', 'pytest', 'ESLint', 'Docker', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/Saathi',
     problem:
       'Information and service workflows are hard to reach for people who prefer speaking in their own language. Saathi aims at field-ready workflows rather than disconnected AI demos.',
@@ -148,7 +148,7 @@ export const projects = [
     image: 'img/projects/patchpilot.png',
     summary:
       'A deterministic diff-review tool that surfaces parser integrity, risky paths, evidence-linked findings and test suggestions—without cloning or executing submitted code.',
-    stack: ['Python', 'FastAPI', 'Pydantic', 'Uvicorn', 'Vanilla HTML/CSS/JavaScript', 'HTTPX', 'pytest', 'Ruff', 'Docker', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Pydantic', 'Uvicorn', 'Vanilla HTML/CSS/JavaScript', 'HTTPX', 'Hatchling', 'pytest', 'Ruff', 'Docker', 'Node.js', 'GitHub Actions'],
     repo: 'https://github.com/kaustubhdua/PatchPilot',
     live: null,
     problem:
@@ -197,7 +197,7 @@ export const projects = [
     image: 'img/projects/smartwaste.png',
     summary:
       'A full-stack operations loop: provenance-aware device telemetry, transparent prioritisation, approved collection jobs, PostGIS context, capacity-constrained routing and driver verification.',
-    stack: ['Python', 'FastAPI', 'Uvicorn', 'SQLAlchemy', 'Psycopg 3', 'PostgreSQL', 'PostGIS', 'Alembic', 'OR-Tools', 'OSRM', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib', 'Streamlit', 'Folium', 'Vanilla HTML/CSS/JavaScript', 'Docker Compose', 'pytest', 'Playwright', 'GitHub Actions'],
+    stack: ['Python', 'FastAPI', 'Uvicorn', 'SQLAlchemy', 'Psycopg 3', 'Pydantic Settings', 'HTTPX', 'python-multipart', 'PostgreSQL', 'PostGIS', 'Alembic', 'OR-Tools', 'OSRM', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'Docker Compose', 'pytest', 'Playwright', 'GitHub Actions', 'CodeQL'],
     repo: 'https://github.com/kaustubhdua/smart_waste_project',
     demoNote: 'No verified public demo',
     problem:
@@ -247,7 +247,7 @@ export const projects = [
     kind: 'Personal project',
     image: 'img/projects/rideforge.svg',
     summary: 'A multi-role bike-taxi MVP built around persisted PostgreSQL bookings, expiring driver offers, sequential redispatch, cancellation and graph-based route planning.',
-    stack: ['C++17', 'Boost.Beast', 'CMake', 'libcurl', 'PostgreSQL/libpq', 'OpenSSL', 'nlohmann/json', 'React 19', 'TypeScript', 'Vite 6', 'Leaflet', 'Motion', 'lucide-react', 'Nominatim', 'OSRM', 'Docker', 'Playwright', 'axe-core', 'GitHub Actions'],
+    stack: ['C++17', 'Boost.Beast', 'CMake', 'libcurl', 'PostgreSQL/libpq', 'OpenSSL', 'nlohmann/json', 'React 19', 'React DOM', 'TypeScript', 'Vite 6', 'Leaflet', 'Motion', 'lucide-react', 'Nominatim', 'OSRM', 'Docker', 'Playwright', '@playwright/test', 'axe-core', 'GitHub Actions', 'CodeQL', 'npm audit'],
     repo: 'https://github.com/kaustubhdua/Smart_bike_taxi_platform',
     live: null,
     demoNote: 'No live deployment claimed',
