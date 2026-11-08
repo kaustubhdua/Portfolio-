@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Section, Reveal } from './ui.jsx';
-import { biomeName, biomes, projectImage, projects, explored } from '../data/projects.js';
+import { biomeName, biomes, projectImage, projects } from '../data/projects.js';
 import { profile, sections } from '../data/profile.js';
 import { useWorld } from '../hooks/useTheme.js';
 
@@ -13,13 +13,13 @@ const COUNT_WORDS = { 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8:
 
 export function ProjectCard({ project, onOpen, delay }) {
   const world = useWorld();
-  const extra = project.stack.length - 4;
+  const extra = project.stack.length - 3;
   return (
     <Reveal as="article" delay={delay} className={`card biome-${project.biome}`}>
       <div className="card-media">
         <img src={projectImage(project, world)} alt={`${project.name} pixel-art cover`} width="320" height="180" loading="lazy" decoding="async" />
         <span className="biome-tag pixel">{biomeName(project.biome, world)}</span>
-        {project.flagship && <span className="flagship-tag pixel">Flagship</span>}
+        
         <span className={`stage-tag pixel${project.live ? ' is-live' : ''}`}>{project.live && project.stage !== 'Live site' ? `${project.stage} · Live` : project.stage}</span>
       </div>
       <div className="card-body">
@@ -28,10 +28,10 @@ export function ProjectCard({ project, onOpen, delay }) {
         <p className="card-tagline">{project.tagline}</p>
         <p className="card-summary">{project.summary}</p>
         <ul className="badges" aria-label="Highlights">
-          {project.badges.map((b) => <li key={b}>{b}</li>)}
+          {project.badges.slice(0, 2).map((b) => <li key={b}>{b}</li>)}
         </ul>
         <ul className="chips" aria-label="Technologies">
-          {project.stack.slice(0, 4).map((t) => <li key={t}>{t}</li>)}
+          {project.stack.slice(0, 3).map((t) => <li key={t}>{t}</li>)}
           {extra > 0 && <li className="chip-more">+{extra}</li>}
         </ul>
       </div>
