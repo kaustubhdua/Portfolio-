@@ -320,8 +320,10 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await touchPage.waitForFunction(() => document.documentElement.dataset.explore === 'on', null, { timeout: 5000 });
   ok('phone free roam opens the touch-first HUD', await touchPage.locator('.explore-hud[data-touch="yes"]').isVisible());
   ok('phone free roam exposes joystick, jump and place controls', await touchPage.locator('.stick').isVisible() && await touchPage.locator('.ex-jump').isVisible() && await touchPage.locator('.ex-place').isVisible());
-  await touchPage.getByRole('button', { name: 'Glass (3)' }).click();
-  ok('phone hotbar selects a block by touch', await touchPage.getByRole('button', { name: 'Glass (3)' }).getAttribute('aria-pressed') === 'true');
+  for (const [name, index] of [['Planks (1)', 0], ['Cobblestone (2)', 1], ['Glass (3)', 2], ['Lamp (4)', 3]]) {
+    await touchPage.getByRole('button', { name }).click();
+    ok(`phone hotbar selects ${name} by touch`, await touchPage.getByRole('button', { name }).getAttribute('aria-pressed') === 'true' && await touchPage.locator('.hotbar-slot').nth(index).getAttribute('aria-pressed') === 'true');
+  }
   const stick = touchPage.locator('.stick');
   const stickBox = await stick.boundingBox();
   if (stickBox) {
@@ -430,8 +432,8 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   ok('W walks the player forward through the world', Math.hypot(x1 - x0, z1 - z0) > 1, `${p0} -> ${p1}`);
   await page.keyboard.press('Digit3');
   ok('number keys select the matching block and update the hotbar', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '2' && document.querySelectorAll('.hotbar-slot')[2].getAttribute('aria-pressed') === 'true'));
-  await page.getByRole('button', { name: 'Lamp (4)' }).click();
-  ok('hotbar buttons update the selected block', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
+  await page.keyboard.press('Digit4');
+  ok('Digit4 selects the lamp while the desktop pointer is locked', await page.evaluate(() => document.querySelector('canvas.world-canvas').dataset.hotbar === '3' && document.querySelectorAll('.hotbar-slot')[3].getAttribute('aria-pressed') === 'true'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   ok('Escape returns to the page', await page.evaluate(() => document.documentElement.dataset.explore !== 'on' && getComputedStyle(document.querySelector('main')).visibility === 'visible'));
