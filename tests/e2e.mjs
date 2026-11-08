@@ -395,9 +395,20 @@ for (const [label, viewport] of [
   } else {
     ok('phone joystick has a measurable touch target', false);
   }
-  await touchPage.locator('.ex-jump').click();
+  const jumpButton = touchPage.locator('.ex-jump');
+  await jumpButton.click();
   await touchPage.locator('.ex-place').click();
-  ok('phone jump and place actions are operable', await touchPage.locator('.ex-jump').isVisible() && await touchPage.locator('.ex-place').isVisible());
+  ok('phone jump and place actions are operable', await jumpButton.isVisible() && await touchPage.locator('.ex-place').isVisible());
+  ok('phone jump button advertises keyboard activation', (await jumpButton.getAttribute('aria-keyshortcuts')) === 'Space Enter');
+  await jumpButton.focus();
+  await touchPage.keyboard.down('Space');
+  ok('phone jump responds to Space keydown', (await jumpButton.getAttribute('data-jump')) === 'pressed');
+  await touchPage.keyboard.up('Space');
+  ok('phone jump releases after Space keyup', (await jumpButton.getAttribute('data-jump')) === 'released');
+  await touchPage.keyboard.down('Enter');
+  ok('phone jump responds to Enter keydown', (await jumpButton.getAttribute('data-jump')) === 'pressed');
+  await touchPage.keyboard.up('Enter');
+  ok('phone jump releases after Enter keyup', (await jumpButton.getAttribute('data-jump')) === 'released');
   await touchPage.getByRole('button', { name: /Leave world/ }).click();
   ok('phone can leave free roam and return to the page', await touchPage.evaluate(() => document.documentElement.dataset.explore !== 'on'));
   await touchWorld.close();
