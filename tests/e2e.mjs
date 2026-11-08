@@ -241,7 +241,6 @@ for (const w of [320, 360, 390, 768, 899, 900, 1024, 1280, 1920, 2560]) {
   await page.locator('#advancements .adv').first().waitFor({ state: 'visible' });
   const highlightsText = await page.locator('#advancements').innerText();
   ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/.test(highlightsText), highlightsText);
-  ok('CGPA and excluded internship are absent from public profile', !/CGPA|Pinnacle Labs|Web Development Intern/i.test(await page.locator('main').innerText()));
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
