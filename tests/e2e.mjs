@@ -111,7 +111,7 @@ async function open({ threed = false, ...opts } = {}) {
       const liveHref = await dialog.locator('.dialog-actions a').nth(1).getAttribute('href');
       ok(`live demo is shown for ${project.name}`, liveHref === project.live);
     }
-    await dialog.locator('.dialog-close').click();
+    await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.querySelector('dialog.dialog')?.open, null, { timeout: 3000 });
   }
 
