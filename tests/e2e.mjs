@@ -99,6 +99,11 @@ async function open({ threed = false, ...opts } = {}) {
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
 
+  ok('project section does not expose a second uncurated experiment grid', (await page.locator('#forge .explored-grid').count()) === 0);
+  const metricValues = (await page.locator('.stat-num').allTextContents()).map((value) => value.trim());
+  ok('at-a-glance metrics are three static, single values', metricValues.length === 3 && metricValues.every((value) => /^\\d+$/.test(value)));
+  ok('technical skills are curated to 15 core technologies', (await page.locator('#inventory .slot').count()) === 15);
+
   // Every featured case study must open, identify the selected project, and expose its real repository.
   for (const project of featuredProjects) {
     await page.getByRole('button', { name: `Case study: ${project.name}` }).click();
@@ -106,6 +111,9 @@ async function open({ threed = false, ...opts } = {}) {
     await dialog.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
     const caseTitle = (await dialog.locator('#case-title').innerText()).trim().toLowerCase();
     ok(`case study opens for ${project.name}`, await dialog.isVisible() && caseTitle === project.name.trim().toLowerCase());
+    const caseHeadings = (await dialog.locator('.case-h').allTextContents()).map((value) => value.trim());
+    ok(`case study prioritises contribution and current status for ${project.name}`, caseHeadings.includes('My role & contribution') && (await dialog.locator('.status').count()) === 1);
+    ok(`case study has native dialog labelling for ${project.name}`, (await dialog.getAttribute('aria-labelledby')) === 'case-title' && (await dialog.getAttribute('aria-describedby')) === 'case-summary');
     const repositoryHref = await dialog.locator('.dialog-actions a').first().getAttribute('href');
     ok(`case study links to the correct repository for ${project.name}`, repositoryHref === project.repo);
     if (project.live) {
