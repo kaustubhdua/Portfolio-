@@ -49,6 +49,7 @@ export const profile = {
     { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
     { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
   ],
+  openSourceArchive: 'https://github.com/lemma-work/lemma-platform/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua',
   links: {
     github: 'https://github.com/kaustubhdua',
     email: 'kaustubhdua1991@gmail.com',
