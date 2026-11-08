@@ -1,6 +1,6 @@
 const STACK_GROUPS = [
   { id: 'languages', title: 'Languages', items: ['Python', 'TypeScript', 'C++17', 'JavaScript', 'SQL'] },
-  { id: 'frontend', title: 'Frontend', items: ['React 19', 'React DOM', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'lucide-react', 'Hugeicons', 'canvas-confetti'] },
+  { id: 'frontend', title: 'Frontend', items: ['React 19', 'React DOM', 'Next.js 15', 'Next.js 16', 'Vite 8', 'Vite 6', 'Tailwind CSS 4', 'Leaflet', 'Three.js', 'Motion', 'OGL', 'Streamlit', 'Folium', 'Streamlit-Folium', 'Vanilla HTML/CSS/JavaScript', 'lucide-react', 'Hugeicons', 'canvas-confetti'] },
   { id: 'backend', title: 'Backend', items: ['FastAPI', 'Starlette', 'Uvicorn', 'Boost.Beast', 'Supabase JS', 'Supabase SSR', 'Ollama', 'Vosk', 'Exotel AgentStream', 'Tesseract OCR', 'eSpeak NG', 'FFmpeg', 'Pydantic', 'Pydantic Settings', 'HTTPX', 'WebSockets', 'python-dotenv', 'python-multipart'] },
   { id: 'data', title: 'Data & Systems', items: ['PostgreSQL', 'PostgreSQL/libpq', 'PostGIS', 'SQLAlchemy', 'Psycopg 3', 'Alembic', 'OR-Tools', 'OSRM', 'Nominatim', 'pandas', 'NumPy', 'scikit-learn', 'Random Forest', 'joblib'] },
   { id: 'tools', title: 'Tools & Quality', items: ['PWA / Service Worker', 'Vercel Functions', 'pytest', 'Ruff', 'Docker', 'Docker Compose', 'GitHub Actions', 'Playwright', '@playwright/test', 'axe-core', 'CMake', 'libcurl', 'OpenSSL', 'nlohmann/json', 'GSAP', 'Sharp', 'Oxlint', 'Hatchling', 'Node.js', 'CodeQL', 'npm audit', 'ESLint'] },
@@ -279,6 +279,7 @@ export const projects = [
     status: 'A tested portfolio MVP with C++/sanitizer, API, PostgreSQL migration, web/Playwright/accessibility and container release gates. The latest verified full-suite result applies to its recorded tested commit, not a live production deployment.',
     research: ["The differentiator is durable multi-role ride state, not just a map: quotes, bookings, driver offers, expiry, redispatch, cancellation and trip history share a transactional backend.","The C++17 Boost.Beast API and PostgreSQL layer use bounded connection handling, migrations and explicit request/readiness boundaries.","Driver offers are durable and time-limited, with sequential redispatch; SSE/outbox updates are paired with reconnect and polling recovery.","Current evidence supports a substantial portfolio MVP, not a commercial taxi service: public deployment, real two-device journeys, compliance and transport approvals remain unverified."],
   }
+];
 
 // Additional flagship case studies selected for demonstrated engineering depth,
 // real product context, and inspectable repository evidence.
@@ -454,5 +455,3 @@ projects.push(
     ],
   },
 );
-
-];
