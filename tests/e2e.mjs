@@ -9,6 +9,7 @@
  */
 import { profile } from '../src/data/profile.js';
 import { projects } from '../src/data/projects.js';
+import { tips } from '../src/data/biomes.js';
 const featuredProjects = projects.filter((project) => project.flagship);
 const featuredCount = featuredProjects.length;
 const projectsWithoutLiveDemo = featuredProjects.filter((project) => !project.live).length;
@@ -98,6 +99,8 @@ async function open({ threed = false, ...opts } = {}) {
   await page.waitForTimeout(300);
   ok(`${featuredCount} curated featured projects shown without empty placeholder cards`, (await page.locator('#forge .card').count()) === featuredCount && (await page.locator('#forge .card-soon').count()) === 0);
   ok('selected project cards avoid generic flagship badges', (await page.locator('#forge .flagship-tag').count()) === 0);
+  const unselectedNames = ['AkashChalak', 'Adapt AI', 'GenomeGuard', 'JYC Website', 'GitGlobe', 'BharatSim', 'JIIT Toppers'];
+  ok('loading tips only reinforce the selected project shortlist', tips.some((tip) => /Smart Waste|RideForge|NIRDHOOM|Saathi|PatchPilot/.test(tip)) && tips.every((tip) => unselectedNames.every((name) => !tip.toLowerCase().includes(name.toLowerCase()))));
   for (const [index, project] of featuredProjects.entries()) {
     const image = page.locator('#forge .card').nth(index).locator('.card-media img');
     await image.scrollIntoViewIfNeeded();
