@@ -9,6 +9,7 @@ import WorldBackdrop from './components/WorldBackdrop.jsx';
 import FallbackBackdrop from './components/FallbackBackdrop.jsx';
 import CommandPalette from './components/CommandPalette.jsx';
 import ExploreHud from './components/ExploreHud.jsx';
+import Rulebook from './components/Rulebook.jsx';
 import Stats from './components/Stats.jsx';
 import Hud from './components/Hud.jsx';
 import Profile from './components/Profile.jsx';
@@ -130,6 +131,13 @@ export default function App() {
     }
     setTrip(next);
   }, [trip, theme, reduced, setTheme]);
+
+  // walking into the portal while free roaming starts the same trip as the portal button
+  useEffect(() => {
+    const onPortal = () => travel();
+    window.addEventListener('portfolio:portal', onPortal);
+    return () => window.removeEventListener('portfolio:portal', onPortal);
+  }, [travel]);
 
   const swapWorld = useCallback(() => {
     setTheme(trip);
@@ -283,10 +291,11 @@ export default function App() {
       <Suspense fallback={null}>
         <Chat />
       </Suspense>
-      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} onExplore={canExplore ? enterExplore : null} />
+      <CommandPalette onGo={(id) => navigate({ preventDefault() {} }, id)} onOpenProject={setOpenId} onTravel={travel} onSound={toggleSound} soundOn={soundOn} world={theme} onQuick={toggleQuick} quick={quick} onExplore={canExplore ? enterExplore : null} onWilds={canExplore ? enterWilds : null} />
       <Toasts active={active} paused={Boolean(intro) || exploring || Boolean(trip)} />
       <Hud active={active} />
       <Nav active={active} onNavigate={navigate} soundOn={soundOn} onToggleSound={toggleSound} theme={theme} onToggleTheme={travel} travelling={Boolean(trip)} />
+      <Rulebook />
       {exploring && <ExploreHud onExit={leaveExplore} />}
       <WorldBackdrop world={theme} sections={ids} reduced={reduced} disabled={quick} />
       <FallbackBackdrop world={theme} sections={ids} active={active} />

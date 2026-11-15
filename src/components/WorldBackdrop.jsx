@@ -43,6 +43,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           onProgress: setLoad,
           onStep: stepSound,
           onWorldSound: worldSound,
+          onPortal: (to) => window.dispatchEvent(new window.CustomEvent('portfolio:portal', { detail: to })),
         });
         if (!renderer) {
           setLoad(1);
@@ -112,7 +113,17 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           e.preventDefault();
           if (renderer.place()) placeSound();
         };
+        // laptops without a right button: E or F places the selected block, as does Ctrl+click
+        const onPlaceKey = (e) => {
+          if (!renderer.exploring || e.repeat || !/^(KeyE|KeyF)$/.test(e.code) || e.ctrlKey || e.metaKey || e.altKey) return;
+          e.preventDefault();
+          if (renderer.place()) placeSound();
+        };
         const onClick = (e) => {
+          if (renderer.exploring && e.ctrlKey) {
+            if (renderer.place()) placeSound();
+            return;
+          }
           if (renderer.exploring) {
             // while exploring the crosshair is the centre of the screen; touch uses its own tap handler
             if (e.target.closest?.('.explore-hud button')) return;
@@ -146,6 +157,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
         window.addEventListener('pointermove', onMove, { passive: true });
         window.addEventListener('click', onClick);
         window.addEventListener('contextmenu', onContext);
+        window.addEventListener('keydown', onPlaceKey);
         cleanup = () => {
           stopDive();
           setExploreApi(null);
@@ -153,6 +165,7 @@ export default function WorldBackdrop({ world, sections, reduced, disabled = fal
           window.removeEventListener('pointermove', onMove);
           window.removeEventListener('click', onClick);
           window.removeEventListener('contextmenu', onContext);
+          window.removeEventListener('keydown', onPlaceKey);
           root.classList.remove('mob-hover');
           clearTimeout(bubbleTimer);
         };

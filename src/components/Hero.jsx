@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
+import { FaEnvelope, FaFileArrowDown, FaGithub, FaLinkedinIn, FaBookOpen } from 'react-icons/fa6';
 import Embers from './Embers.jsx';
 import Sprite from './Sprite.jsx';
 import { profile } from '../data/profile.js';
@@ -225,6 +225,9 @@ export default function Hero({ ready, onNavigate, theme = 'nether', quick = fals
             </a>
             <button ref={resumeTriggerRef} type="button" className="icon-btn" aria-label="Resume — coming soon" aria-haspopup="dialog" onClick={() => setResumeNoticeOpen(true)}>
               <FaFileArrowDown aria-hidden="true" />
+            </button>
+            <button type="button" className="icon-btn" aria-label="How to explore (opens the rulebook)" aria-haspopup="dialog" onClick={() => window.dispatchEvent(new window.CustomEvent('portfolio:rulebook'))}>
+              <FaBookOpen aria-hidden="true" />
             </button>
             <a className="icon-btn" href={`mailto:${profile.links.email}`} aria-label="Send an email">
               <FaEnvelope aria-hidden="true" />

@@ -363,6 +363,12 @@ function buildVillage() {
   // portal home
   g.shell(30, GY, 207, 34, GY + 4, 207, B.OBSIDIAN);
   g.fill(31, GY + 1, 207, 33, GY + 3, 207, B.AIR);
+  // the land rises behind the plaza, which used to bury the gateway behind a wall of dirt: level the
+  // approach and open the sill so the portal can be walked into
+  g.fill(28, GY, 206, 36, GY + 6, 206, B.AIR);
+  for (let x = 28; x <= 36; x++) g.set(x, GY - 1, 206, B.GRASS);
+  g.fill(31, GY, 207, 33, GY, 207, B.AIR);
+  g.fill(31, GY - 1, 207, 33, GY - 1, 207, B.OBSIDIAN);
   reserve(28, 205, 36, 209, 0);
 
   // trees
@@ -586,7 +592,7 @@ function buildFortress() {
   for (let x = 21; x <= 43; x++) g.set(x, D + 1, 208, B.NETHER_FENCE);
   for (let z = 182; z <= 208; z++) for (const x of [21, 43]) g.set(x, D + 1, z, B.NETHER_FENCE);
   g.fill(30, D + 1, 205, 34, D + 5, 205, B.OBSIDIAN);
-  g.fill(31, D + 2, 205, 33, D + 4, 205, B.AIR);
+  g.fill(31, D + 1, 205, 33, D + 4, 205, B.AIR);
   for (const [x, z] of [[24, 186], [40, 186], [24, 204], [40, 204], [27, 196], [37, 196]]) {
     g.set(x, D, z, B.SOUL_SAND);
     g.set(x, D + 1, z, B.FIRE);

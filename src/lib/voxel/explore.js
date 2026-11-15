@@ -32,8 +32,9 @@ export function stepPlayer(p, grid, input, dt) {
   dt = Math.min(dt, 0.05);
   const sy = Math.sin(p.yaw);
   const cy = Math.cos(p.yaw);
-  let wx = cy * input.fx + sy * input.fz;
-  let wz = -sy * input.fx + cy * input.fz;
+  // the camera's right-hand side is forward x up = (-cos, sin), so +fx (the D key) walks that way
+  let wx = -cy * input.fx + sy * input.fz;
+  let wz = sy * input.fx + cy * input.fz;
   const len = Math.hypot(wx, wz);
   if (len > 1) {
     wx /= len;
