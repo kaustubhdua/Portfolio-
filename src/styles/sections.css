@@ -923,3 +923,20 @@
 @media (max-width: 420px) {
   .resume-notice { margin: auto; }
 }
+
+/* Quest Log: a mine-rail timeline. Cleared stops are emerald, the active one pulses gold, the open one is dashed. */
+.quest-log { margin-top: 1.5rem; }
+.quest-log h3 { margin-bottom: 1rem; }
+.rail { position: relative; display: grid; gap: 1.25rem; margin: 0; padding: 0 0 0 2rem; list-style: none; }
+.rail::before { content: ''; position: absolute; left: 0.62rem; top: 0.4rem; bottom: 0.4rem; width: 4px; background: repeating-linear-gradient(to bottom, var(--edge) 0 10px, transparent 10px 16px); }
+.rail-stop { position: relative; min-width: 0; }
+.rail-block { position: absolute; left: -2rem; top: 0.1rem; width: 1.3rem; height: 1.3rem; background: var(--basalt-2); border: 3px solid var(--edge); box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.18), inset -3px -3px 0 rgba(0, 0, 0, 0.35); }
+.rail-when { font-size: 0.66rem; letter-spacing: 0.05em; color: var(--gold); }
+.rail-state { color: var(--muted); }
+.rail-title { margin: 0.2rem 0 0.15rem; font-weight: 600; color: var(--text); }
+.rail-stop.is-done .rail-block { background: #3fae52; border-color: #1f5f2b; }
+.rail-stop.is-active .rail-block { background: var(--amber); border-color: #7a4a00; animation: rail-pulse 1.6s ease-in-out infinite; }
+.rail-stop.is-locked .rail-block, .rail-stop.is-next .rail-block { background: transparent; border-style: dashed; border-color: var(--dim); }
+.rail-stop.is-locked, .rail-stop.is-next { opacity: 0.85; }
+@keyframes rail-pulse { 50% { box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.18), inset -3px -3px 0 rgba(0, 0, 0, 0.35), 0 0 12px var(--amber); } }
+@media (prefers-reduced-motion: reduce) { .rail-stop.is-active .rail-block { animation: none; } }

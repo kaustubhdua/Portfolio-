@@ -270,6 +270,7 @@ for (const [label, viewport] of [
   const highlightsText = await page.locator('#advancements').textContent();
   ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/i.test(highlightsText), highlightsText);
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
+  ok('the Quest Log shows its checkpoints with cleared and open states', (await page.locator('.quest-log .rail-stop').count()) === 4 && (await page.locator('.quest-log .is-done').count()) >= 2 && (await page.locator('.quest-log .is-next').count()) === 1);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
   const smartWasteProject = projects.find((project) => project.id === 'smartwaste');

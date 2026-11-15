@@ -3,6 +3,7 @@
 import { SOLID } from '../src/lib/voxel/blocks.js';
 import { sampleCamera } from '../src/lib/voxel/journey.js';
 import { computeLight } from '../src/lib/voxel/light.js';
+import { questState, profile } from '../src/data/profile.js';
 import { buildWorld } from '../src/lib/voxel/worlds.js';
 
 let failed = 0;
@@ -112,5 +113,14 @@ import { MIN_SCALE, createQuality, startScale, stepQuality } from '../src/lib/vo
     }
   ok('wilds: tunnels are carved under the surface', caves > 300, `cave cells=${caves}`);
   ok('wilds: the walls around the edge are too tall to climb', [0, 1, 62, 63].every((x) => [20, 100, 200].every((z) => SOLID[g.get(x, 16, z)])));
+}
+
+// Quest Log: the state of each checkpoint follows the calendar and the open entry never claims a date.
+{
+  const by = (id) => profile.questLog.find((q) => q.id === id);
+  ok('quest log: a finished entry is cleared', questState(by('nsoc'), new Date('2026-11-15T12:00:00+05:30')) === 'done');
+  ok('quest log: an entry inside its dates is in progress', questState(by('eximius'), new Date('2026-11-10T12:00:00+05:30')) === 'active');
+  ok('quest log: an entry before its start is locked', questState(by('nsoc'), new Date('2026-10-01T12:00:00+05:30')) === 'locked');
+  ok('quest log: the open checkpoint has no dates', questState(by('next')) === 'next' && !by('next').start);
 }
 process.exit(failed ? 1 : 0);
