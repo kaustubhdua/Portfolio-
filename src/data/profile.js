@@ -49,6 +49,17 @@ export const profile = {
     { number: 1125, title: 'Python SDK auth-refresh error handling', note: 'Handled malformed and non-object error payloads without leaking unhelpful exceptions.', url: 'https://github.com/lemma-work/lemma-platform/pull/1125' },
     { number: 1124, title: 'JSONC unterminated-comment diagnostics', note: 'Added location-aware parser errors and regression coverage for unterminated block comments.', url: 'https://github.com/lemma-work/lemma-platform/pull/1124' },
   ],
+  /**
+   * Dated milestones for the Quest Log. Every entry comes from facts already published above or
+   * stated by the owner; no results are claimed. `start`/`end` are ISO dates: the state is worked out
+   * from them at runtime, and an entry with no `start` is the open next checkpoint.
+   */
+  questLog: [
+    { id: 'jiit', when: '2025', start: '2025-08-01', end: '2025-08-01', title: 'Started at JIIT Noida', note: 'Began the Electronics & Computer Engineering course, Class of 2029.' },
+    { id: 'nsoc', when: '15–30 Oct 2026', start: '2026-10-15', end: '2026-10-30', title: 'NSoC Campus Ambassador', note: 'Outreach & Relations team, Nexus Spring of Code Winter Edition 2026.' },
+    { id: 'eximius', when: '2–14 Nov 2026', start: '2026-11-02', end: '2026-11-14', title: 'Tech Eximius 2.0', note: 'GenomeGuard entered: submission due 2 Nov, final round 14 Nov. No result is claimed here.' },
+    { id: 'next', when: 'Next', start: null, end: null, title: 'Internship checkpoint', note: 'Open to full-stack, backend and applied AI or data internships.' },
+  ],
   openSourceArchive: 'https://github.com/lemma-work/lemma-platform/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua',
   links: {
     github: 'https://github.com/kaustubhdua',
@@ -58,6 +69,15 @@ export const profile = {
 };
 
 /** Navigation and section registry. `label` is the thematic name, `hint` the plain-language one. */
+/** Quest Log state for one entry at `now`: done, active, or next (no start date yet). */
+export const questState = (item, now = new Date()) => {
+  if (!item.start) return 'next';
+  const start = new Date(`${item.start}T00:00:00+05:30`);
+  const end = new Date(`${item.end}T23:59:59+05:30`);
+  if (now > end) return 'done';
+  return now >= start ? 'active' : 'locked';
+};
+
 export const sections = [
   { id: 'spawn', label: 'Home', short: 'Home', hint: 'Spawn Point', sprite: 'torch' },
   { id: 'forge', label: 'Projects', short: 'Projects', hint: 'The Forge', sprite: 'anvil' },

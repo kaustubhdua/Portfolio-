@@ -1,4 +1,5 @@
 import { Section, Reveal } from './ui.jsx';
+import QuestLog from './QuestLog.jsx';
 import { profile, sections } from '../data/profile.js';
 
 const meta = sections.find((s) => s.id === 'profile');
@@ -66,6 +67,8 @@ export default function Profile() {
           </Reveal>
         </div>
       </div>
+
+      <QuestLog />
 
       <Reveal delay={140} className="panel open-source-panel">
         <div className="open-source-heading">
