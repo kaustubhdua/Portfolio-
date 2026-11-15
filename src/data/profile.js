@@ -57,7 +57,6 @@ export const profile = {
   questLog: [
     { id: 'jiit', when: '2025', start: '2025-08-01', end: '2025-08-01', title: 'Started at JIIT Noida', note: 'Began the Electronics & Computer Engineering course, Class of 2029.' },
     { id: 'nsoc', when: '15–30 Oct 2026', start: '2026-10-15', end: '2026-10-30', title: 'NSoC Campus Ambassador', note: 'Outreach & Relations team, Nexus Spring of Code Winter Edition 2026.' },
-    { id: 'eximius', when: '2–14 Nov 2026', start: '2026-11-02', end: '2026-11-14', title: 'Tech Eximius 2.0', note: 'GenomeGuard entered: submission due 2 Nov, final round 14 Nov. No result is claimed here.' },
     { id: 'next', when: 'Next', start: null, end: null, title: 'Internship checkpoint', note: 'Open to full-stack, backend and applied AI or data internships.' },
   ],
   openSourceArchive: 'https://github.com/lemma-work/lemma-platform/pulls?q=is%3Apr+is%3Amerged+author%3Akaustubhdua',

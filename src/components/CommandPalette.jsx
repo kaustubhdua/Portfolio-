@@ -6,7 +6,7 @@ import { profile, sections } from '../data/profile.js';
  * Ctrl/Cmd + K opens a keyboard-first launcher, like the command menus in professional tools:
  * jump to a section, open a case study, grab a link, copy the email, switch world or toggle sound.
  */
-export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick, onExplore }) {
+export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick, onExplore, onWilds }) {
   const dialogRef = useRef(null);
   const inputRef = useRef(null);
   const [query, setQuery] = useState('');
@@ -39,10 +39,12 @@ export default function CommandPalette({ onGo, onOpenProject, onTravel, onSound,
       },
       { id: 'world', group: 'Actions', label: world === 'overworld' ? 'Travel to the Nether (night mode)' : 'Travel to the Overworld (day mode)', run: onTravel },
       ...(onExplore ? [{ id: 'explore', group: 'Actions', label: 'Explore the world freely (no text)', run: onExplore }] : []),
+      ...(onWilds ? [{ id: 'wilds', group: 'Actions', label: 'Explore the Wilds (a generated landscape)', run: onWilds }] : []),
+      { id: 'rulebook', group: 'Actions', label: 'How to explore (open the rulebook)', run: () => window.dispatchEvent(new window.CustomEvent('portfolio:rulebook')) },
       { id: 'quick', group: 'Actions', label: quick ? 'Turn 3D scenery back on' : 'Quick view: turn 3D scenery off', run: onQuick },
       { id: 'sound', group: 'Actions', label: soundOn ? 'Turn ambient sound off' : 'Turn ambient sound on', run: onSound },
     ];
-  }, [onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick, onExplore]);
+  }, [onGo, onOpenProject, onTravel, onSound, soundOn, world, onQuick, quick, onExplore, onWilds]);
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();

@@ -295,7 +295,7 @@ projects.push(
     stage: 'Official platform',
     name: 'JIIT Youth Club 128',
     tagline: 'Official campus community and events platform',
-    contribution: 'Technical-team contribution to an internal campus platform. Describe only the modules and changes attributable to your own commits; the case study does not claim sole authorship.',
+    contribution: 'Technical-team contribution to an internal campus platform. This case study covers only changes I can attribute to my own commits and does not claim sole authorship.',
     evidence: [
       { label: 'Official project repository', url: 'https://github.com/kaustubhdua/JYC-Website' },
       { label: 'Repository architecture and maintenance policy', url: 'https://github.com/kaustubhdua/JYC-Website#platform-overview' },
@@ -329,13 +329,13 @@ projects.push(
     ],
     limits: [
       'The repository is closed to external contributions and maintained by the authorized technical team.',
-      'The case study intentionally does not claim sole ownership of the platform or work outside your own verified contribution history.',
-      'Do not disclose internal operational details or private user data in a public resume.',
+      'The case study intentionally does not claim sole ownership of the platform or any work outside my own verified contribution history.',
+      'Internal operational details and private user data are not published here.',
     ],
-    status: 'Official internal campus platform. Public repository documentation describes the platform architecture; attribute personal implementation scope from your own commit history.',
+    status: 'Official internal campus platform. Public repository documentation describes the platform architecture; my own scope is limited to what my commit history shows.',
     research: [
       'This is the strongest real-world product-context story in the set: a campus platform with actual organizational stakeholders and information architecture.',
-      'The technical narrative should emphasize the specific modules you personally implemented, reviewed or maintained—not the total feature inventory.',
+      'The technical story here emphasizes the modules I implemented, reviewed or maintained, not the full feature inventory.',
       'Visual polish is valuable only when paired with route performance, media optimization, offline behavior and accessibility.',
     ],
   },

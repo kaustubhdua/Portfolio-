@@ -152,7 +152,7 @@ export default function ExploreHud({ onExit }) {
       <div className="crosshair" aria-hidden="true" />
       {hint && (
         <p className="explore-hint pixel" role="status">
-          {touch ? 'Left thumb moves · drag the right side to look · tap to dig' : 'WASD to walk · Space to jump · Shift to sprint · click to dig · right-click to place'}
+          {touch ? 'Left thumb moves · drag the right side to look · tap to dig' : 'WASD to walk · Space to jump · Shift to sprint · click to dig · right-click or E to place'}
         </p>
       )}
       <ul className="hotbar" aria-label="Blocks you can place">

@@ -1,4 +1,5 @@
 import { BY, GY } from './worlds.js';
+import { SOLID } from './blocks.js';
 
 /**
  * Original blocky characters and creatures. They are built from a few coloured boxes, animated
@@ -472,9 +473,89 @@ function person(list, { name, role, line, kind = 'friendly', parts, y = GY, step
 }
 
 /** Creates every creature for a world. Each is { name, line, pos, r, h, draw(t, push) }. */
-export function createActors(world) {
+let daylight = 1;
+/** The renderer tells the actors how bright it is (0 night, 1 day) so daytime creatures can go home. */
+export function setDaylight(v) {
+  daylight = v;
+}
+
+/**
+ * Bees and butterflies for the meadows. Each one drifts around a spot of ground, so the grid is used
+ * once to find the height there. They are drawn only in daylight, and freeze under reduced motion.
+ */
+function ambientLife(list, grid, { zMin, zMax, xMin, xMax, skipRoad, butterflies, bees, seed }) {
+  let n = seed;
+  const rnd = () => {
+    n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
+    return n / 4294967296;
+  };
+  const groundAt = (x, z) => {
+    for (let y = 43; y > 0; y--) if (SOLID[grid.get(Math.floor(x), y, Math.floor(z))]) return y + 1;
+    return GY;
+  };
+  const spot = () => {
+    for (let tries = 0; tries < 30; tries++) {
+      const x = xMin + rnd() * (xMax - xMin);
+      const z = zMin + rnd() * (zMax - zMin);
+      if (skipRoad && Math.abs(x - 32) < 5) continue;
+      return [x, z, groundAt(x, z)];
+    }
+    return [xMin, zMin, groundAt(xMin, zMin)];
+  };
+  const wing = (side, col) => ({ s: [3.2 * U, 0.4 * U, 3 * U], p: [side * 0.8 * U, 0.6 * U, 0], c: [side * 1.6 * U, 0, 0], col });
+  const PALETTE = [0xf08a24, 0x4a8be0, 0xf4efe4, 0xe0508a, 0xf2d83a];
+  for (let i = 0; i < butterflies; i++) {
+    const [cx, cz, gy] = spot();
+    const col = hex(PALETTE[i % PALETTE.length]);
+    const body = box([0.8, 0.8, 3.4], [0, 0, 0], hex(0x2a2228));
+    const wl = wing(-1, col);
+    const wr = wing(1, col);
+    const ph = rnd() * 6.28;
+    actor(list, quietOpts(null, 'Butterfly'), (t0) => {
+      if (daylight < 0.35) return;
+      const t = t0;
+      const a = t * 0.35 + ph;
+      const x = cx + Math.sin(a) * 2.4 + Math.sin(a * 2.3) * 0.8;
+      const z = cz + Math.cos(a * 0.8) * 2.4;
+      const y = gy + 0.9 + Math.sin(a * 1.7) * 0.5;
+      const base = baseOf(x, y, z, Math.atan2(Math.cos(a), -Math.sin(a)));
+      pushPart(pushRef, base, body);
+      const flap = Math.sin(t * 13 + ph) * 0.95;
+      pushPart(pushRef, base, wl, 0, 0, flap);
+      pushPart(pushRef, base, wr, 0, 0, -flap);
+    });
+  }
+  for (let i = 0; i < bees; i++) {
+    const [cx, cz, gy] = spot();
+    const body = box([2.6, 2.4, 3.8], [0, 0, 0], hex(0xf2c230));
+    const band = box([2.8, 2.6, 1.1], [0, 0, -0.4], hex(0x2a2218));
+    const wl = wing(-1, hex(0xdfeefa));
+    const wr = wing(1, hex(0xdfeefa));
+    const ph = rnd() * 6.28;
+    actor(list, quietOpts(null, 'Bee'), (t0) => {
+      if (daylight < 0.35) return;
+      const t = t0;
+      // a lazy figure of eight with a little hover bob, like a bee working a patch of flowers
+      const a = t * 0.9 + ph;
+      const x = cx + Math.sin(a) * 1.5;
+      const z = cz + Math.sin(a * 2) * 0.9;
+      const y = gy + 0.8 + Math.sin(t * 3 + ph) * 0.12 + Math.sin(a * 0.5) * 0.25;
+      const base = baseOf(x, y, z, Math.atan2(Math.cos(a), Math.cos(a * 2) * 1.2));
+      pushPart(pushRef, base, body);
+      pushPart(pushRef, base, band);
+      const flap = Math.sin(t * 38 + ph) * 0.8;
+      pushPart(pushRef, base, wl, 0, 0, flap);
+      pushPart(pushRef, base, wr, 0, 0, -flap);
+    });
+  }
+}
+export function createActors(world, grid) {
   const list = [];
   const quiet = { pick: false };
+  if (grid && (world === 'overworld' || world === 'wilds')) {
+    if (world === 'overworld') ambientLife(list, grid, { zMin: 14, zMax: 200, xMin: 8, xMax: 56, skipRoad: true, butterflies: 16, bees: 10, seed: 7 });
+    else ambientLife(list, grid, { zMin: 14, zMax: 110, xMin: 8, xMax: 56, skipRoad: false, butterflies: 16, bees: 12, seed: 11 });
+  }
   if (world === 'overworld') {
     const lines = [
       'Nice day for a stroll down the road.',

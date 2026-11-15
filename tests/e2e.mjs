@@ -270,7 +270,16 @@ for (const [label, viewport] of [
   const highlightsText = await page.locator('#advancements').textContent();
   ok('technical highlights are curated to the job simulation and SQL coursework', (await page.locator('#advancements .adv').count()) === 2 && /JPMorgan Chase Software Engineering/.test(highlightsText) && /Introduction to Databases with SQL/i.test(highlightsText), highlightsText);
   ok('profile does not expose a professional-experience placeholder', (await page.locator('.experience').count()) === 0);
-  ok('the Quest Log shows its checkpoints with cleared and open states', (await page.locator('.quest-log .rail-stop').count()) === 4 && (await page.locator('.quest-log .is-done').count()) >= 2 && (await page.locator('.quest-log .is-next').count()) === 1);
+  await page.getByRole('button', { name: /How to explore/ }).first().click();
+  await page.waitForTimeout(1300);
+  ok('the rulebook opens as a dialog and shows the first spread', (await page.locator('dialog.rulebook[open] .book-page').count()) === 2 && (await page.locator('dialog.rulebook[open]').innerText()).toLowerCase().includes('moving'));
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await page.waitForTimeout(400);
+  ok('the rulebook turns to the next spread and mentions placing with E', (await page.locator('dialog.rulebook[open]').innerText()).includes('press E or F'));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+  ok('Escape closes the rulebook', (await page.locator('dialog.rulebook[open]').count()) === 0);
+  ok('the Quest Log shows its checkpoints with cleared and open states', (await page.locator('.quest-log .rail-stop').count()) === 3 && (await page.locator('.quest-log .is-done').count()) >= 2 && (await page.locator('.quest-log .is-next').count()) === 1);
   ok('the unfinished experience placeholder is gone', (await page.locator('.roles-soon').count()) === 0);
   ok('obsolete Saathi and JYC demo URLs are absent', (await page.locator('a[href*="saathi-two-pi"], a[href*="jyc-website-eight"]').count()) === 0);
   const smartWasteProject = projects.find((project) => project.id === 'smartwaste');

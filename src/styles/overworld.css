@@ -274,6 +274,27 @@
   background: rgba(40, 44, 40, 0.95);
 }
 
+/* The chat panel stays dark in the day theme, so its heading, close button and suggestions need light text. */
+[data-theme='overworld'] .chat-head,
+[data-theme='overworld'] .chat-close {
+  color: #ffd27a;
+}
+
+[data-theme='overworld'] .chat-close:hover {
+  color: #fff;
+}
+
+[data-theme='overworld'] .chat-suggest button {
+  color: #f1f1f1;
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #8a8a8a;
+}
+
+[data-theme='overworld'] .chat-suggest button:hover {
+  color: #fff;
+  border-color: #ffd27a;
+}
+
 /* ------------------------------------------------------------------ toast */
 
 [data-theme='overworld'] .toast {

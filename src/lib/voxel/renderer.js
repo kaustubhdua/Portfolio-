@@ -1,5 +1,5 @@
 import { buildTiles, TILE, TILE_COUNT } from './atlas.js';
-import { InstanceWriter, createActors, setActorSound, setLookTarget } from './actors.js';
+import { InstanceWriter, createActors, setActorSound, setDaylight, setLookTarget } from './actors.js';
 import { sampleCamera, scrollToProgress } from './journey.js';
 import { EYE_HEIGHT, createPlayer, stepPlayer } from './explore.js';
 import { computeLight } from './light.js';
@@ -78,7 +78,7 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
 /** Creates the world renderer. Returns null when WebGL 2 is not available. */
-export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent, onWorldSound } = {}) {
+export function createWorldRenderer(canvas, { sections, reduced = false, onContextLost, onProgress, onStep, onEvent, onWorldSound, onPortal } = {}) {
   setActorSound(onWorldSound ?? null);
   const gl = canvas.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance', depth: true });
   if (!gl) return null;
@@ -187,7 +187,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       light,
       gen: meshWorld(meta.grid, light),
       broken: [],
-      actors: createActors(name),
+      actors: createActors(name, meta.grid),
     };
     worlds[name] = w;
     return w;
@@ -516,6 +516,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   // ---- free roam: walk anywhere in the world with the keyboard, mouse or touch controls
   let exploring = false;
   let player = null;
+  let portalCool = 0;
   let blend = 1;
   let blendFrom = null;
   const exIn = { fx: 0, fz: 0, jump: false, sprint: false };
@@ -573,7 +574,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     if (Math.abs(e.movementX) > BOGUS_DELTA || Math.abs(e.movementY) > BOGUS_DELTA) return;
     const dx = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementX));
     const dy = Math.max(-MAX_DELTA, Math.min(MAX_DELTA, e.movementY));
-    player.yaw += dx * 0.0022;
+    player.yaw -= dx * 0.0022;
     player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy * 0.0022));
     dirty = true;
     schedule();
@@ -606,6 +607,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       // starts mid-morning; frozen under reduced motion because simTime does not advance
       sunE = Math.sin((simTime / DAY_LENGTH + 0.0485) * Math.PI * 2);
       dayF = smooth(-0.14, 0.2, sunE);
+      setDaylight(dayF);
       const dusk = Math.max(0, 1 - Math.abs(sunE) / 0.28) * 0.4 * smooth(-0.3, 0.0, sunE + 0.15);
       for (let i = 0; i < 3; i++) {
         dyn.fog[i] = lerp(lerp(NIGHT.fog[i], base.fog[i], dayF), DUSK[i], dusk);
@@ -648,6 +650,12 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
       if (exploring && player) {
         const evt = stepPlayer(player, w.meta.grid, exIn, dt);
         if (evt) onEvent?.(evt);
+        // walking into the glowing gateway at the end of the road takes you to the other world
+        const pt = w.meta.portal;
+        if (pt && current !== 'wilds' && simTime > portalCool && player.x > pt.x - 1 && player.x < pt.x + 2 && player.z > pt.z - 0.3 && player.z < pt.z + 1.4 && player.y > pt.y - 2.5 && player.y < pt.y + pt.h) {
+          portalCool = simTime + 6;
+          onPortal?.(current === 'nether' ? 'overworld' : 'nether');
+        }
         canvas.dataset.pos = `${player.x.toFixed(1)},${player.y.toFixed(1)},${player.z.toFixed(1)}`;
         const sp = Math.hypot(player.vx, player.vz);
         if (player.onGround) walk += sp * dt * 1.6;
@@ -875,8 +883,19 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     ready,
     /** Switches worlds, building the new one first if needed. */
     setWorld(name) {
+      const before = current;
       current = name;
       ensureWorld(name);
+      // arriving through the portal while roaming: stand in front of the gateway on the other side
+      const pt = worlds[name].meta.portal;
+      if (exploring && player && before !== name && name !== 'wilds' && before !== 'wilds' && pt) {
+        const gx = Math.floor(pt.x + 0.5);
+        const gz = pt.z - 3;
+        let y = pt.y + 6;
+        while (y > 1 && !SOLID[worlds[name].meta.grid.get(gx, y, gz)]) y--;
+        player = createPlayer(pt.x + 0.5, y + 1.05, gz + 0.5, Math.PI, 0);
+        portalCool = simTime + 6;
+      }
       if (!worlds[name].done) kick();
       canvas.dataset.world = name;
       dirty = true;
@@ -1001,7 +1020,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
     },
     lookBy(dx, dy) {
       if (!player) return;
-      player.yaw += dx;
+      player.yaw -= dx;
       player.pitch = Math.max(-1.45, Math.min(1.45, player.pitch - dy));
       dirty = true;
       schedule();

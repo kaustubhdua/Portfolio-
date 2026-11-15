@@ -12,7 +12,7 @@ import { advancements } from '../data/advancements.js';
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 export const WELCOME = [
-  ['Welcome to the Nether chat. Answers come from this site’s own data. No AI model is involved.'],
+  ['Welcome to the chat. Answers come from this site’s own data, and no AI model is involved.'],
   ['Type /help, or tap a suggestion below.'],
 ];
 
@@ -69,8 +69,8 @@ const commands = {
   ],
   roles: () => [...profile.roles, ...profile.volunteering].map((r) => [`${r.org} (${r.full}): ${r.role}. ${r.note}`]),
   trophy: () => [
-    ['At the end of the road, in the village and in the Nether, a gold trophy stands on a pedestal.'],
-    ['It has no name yet on purpose. It gets one when I win a competition or hackathon.'],
+    ['At the end of the road, in both the village and the Nether, a gold trophy stands on a pedestal.'],
+    ['It has no name yet, on purpose. It will get one when I win a competition or hackathon.'],
   ],
   blog: () => (profile.blogEnabled ? [['Notes on what I build and learn: ', link('blog/', 'open the blog')]] : [['The blog is coming soon. Until then, the projects are in the Forge.']]),
   projects: () => [

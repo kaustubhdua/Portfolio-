@@ -119,8 +119,35 @@ import { MIN_SCALE, createQuality, startScale, stepQuality } from '../src/lib/vo
 {
   const by = (id) => profile.questLog.find((q) => q.id === id);
   ok('quest log: a finished entry is cleared', questState(by('nsoc'), new Date('2026-11-15T12:00:00+05:30')) === 'done');
-  ok('quest log: an entry inside its dates is in progress', questState(by('eximius'), new Date('2026-11-10T12:00:00+05:30')) === 'active');
+  ok('quest log: an entry inside its dates is in progress', questState({ start: '2026-11-02', end: '2026-11-14' }, new Date('2026-11-10T12:00:00+05:30')) === 'active');
   ok('quest log: an entry before its start is locked', questState(by('nsoc'), new Date('2026-10-01T12:00:00+05:30')) === 'locked');
   ok('quest log: the open checkpoint has no dates', questState(by('next')) === 'next' && !by('next').start);
+}
+
+// Controls: D must walk toward the camera's right (forward x up), A toward its left, for any heading.
+{
+  const w = buildWorld('overworld');
+  let ok1 = true;
+  for (const yaw of [0, 0.7, 1.6, 3.1, -2.2]) {
+    const p = createPlayer(32.5, 13.05, 60.5, yaw, 0);
+    for (let i = 0; i < 20; i++) stepPlayer(p, w.grid, { fx: 1, fz: 0 }, 1 / 60);
+    const fwd = [Math.sin(yaw), Math.cos(yaw)];
+    const right = [-fwd[1], fwd[0]]; // forward x up, on the ground plane
+    ok1 = ok1 && p.vx * right[0] + p.vz * right[1] > 0.5 && Math.abs(p.vx * fwd[0] + p.vz * fwd[1]) < 0.01;
+  }
+  ok('controls: D walks to the right of where you face, whichever way that is', ok1);
+}
+
+// The Nether portal: walking down the road into the gateway must reach its trigger volume in both worlds.
+for (const name of ['overworld', 'nether']) {
+  const w = buildWorld(name);
+  const pt = w.portal;
+  const p = createPlayer(pt.x + 0.5, pt.y + 0.05, pt.z - 6, 0, 0);
+  let hit = false;
+  for (let i = 0; i < 400 && !hit; i++) {
+    stepPlayer(p, w.grid, { fx: 0, fz: 1 }, 1 / 60);
+    hit = p.x > pt.x - 1 && p.x < pt.x + 2 && p.z > pt.z - 0.3 && p.z < pt.z + 1.4 && p.y > pt.y - 2.5 && p.y < pt.y + pt.h;
+  }
+  ok(`portal: walking into the ${name} gateway reaches its trigger`, hit, `stopped at z=${p.z.toFixed(2)}`);
 }
 process.exit(failed ? 1 : 0);
