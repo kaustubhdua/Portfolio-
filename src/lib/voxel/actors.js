@@ -922,7 +922,7 @@ export function createActors(world, grid) {
       const hc = pushRef.color();
       hc[0] = 0.35; hc[1] = 0.24; hc[2] = 0.14; hc[3] = 0;
     });
-    actor(list, quietOpts(quiet, 'Portal'), portalDraw(32, GY + 2.5, 207.4));
+    actor(list, quietOpts(quiet, 'Portal'), portalDraw(31, GY, 207, 3, 4));
   } else if (world === 'nether') {
     // Cinder guards patrol the bridge
     const lanes = [
@@ -1080,7 +1080,7 @@ export function createActors(world, grid) {
         pushPart(pushRef, base, { s: [s * 2.4, s * 2.4, s * 2.4], p: [0, 0, 0], c: [0, 0, 0], col: hex(0xffc060), glow: 1 }, t, t * 0.7, 0);
       });
     }
-    actor(list, quietOpts(quiet, 'Portal'), portalDraw(32, BY + 3.5, 205.5));
+    actor(list, quietOpts(quiet, 'Portal'), portalDraw(31, BY, 205, 3, 4));
   }
 
   // The writer is handed to draw() each frame; actor closures reach it through this reference.
@@ -1119,25 +1119,59 @@ export function createActors(world, grid) {
 let pushRef = null;
 const quietOpts = (_q, name) => ({ name, pick: false });
 
-function portalDraw(x, y, z) {
+/**
+ * The gateway surface: a grid of small tiles filling the obsidian opening exactly, each coloured from two
+ * interfering sine waves so the purple swirl drifts like the game's portal, plus motes rising out of it.
+ * (x0, y0) is the opening's lower-left block corner, w and h are its size in blocks, z is the block layer.
+ */
+function portalDraw(x0, y0, z, w, h) {
+  const N = 4; // tiles per block edge
+  const cols = w * N;
+  const rows = h * N;
+  const tile = 1 / N;
   return (t) => {
-    for (let i = 0; i < 3; i++) {
+    // the renderer skips actors whose position is far from the camera, so say where the gateway is
+    if (cur) cur.pos = [x0 + w / 2, y0, z + 0.5];
+    for (let j = 0; j < rows; j++) {
+      for (let i = 0; i < cols; i++) {
+        const px = i * tile;
+        const py = j * tile;
+        const m = pushRef.next();
+        m.fill(0);
+        m[0] = tile * 1.04; m[5] = tile * 1.04; m[10] = 0.1; m[15] = 1;
+        m[12] = x0 + px + tile / 2; m[13] = y0 + py + tile / 2; m[14] = z + 0.5;
+        const a = Math.sin(px * 2.4 + t * 1.3 + Math.sin(py * 1.9 - t * 0.9) * 1.6);
+        const b = Math.sin(py * 2.1 - t * 1.1 + Math.cos(px * 2.2 + t * 0.8) * 1.3);
+        const v = 0.5 + 0.25 * a + 0.25 * b; // 0..1
+        // dim slightly toward the frame so the swirl seems to recede
+        const edge = Math.min(px, w - px, py, h - py);
+        const fade = 0.75 + 0.25 * Math.min(1, edge / 0.8);
+        const c = pushRef.color();
+        c[0] = (0.22 + 0.5 * v * v) * fade;
+        c[1] = (0.03 + 0.2 * v * v * v) * fade;
+        c[2] = (0.5 + 0.5 * v) * fade;
+        c[3] = 1;
+      }
+    }
+    // motes drifting up out of the gateway
+    for (let k = 0; k < 9; k++) {
+      const life = (t * 0.35 + k * 0.173) % 1;
       const m = pushRef.next();
       m.fill(0);
-      m[10] = 0.12; m[15] = 1;
-      m[12] = x; m[13] = y; m[14] = z + (i - 1) * 0.07;
-      m[0] = 3 - i * 0.25;
-      m[5] = 3 - i * 0.25;
-      const pulse = 0.5 + 0.5 * Math.sin(t * (1.6 + i * 0.7) + i * 2);
+      m[0] = 0.09; m[5] = 0.09; m[10] = 0.09; m[15] = 1;
+      m[12] = x0 + w / 2 + Math.sin(k * 12.9 + t * 0.6) * (w / 2 - 0.3);
+      m[13] = y0 + 0.2 + life * (h - 0.2);
+      m[14] = z + 0.5 + Math.sin(k * 7.1 + life * 6) * 0.45 + (k % 2 ? 0.4 : -0.4);
       const c = pushRef.color();
-      c[0] = 0.32 + 0.3 * pulse; c[1] = 0.05 + 0.1 * pulse; c[2] = 0.6 + 0.35 * pulse; c[3] = 1;
+      const f = Math.sin(life * Math.PI);
+      c[0] = 0.75 * f + 0.2; c[1] = 0.45 * f + 0.1; c[2] = 1; c[3] = 1;
     }
   };
 }
 
 /** The per-frame instance buffer the renderer uploads. */
 export class InstanceWriter {
-  constructor(capacity = 1800) {
+  constructor(capacity = 3200) {
     this.data = new Float32Array(capacity * 20);
     this.count = 0;
     this.cap = capacity;

@@ -150,7 +150,7 @@ export function createWorldRenderer(canvas, { sections, reduced = false, onConte
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeData), gl.STATIC_DRAW);
   const instBuffer = gl.createBuffer();
-  const writer = new InstanceWriter(2200);
+  const writer = new InstanceWriter(3200);
   gl.bindBuffer(gl.ARRAY_BUFFER, instBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, writer.data.byteLength, gl.DYNAMIC_DRAW);
   const entityVao = gl.createVertexArray();
